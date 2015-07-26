@@ -1,5 +1,3 @@
 #+TITLE: About
 
-* About Philipp Middendorf
-
-  I need to think about myself some more and get back to filling in this page.
+You can contact me via [[pmidden@secure.mailbox.org][e-mail]] or visit me via IRC (irc.freenode.net, =#sge-sanguis=)
