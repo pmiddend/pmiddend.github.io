@@ -139,10 +139,15 @@ bad:
 
 #+BEGIN_SRC sh
 while true; do
-  $HOME/autorandr/autorandr.py --change;
+  $HOME/autorandr/autorandr.py --change --skip-options=gamma
   sleep 10s
 done
 #+END_SRC
 
 It's bad, I know, but it works for now. =--change= is intelligent and
 does nothing if the configuration did not change.
+
+The =--skip-options= directive instructs autorandr to ignore the gamma
+setting when checking for new or changed configurations. This is
+needed for [[http://jonls.dk/redshift/][redshift]], which I use to turn down the gamma when it's
+getting dark outside.
