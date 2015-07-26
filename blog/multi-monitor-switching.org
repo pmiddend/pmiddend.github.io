@@ -137,7 +137,7 @@ this approach will succeed, but I gave up here.
 So what did I do? I just added this code to my =~/.xsession= and felt
 bad:
 
-#+BEGIN_SRC shell
+#+BEGIN_SRC sh
 while true; do
   $HOME/autorandr/autorandr.py --change;
   sleep 10s
