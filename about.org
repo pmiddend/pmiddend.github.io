@@ -1,3 +1,3 @@
 #+TITLE: About
 
-You can contact me via [[mailto:pmidden@secure.mailbox.org][e-mail]] or visit me via IRC (irc.freenode.net, =#sge-sanguis=)
+You can contact me via [[mailto:pmidden@secure.mailbox.org][e-mail]] or visit me via IRC (irc.freenode.net, =#sge-sanguis=).
