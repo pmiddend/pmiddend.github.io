@@ -116,4 +116,5 @@ The result you can see below. 'c' is for "consonant", 'v' for "vowel"
 and "s*xyzpspngn" is the above mentioned "starts with x or y or ..."
 construct.
 
+#+CAPTION: The result of running it through "dot"
 [[./italian.png]]
