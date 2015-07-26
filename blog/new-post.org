@@ -1,0 +1,12 @@
+#+TITLE:       New post
+#+AUTHOR:      Philipp Middendorf
+#+EMAIL:       philipp@localhost.localdomain
+#+DATE:        2015-07-26 Sun
+#+URI:         /blog/%y/%m/%d/new-post
+#+KEYWORDS:    <TODO: insert your keywords here>
+#+TAGS:        <TODO: insert your tags here>
+#+LANGUAGE:    en
+#+OPTIONS:     H:3 num:nil toc:nil \n:nil ::t |:t ^:nil -:nil f:t *:t <:t
+#+DESCRIPTION: New post?
+
+here it is
