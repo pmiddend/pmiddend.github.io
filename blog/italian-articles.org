@@ -1,0 +1,119 @@
+#+TITLE:       Italian definite and indefinite articles
+#+AUTHOR:      Philipp Middendorf
+#+EMAIL:       pmidden@secure.mailbox.org
+#+DATE:        2015-07-26 Sun
+#+URI:         /blog/%y/%m/%d/italian-definite-and-indefinite-articles
+#+KEYWORDS:    italian
+#+LANGUAGE:    en
+#+OPTIONS:     H:3 num:nil toc:nil \n:nil ::t |:t ^:nil -:nil f:t *:t <:t
+#+DESCRIPTION: Fun with graphviz and italian
+
+I'm currently trying to learn Italian. Like the english language,
+Italian has /definite/ articles (/the/ tree) and /indefinite/ articles
+(/a/ tree). From what I understand, in English, you have just two
+articles: "the" and "a". In Italian, it's a bit more complicated than
+that. Here, you have different articles depending on the following
+criteria:
+
+  - definite/indefinite
+  - gender (male/female)
+  - singular/plural
+  - starting letter(s) of the noun
+    - starts with a vowel
+    - starts with 's', followed by a consonant or starts with one of
+      x, y or z, or starts with "ps", "pn" or "gn"
+    - starts with a consonant
+
+To memorize this intricate system of articles, I made a little graph
+using graphviz:
+
+#+BEGIN_SRC
+digraph {
+  "definite/indefinite" -> "definite"
+  "definite/indefinite" -> "indefinite"
+  "definite" -> defm
+  "definite" -> deff
+  "indefinite" -> indefm
+  "indefinite" -> indeff
+  defm -> defms
+  defm -> defmpl
+  deff -> deffs
+  deff -> deffpl
+  indefm -> indefms
+  indefm -> indefmpl
+  indeff -> indeffs
+  indeff -> indeffpl
+
+  defms -> defmswild
+  defmswild -> lo
+  defms -> defmsv
+  defmsv -> lprimefirst
+  defms -> defmsk
+  defmsk -> il
+  defmpl -> defmplv
+  defmplv -> gli
+  defmpl -> defmplwild
+  defmplwild -> gli
+  defmpl -> defmplk
+  defmplk -> i
+  deffs -> deffsv
+  deffsv -> lprimesecond
+  deffs -> deffsk
+  deffsk -> la
+  deffpl -> le
+  indefms -> indefmsk
+  indefmsk -> un
+  indefms -> indefmsv
+  indefmsv -> un
+  indefms -> indefmswild
+  indefmswild -> uno
+  indefmpl -> appendi
+  indeffs -> indeffsv
+  indeffsv -> unprime
+  indeffs -> indeffsk
+  indeffsk -> una
+  indeffpl -> appende
+
+  indeffsv[label="v"]
+  indeffsk[label="c"]
+  una[label="una"]
+  unprime[label="un'"]
+  deffsv[label="v"]
+  deffsk[label="c"]
+  indefmsk[label="c"]
+  indefmsv[label="v"]
+  indefmswild[label="s*xyzpspngn"]
+  appendi[label="append 'i'"]
+  appende[label="append 'e'"]
+  defm[label="m"]
+  deff[label="f"]
+  indefm[label="m"]
+  indeff[label="f"]
+  defms[label="s"]
+  defmpl[label="pl"]
+  deffs[label="s"]
+  deffpl[label="pl"]
+  indefms[label="s"]
+  indefmpl[label="pl"]
+  indeffs[label="s"]
+  indeffpl[label="pl"]
+  defmswild[label="s*xyzpspngn"]
+  lo[label="lo",shape=doublecircle]
+  defmsv[label="v"]
+  lprimefirst[label="l'",shape=doublecircle]
+  lprimesecond[label="l'",shape=doublecircle]
+  defmsk[label="c"]
+  il[label="il",shape=doublecircle]
+  defmplv[label="v"]
+  gli[label="gli",shape=doublecircle]
+  defmplwild[label="s*xyzpspngn"]
+  defmplk[label="c"]
+  i[label="i",shape=doublecircle]
+}
+#+END_SRC
+
+The result you can see below. 'c' is for "consonant", 'v' for "vowel"
+and "s*xyzpspngn" is the above mentioned "starts with x or y or ..."
+construct.
+
+[[./italian.png]]
