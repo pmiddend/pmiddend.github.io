@@ -1,0 +1,148 @@
+#+TITLE:       Multiple monitor configurations in Linux
+#+AUTHOR:      Philipp Middendorf
+#+EMAIL:       pmidden@secure.mailbox.org
+#+DATE:        2015-07-26 Sun
+#+URI:         /blog/%y/%m/%d/multiple-monitor-configurations-in-linux
+#+KEYWORDS:    linux
+#+TAGS:        linux
+#+LANGUAGE:    en
+#+OPTIONS:     H:3 num:nil toc:nil \n:nil ::t |:t ^:nil -:nil f:t *:t <:t
+#+DESCRIPTION: <TODO: insert your description here>
+
+Like many people today, I have more than one monitor attached to my
+PC. In my case, I've got the following setup:
+
+  - Laptop screen
+  - Main screen for working (attached via HDMI)
+  - TV (also HDMI)
+
+Since the laptop only has one HDMI port, when I want to switch from
+the main screen to the TV screen, I have to manually switch the cables.
+I could get an HDMI switch for ~15 euros, but until now I didn't
+bother. Probably because more annoying than switching in hardware was
+switching the displays in software. Let me explain my use-cases:
+
+  - For normal day-to-day work, I only use the main screen. The laptop
+    screen is turned off.
+  - When I want to watch a show or movie, I have the TV and the laptop
+    screen on (the laptopf screen is on just so I can control the media
+    player directly, without turning my head to the TV while I'm
+    typing).
+  - When I'm on the road, only the laptop screen is on (naturally).
+
+Now, with desktop environments like GNOME/KDE, you have some
+intelligence built-in which remembers this configuration. I don't know
+how this is done, but when you plug the TV in, it remembers that when
+this happens, I want to switch to it and turn on the laptop
+screen. This is very handy, and I wanted just that, without having to
+use GNOME/KDE in its entirety.
+
+Turning screens on and off can be done with the =xrandr=
+program. Running =xrandr= without arguments gives me:
+
+#+BEGIN_SRC
+➜  ~  xrandr
+Screen 0: minimum 8 x 8, current 1920 x 1080, maximum 16384 x 16384
+VGA-0 disconnected (normal left inverted right x axis y axis)
+LVDS-0 connected (normal left inverted right x axis y axis)
+   1920x1080     60.01 +  40.01  
+DP-0 disconnected (normal left inverted right x axis y axis)
+HDMI-0 connected primary 1920x1080+0+0 (normal left inverted right x axis y axis) 477mm x 268mm
+   1920x1080     60.00*+
+   1680x1050     59.95  
+   1600x900      60.00  
+   1280x1024     60.02  
+   1280x800      59.81  
+   1280x720      60.00  
+   1024x768      60.00  
+   800x600       60.32  
+   640x480       59.94  
+DP-1 disconnected (normal left inverted right x axis y axis)
+#+END_SRC
+
+So you can see that LVDS (the laptop display) and HDMI-0 (the main
+screen) are connected. All the other ports are disconnected. Below the
+devices are their possible resolutions, followed by the refresh
+rate. Next to that is an optional asterisk, telling me which of the
+resolutions is currently selected. The laptop display LVDS-0 doesn't
+have an asterisk next to its only supported resolution, which tells
+you that it's turned off right now.
+
+With the =--output= option you can configure a specific output
+device. There are a lot of options available here, like brightness,
+rotation and so on. We're only interested in turning the thing on and
+off:
+
+#+BEGIN_SRC
+xrandr --output <device> --off
+xrandr --output <device> --auto
+#+END_SRC
+
+It's a little odd that there is no option =--on=, but whatever...
+
+So we can turn things on and off and we can query what's currently
+connected - very nice! We could write a shell script that calls
+=xrandr= without arguments, checks which devices are available and
+configures them.
+
+Of course, we'd have to distinguish different devices on the same HDMI
+port. The configuration for the TV is not the same as the main monitor
+configuration, although both are connected on the HDMI port. A good
+way to do that is using the device's "EDID", which is a code
+containing the device's model name, manufacturer and so on. You can
+query that with the =verbose= option of xrandr.
+
+My instinct, though, was that I'm not the only one having this
+problem, and that someone probably wrote this script for me. And I was
+right, there is a project called [[https://github.com/phillipberndt/autorandr.git][autorandr]] that does exactly what I
+was talking about. Using it is a breeze. Plug in your devices,
+configure them via =xrandr=, and then call =./autorandr.py --save
+name= where =name= is a profile name of your choice.
+
+I created three profiles, "movies", "mobile" and "work", corresponding
+to the configurations I mentioned at the begining. Calling
+=./autorandr.py= without arguments outputs
+
+#+BEGIN_SRC
+movies
+mobile
+work (detected) (current)
+#+END_SRC
+
+The script detected my main screen and deactivated the laptop
+screen. When I unplug my main screen and plug in the TV, I can call
+=./autorandr.py --change= and it'll enable the laptop screen and the
+TV. Very nice!
+
+There is one problem left: /When/ do I call this script? It would be
+best if it's called when the configuration changes, so when a device
+is plugged out or plugged in. The Linux subsystem responsible for
+these kinds of events is udev, and you can see which udev events are
+triggered when you do stuff by typing:
+
+#+BEGIN_SRC
+udevadm monitor --property
+#+END_SRC
+
+You can try it out, just enter it (as root or as a normal user) and
+open your optical drive (if you have one). Or plug in a USB
+device. It'll tell you all sorts of stuff: Where the device is located
+below =/dev/=, what medium was inserted, and so on.
+
+The monitor remained silent, however, when I plugged in a device via
+HDMI. It turns out that due to a missing feature in the NVidia driver,
+these notifications do not work. Bummer. Maybe with your Intel/AMD GPU
+this approach will succeed, but I gave up here.
+
+So what did I do? I just added this code to my =~/.xsession= and felt
+bad:
+
+#+BEGIN_SRC shell
+while true; do
+  $HOME/autorandr/autorandr.py --change;
+  sleep 10s
+done
+#+END_SRC
+
+It's bad, I know, but it works for now. =--change= is intelligent and
+does nothing if the configuration did not change.
