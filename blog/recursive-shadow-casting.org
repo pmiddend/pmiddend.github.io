@@ -1,0 +1,209 @@
+#+TITLE:       Recursive Shadow Casting for roguelikes in Haskell
+#+AUTHOR:      Philipp Middendorf
+#+EMAIL:       pmidden@secure.mailbox.org
+#+DATE:        2015-08-23 Sun
+#+URI:         /blog/%y/%m/%d/recursive-shadow-casting-for-roguelikes-in-haskell
+#+KEYWORDS:    haskell
+#+TAGS:        haskell
+#+LANGUAGE:    en
+#+OPTIONS:     H:3 num:nil toc:nil \n:nil ::t |:t ^:nil -:nil f:t *:t <:t
+#+DESCRIPTION: Recursive shadow casting more complex than necessary
+
+* Introduction
+
+A few weeks ago, I started work on a [[https://en.wikipedia.org/wiki/Roguelike][Roguelike]] game in Haskell. The
+game uses ncurses (i.e. the terminal) to display 25 rows and 80
+columns of character-only graphics. In the game, you view the world
+from a top-down perspective, exploring a big dungeon - one screen at a
+time, so to speak.
+
+To make the player explore the world room by room, you need some sort
+of visibility determination. The player shouldn't always see
+everything there is in the world. There are a [[http://www.roguebasin.com/index.php?title=Category:FOV][few approaches]] to this
+"field of view" problem, and the one I chose to implement was
+"recursive shadow casting", since it was already defined in a
+recursive way, so I thought implementing it in a pure language like
+Haskell would be easier.
+
+I will describe the algorithm to make this a complete post. If the
+description is too small for your taste, there is an /excellent/
+description over at [[http://www.roguebasin.com/index.php?title=FOV_using_recursive_shadowcasting][roguebasin.com]], done by Björn Bergström which is
+pretty exhaustive - kudos to Björn for that!
+
+* Definition
+
+The algorithm's objective is to determine the tiles that can be seen
+from the player's point of view. So the algorithm's *inputs* are:
+
+  - the player position
+  - the obstacle positions
+
+The *output* is a list of points that are visible. 
+
+To visualize that, say the player is denoted by '@' and an obstacle is
+denoted by '#', and suppose we have the following situation:
+
+#+BEGIN_SRC
+.           .
+..         ..
+...       ...
+....     ....
+.....###.....
+.............
+......@......
+#+END_SRC
+
+Then all the tiles denoted by a '.' are visible. The tiles behind the
+obstacle are not.
+
+In Haskell, I decided on the following type signature:
+
+#+BEGIN_SRC haskell
+import Linear.V2(V2)
+
+type PointInt = V2 Int
+
+castShadow :: (PointInt -> Bool) -> [PointInt]
+castShadow isOpaque = undefined
+#+END_SRC
+
+The first function is given a point and it tells you if the tile is
+opaque or translucent. The player position is assumed to be (0,0). If
+the player is somewhere else, just adjust the =isOpaque= function.
+
+* The algorithm
+
+As we see in the end, it suffices to define the algorithm on just one
+of the octants. Stealing bluntly from Björn's article linked above:
+
+#+BEGIN_SRC
+             Shared
+             edge by
+  Shared     1 & 2      Shared
+  edge by\      |      /edge by
+  1 & 8   \     |     / 2 & 3
+           \1111|2222/
+           8\111|222/3
+           88\11|22/33
+           888\1|2/333
+  Shared   8888\|/3333  Shared
+  edge by-------@-------edge by
+  7 & 8    7777/|\4444  3 & 4
+           777/6|5\444
+           77/66|55\44
+           7/666|555\4
+           /6666|5555\
+  Shared  /     |     \ Shared
+  edge by/      |      \edge by
+  6 & 7      Shared     4 & 5
+             edge by 
+             5 & 6
+#+END_SRC
+
+As Björn did, I will describe the algorithm assuming we are in the
+octant denoted '1' in the figure above.
+
+Recursive shadow casting works line-wise from the starting line
+upwards. It takes three parameters:
+
+  1. the starting position for the current row (initially this is (1,1))
+  2. the start slope; this determines how far we go left as we go up
+     one line (initially 1)
+  3. the end slope; this determines how far we test visibility inside
+     the current row (initially 0)
+  4. the =isOpaque= function from above
+
+So we have:
+
+#+BEGIN_SRC haskell
+castShadowOctant :: forall a.( RealFrac a ) =>
+  V2 a -- ^ Starting point
+  -> a -- ^ Start slope
+  -> a -- ^ End slope
+  -> (PointInt -> Bool) -- ^ Tile position to translucency
+  -> [PointInt] -- ^ List of lit tiles
+#+END_SRC
+
+As you can see, we use a =RealFrac= type (so =Double= or =Float=)
+internally to represent something like slopes (which are
+rationals). It's similar to an unoptimized version of [[https://en.wikipedia.org/wiki/Bresenham%2527s_line_algorithm][Bresenham's line
+algorithm]], in case you've heard of that. The result is still a list of
+integral points.
+
+Given the first octant with the player at the bottom and some
+obstacles (shamelessly stolen from Björn - I'm gonna have to buy him a
+drink some time):
+
+#+BEGIN_SRC
+ ................. 16  @ = starting cell
+  ......###....... 15  # = blocking cell
+   .....###....... 14  . = non-blocking cell
+    ....###..#..## 13  s = algorithm start
+     ...##........ 12
+      ............ 11
+       ........... 10
+        .......... 9
+         ......... 8
+          ........ 7
+           ....... 6
+            ...... 5
+             ..... 4
+              .... 3
+               ... 2
+                s. 1
+                 @
+#+END_SRC
+
+We start at the line given by the starting position (1,1) and
+determine which parts of the line are visible up to the end slope
+(initially 0, so until the end of the line). These parts immediately
+contribute to the result.
+
+In the case of the first line, the tiles =[(1,0),(0,0)]= are
+visible. We then adjust the starting position by the start slope
+(initially 1) and do a recursive call with the same parameters. This
+way, we go all the way up to row 12, where something more interesting
+happens.
+
+In row 12, we have two spans (or blocks) of visible tiles - one from
+(12,12) to (10,12), the other from (7,12) to (0,12). In this case,
+instead of doing one recursive call, we do two; one for each
+span. The following rules apply to recursive calls:
+
+  - if the span has an opaque block to the left, adjust the start slope
+  - if the span has an opaque block to the right, adjust the end slope
+
+Up until row 12, we had no opaque blocks and the recursion didn't
+change either slopes. But now, we have a different end slope for the
+first span (~0.83) and a different start slope for the second span
+(~0.6). This results in the left recursion not touching the obstacle
+on its right anymore.
+
+#+BEGIN_SRC
+ ................. 16  @ = starting cell
+  ......###....... 15  # = blocking cell
+   .....###....... 14  . = non-blocking cell
+    ....###..#..## 13  s = algorithm start
+     111##22222222 12  1 = first recursive call
+      vvvvvvvvvvvv 11  2 = second recursive call
+       vvvvvvvvvvv 10
+        vvvvvvvvvv 9
+         vvvvvvvvv 8
+          vvvvvvvv 7
+           vvvvvvv 6
+            vvvvvv 5
+             vvvvv 4
+              vvvv 3
+               vvv 2
+                sv 1
+                 @
+#+END_SRC
+
+Here's a little animation showing how the algorithm progresses:
+
+ 
+
+** Code
+
+
+
