@@ -27,7 +27,7 @@ criteria:
 To memorize this intricate system of articles, I made a little graph
 using graphviz:
 
-#+BEGIN_SRC
+#+BEGIN_SRC dot
 digraph {
   "definite/indefinite" -> "definite"
   "definite/indefinite" -> "indefinite"
