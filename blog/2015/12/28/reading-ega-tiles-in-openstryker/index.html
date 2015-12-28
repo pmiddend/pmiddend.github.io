@@ -106,7 +106,10 @@ Since by today's standards, the Major Stryker files are tiny, I decided to appro
 
 <div class="org-src-container">
 
-<pre class="src src-c++">grid&lt;bool,2&gt; read_plane(std::istream &amp;,unsigned width,unsigned height);
+<pre class="src src-c++">grid&lt;bool,2&gt; read_plane(
+  std::istream &amp;,
+  unsigned width,
+  unsigned height);
 </pre>
 </div>
 
@@ -184,7 +187,11 @@ So all I had to do was add a parameter to my <code>read_plane</code> function:
 
 <div class="org-src-container">
 
-<pre class="src src-c++">grid&lt;bool,2&gt; read_plane(std::istream &amp;,unsigned,unsigned,std::streamsize stride);
+<pre class="src src-c++">grid&lt;bool,2&gt; read_plane(
+  std::istream &amp;,
+  unsigned,
+  unsigned,
+  std::streamsize stride);
 </pre>
 </div>
 
