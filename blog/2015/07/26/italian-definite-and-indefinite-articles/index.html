@@ -41,23 +41,16 @@ criteria:
 </p>
 
 <ul class="org-ul">
-<li>definite/indefinite
-</li>
-<li>gender (male/female)
-</li>
-<li>singular/plural
-</li>
+<li>definite/indefinite</li>
+<li>gender (male/female)</li>
+<li>singular/plural</li>
 <li>starting letter(s) of the noun
 <ul class="org-ul">
-<li>starts with a vowel
-</li>
+<li>starts with a vowel</li>
 <li>starts with 's', followed by a consonant or starts with one of
-x, y or z, or starts with "ps", "pn" or "gn"
-</li>
-<li>starts with a consonant
-</li>
-</ul>
-</li>
+x, y or z, or starts with "ps", "pn" or "gn"</li>
+<li>starts with a consonant</li>
+</ul></li>
 </ul>
 
 <p>
@@ -65,8 +58,9 @@ To memorize this intricate system of articles, I made a little graph
 using graphviz:
 </p>
 
-<pre class="example">
-digraph {
+<div class="org-src-container">
+
+<pre class="src src-dot">digraph {
   "definite/indefinite" -&gt; "definite"
   "definite/indefinite" -&gt; "indefinite"
   "definite" -&gt; defm
@@ -149,6 +143,7 @@ digraph {
   i[label="i",shape=doublecircle]
 }
 </pre>
+</div>
 
 <p>
 The result you can see below. 'c' is for "consonant", 'v' for "vowel"
@@ -168,7 +163,7 @@ construct.
     <div>
       <div class="post-meta">
         <span title="post date" class="post-info">2015-07-26</span>
-        <span title="last modification date" class="post-info">2015-07-26</span>
+        <span title="last modification date" class="post-info">2015-12-28</span>
         <span title="tags" class="post-info">N/A</span>
         <span title="author" class="post-info">Philipp Middendorf</span>
       </div>
