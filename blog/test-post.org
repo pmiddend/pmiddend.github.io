@@ -1,0 +1,12 @@
+#+TITLE:       this is just a test
+#+AUTHOR:      Philipp Middendorf
+#+EMAIL:       pmidden@secure.mailbox.org
+#+DATE:        2015-12-28 Mon
+#+URI:         /blog/%y/%m/%d/this-is-just-a-test
+#+KEYWORDS:    <TODO: insert your keywords here>
+#+TAGS:        <TODO: insert your tags here>
+#+LANGUAGE:    en
+#+OPTIONS:     H:3 num:nil toc:nil \n:nil ::t |:t ^:nil -:nil f:t *:t <:t
+#+DESCRIPTION: Test post for org-page
+
+* Test post please ignore
