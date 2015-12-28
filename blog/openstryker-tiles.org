@@ -40,7 +40,10 @@ So what channels are there? RGB? RGBA? Almost! Major Stryker mostly uses "BGRI".
 Since by today's standards, the Major Stryker files are tiny, I decided to approach the problem in a simple yet slightly inefficient way. Let's first consider graphic-planar EGA files. For that, I wrote a function (which is very simple and I'm not going to show it here)
 
 #+BEGIN_SRC c++
-grid<bool,2> read_plane(std::istream &,unsigned width,unsigned height);
+grid<bool,2> read_plane(
+  std::istream &,
+  unsigned width,
+  unsigned height);
 #+END_SRC
 
 which returns a [[http://fcppt.org/d4/dfd/group__fcpptcontainergrid.html][grid]], a two-dimensional array of bools. By the way, the dimension of the image files has to be given externally, it's not contained in the image files.
@@ -90,7 +93,11 @@ After that, to read the /second/ plane...
 So all I had to do was add a parameter to my ~read_plane~ function:
 
 #+BEGIN_SRC c++
-grid<bool,2> read_plane(std::istream &,unsigned,unsigned,std::streamsize stride);
+grid<bool,2> read_plane(
+  std::istream &,
+  unsigned,
+  unsigned,
+  std::streamsize stride);
 #+END_SRC
 
 And use it accordingly when reading the planes.
