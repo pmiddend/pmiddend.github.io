@@ -137,7 +137,11 @@ Then, all you need to get the complete image is combine each pixel-nibble of all
 <div class="org-src-container">
 
 <pre class="src src-c++">rgb_pixel&lt;unsigned char&gt;
-bgri_indices_to_pixel(bool const b,bool const g,bool const r,bool const i)
+bgri_indices_to_pixel(
+  bool const b,
+  bool const g,
+  bool const r,
+  bool const i)
 {
   return
     r &amp;&amp; g &amp;&amp; !i &amp;&amp; !b
