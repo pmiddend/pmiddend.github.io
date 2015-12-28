@@ -1,0 +1,123 @@
+#+TITLE:       Reading EGA tiles in openstryker
+#+AUTHOR:      Philipp Middendorf
+#+EMAIL:       pmidden@secure.mailbox.org
+#+DATE:        2015-12-28 Mon
+#+URI:         /blog/%y/%m/%d/reading-ega-tiles-in-openstryker
+#+KEYWORDS:    openstryker, cpp
+#+TAGS:        openstryker, cpp
+#+LANGUAGE:    en
+#+OPTIONS:     H:3 num:nil toc:nil \n:nil ::t |:t ^:nil -:nil f:t *:t <:t
+#+DESCRIPTION: <TODO: insert your description here>
+* Intro
+So for my new project "openstryker", a clone of the 1993 side-scroller [[https://en.wikipedia.org/wiki/Major_Stryker][Major Stryker]], I just finished a first version of the code that loads the tile images for objects in the game. The images look like this:
+
+#+CAPTION: The Major Stryker tiles
+[[./os_tiles.png]]
+
+They consist of 240 tiles, all 16x16 in size. The pixel data itself is stored in EGA. The site [[http://www.shikadi.net][shikadi.net]] has been a /huge/ source of material for me to decode these images, big thanks to the guys there for doing the hard lifting. However, there was one aspect that was bugging me and that I'd like to describe further.
+* EGA overview
+As I said, the pixels in all Major Stryker images are stored in [[http://www.shikadi.net/moddingwiki/Raw_EGA_data][Raw EGA]], which is a very old format that allows for just 16 colors (imagine that, a whole game limited to 16 colors!). The storage format is very simple: each byte (or octet) contains data for /1/ channel of /8/ pixels. This means that you only have /one/ bit per channel. This is in stark contrast to modern image formats, where you usually have 8 bits per channel, allowing for much more color nuances.
+
+So if you have three channels for red, green and blue, you could code the 8 pixels "red, green, blue, magenta, black, black, black, black" with the following three bytes:
+
+#+BEGIN_EXAMPLE
+  red     green     blue
+10010000 01000000 00110000
+#+END_EXAMPLE
+
+So far, so good. On top of that, there are two important ways to encode a whole image, and both are used by Major Stryker: /graphic-planar/ and /byte-planar/ EGA.
+
+In /graphic-planar/ EGA, you store the channels separately. In an RGB image, you first store the whole image's red channel. Then the whole image's green channel and then the whole image's blue channel. When reading these images, to get the first pixel, you have to read the first bit of the first byte, then skip =n= bytes (where =n= is the number of pixels in the image), then read the first bit of that byte, then skip =n= bytes again and read the first bit
+
+#+CAPTION: Graphic-planar EGA file with three channels
+[[./lena_colors.png]]
+
+In /byte-planar/ EGA, you store all channels of 8-pixel-groups sequentially, just like in the example above.
+* Available channels
+So what channels are there? RGB? RGBA? Almost! Major Stryker mostly uses "BGRI". BGR are colors, I stands for "intensity". The idea is simple: You have three bytes for the color and one bit for "increase each channel's value a bit". So the nibble "0000" is "black", the nibble "0001" (with the I bit set) is "grey". "0010" is "dark red" and "0011" is, well, "pale red", because not only the red channel is amplified, but also the other two channels.
+* How it's done
+** Graphic-planar EGA
+Since by today's standards, the Major Stryker files are tiny, I decided to approach the problem in a simple yet slightly inefficient way. Let's first consider graphic-planar EGA files. For that, I wrote a function (which is very simple and I'm not going to show it here)
+
+#+BEGIN_SRC c++
+grid<bool,2> read_plane(std::istream &,unsigned width,unsigned height);
+#+END_SRC
+
+which returns a [[http://fcppt.org/d4/dfd/group__fcpptcontainergrid.html][grid]], a two-dimensional array of bools. By the way, the dimension of the image files has to be given externally, it's not contained in the image files.
+
+Calling this function four times one after the other, without resetting the get pointer of the input stream, you can read all the pixels easily:
+
+#+BEGIN_SRC c++
+grid<bool,2> blue_plane{read_plane(s,w,h)};
+grid<bool,2> green_plane{read_plane(s,w,h)};
+grid<bool,2> red_plane{read_plane(s,w,h)};
+grid<bool,2> intensity_plane{read_plane(s,w,h)};
+#+END_SRC
+
+Then, all you need to get the complete image is combine each pixel-nibble of all the four planes into an RGB pixel:
+
+#+BEGIN_SRC c++
+rgb_pixel<unsigned char>
+bgri_indices_to_pixel(bool const b,bool const g,bool const r,bool const i)
+{
+  return
+    r && g && !i && !b
+    ?
+      rgb_pixel<unsigned char>{0xaa,0x56,0}
+    :
+      rgb_pixel_static_cast<unsigned char>(
+         ((i ? 1 : 0) * rgb_pixel<int>{0x56,0x56,0x56}) +
+         rgb_pixel_map<int>(
+           rgb_pixel<bool>{r,g,b},
+           [](bool const p) { return p ? 0xaa : 0; }));
+}
+#+END_SRC
+
+Note the strange if/else in there: One color (light brown) actually doesn't follow the usual conversion scheme and has to be treated separately. Also note that I invented a new type representing pixels that is templated on the channel type and which provides ~operator+~ and ~operator*~ with a scalar value, as well as an equivalent of ~static_cast~ and the ~map~ (or ~transform~) function.
+** Byte-planar EGA
+This works very well for graphic-planar EGA files. But how much extra work is needed in order to read /byte-planar/ EGA files? Not much, as it turns out.
+
+You can think of byte-planar EGA files as "interleaved" graphic-planar files. To read the first plane, you read a byte containing 8 pixel channel values, and then instead of advancing to the /next/ byte, you skip 3 bytes first, then read the next pixel.
+
+After that, to read the /second/ plane...
+
+  1) you rewind to the start of the file
+  2) then ignore the first byte (it belongs to the first plane)
+  3) then read a byte containing 8 pixel channels values of the second channel
+  4) ignore 3 bytes (with the first plane)
+  5) continue with step 3
+
+So all I had to do was add a parameter to my ~read_plane~ function:
+
+#+BEGIN_SRC c++
+grid<bool,2> read_plane(std::istream &,unsigned,unsigned,std::streamsize stride);
+#+END_SRC
+
+And use it accordingly when reading the planes.
+
+#+BEGIN_SRC c++
+std::streamoff const stream_start{s.tellg()};
+std::streamsize const stride{3};
+auto b_plane{read_plane(s,w,h,stride);
+s.seekg(stream_start+1,std::ios_base::beg);
+auto g_plane{read_plane(s,w,h,stride)};
+s.seekg(stream_start+2,std::ios_base::beg);
+auto r_plane{read_plane(s,w,h,stride)};
+s.seekg(stream_start+3,std::ios_base::beg);
+auto i_plane{read_plane(s,w,h,stride)};
+// Combine the planes
+// ...
+#+END_SRC
+** Artifact with tile graphics
+
+Now, when I tried to read in the level tiles that are /supposed/ to look like the first image in this post, I instead got this:
+
+#+CAPTION: Something's fishy
+[[./broken_tiles.png]]
+
+Note that the tiles are 16x16. If you look /very/ closely at this image, you can see that the lines of the first tile on the top left are /next/ to each other in the first line of the broken image, instead of on top of each other. The shikadi.net wiki page suggested that the images have dimensions of 320x192, so I was very surprised to see this happening.
+
+Deducing from the observations, I guessed that the tiles are actually all on top of each other, instead of being arranged in a grid of (320/16=20)x(192/16=12) tiles. Using this assumption, however, reading an image with dimensions 16x3840 should work just fine. I changed the dimensions and it worked!
+
+I'm still a little confused as to /why/ that is, and I'll update the article when I find out, but until now the code seems to work. It's available on [[https://github.com/pmiddend/openstryker][github]].
+
