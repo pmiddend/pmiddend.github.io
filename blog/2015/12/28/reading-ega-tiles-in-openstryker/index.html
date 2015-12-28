@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Reading EGA tiles in openstryker - pmiddend&#39;s Blog</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Philipp Middendorf" />
+    <meta name="description" content="&lt;TODO: insert your description here&gt;" />
+    <meta name="keywords" content="openstryker, cpp" />
+    <link rel="stylesheet" href="/media/css/main.css" type="text/css">
+    <link rel="stylesheet" href="/media/css/prettify.css" type="text/css">
+  </head>
+  <body class="container">
+    <div>
+      <header class="masthead">
+        <h1 class="masthead-title"><a href="/">pmiddend&#39;s Blog</a></h1>
+        <p>Stuff about Haskell, nutrition, learning and life in general</p>
+        <ul>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/tags/">Tags</a></li>
+          <li><a href="/about/">About</a></li>
+          <li><a href="https://github.com/pmiddend">GitHub</a></li>
+          <li><a href="/rss.xml">RSS</a></li>
+        </ul>
+        <form method="get" id="searchform" action="http://www.google.com/search">
+          <input type="text" class="field" name="q" id="s" placeholder="Search">
+          <input type="hidden" name="as_sitesearch" value="pmiddend.github.io">
+        </form>
+      </header>
+    </div>
+
+<div>
+<div class="post">
+<h1>Reading EGA tiles in openstryker</h1>
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1">Intro</h2>
+<div class="outline-text-2" id="text-orgheadline1">
+<p>
+So for my new project "openstryker", a clone of the 1993 side-scroller <a href="https://en.wikipedia.org/wiki/Major_Stryker">Major Stryker</a>, I just finished a first version of the code that loads the tile images for objects in the game. The images look like this:
+</p>
+
+
+<div class="figure">
+<p><img src="./os_tiles.png" alt="os_tiles.png" />
+</p>
+<p><span class="figure-number">Figure 1:</span> The Major Stryker tiles</p>
+</div>
+
+<p>
+They consist of 240 tiles, all 16x16 in size. The pixel data itself is stored in EGA. The site <a href="http://www.shikadi.net/">shikadi.net</a> has been a <i>huge</i> source of material for me to decode these images, big thanks to the guys there for doing the hard lifting. However, there was one aspect that was bugging me and that I'd like to describe further.
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline2" class="outline-2">
+<h2 id="orgheadline2">EGA overview</h2>
+<div class="outline-text-2" id="text-orgheadline2">
+<p>
+As I said, the pixels in all Major Stryker images are stored in <a href="http://www.shikadi.net/moddingwiki/Raw_EGA_data">Raw EGA</a>, which is a very old format that allows for just 16 colors (imagine that, a whole game limited to 16 colors!). The storage format is very simple: each byte (or octet) contains data for <i>1</i> channel of <i>8</i> pixels. This means that you only have <i>one</i> bit per channel. This is in stark contrast to modern image formats, where you usually have 8 bits per channel, allowing for much more color nuances.
+</p>
+
+<p>
+So if you have three channels for red, green and blue, you could code the 8 pixels "red, green, blue, magenta, black, black, black, black" with the following three bytes:
+</p>
+
+<pre class="example">
+  red     green     blue
+10010000 01000000 00110000
+</pre>
+
+<p>
+So far, so good. On top of that, there are two important ways to encode a whole image, and both are used by Major Stryker: <i>graphic-planar</i> and <i>byte-planar</i> EGA.
+</p>
+
+<p>
+In <i>graphic-planar</i> EGA, you store the channels separately. In an RGB image, you first store the whole image's red channel. Then the whole image's green channel and then the whole image's blue channel. When reading these images, to get the first pixel, you have to read the first bit of the first byte, then skip <code>n</code> bytes (where <code>n</code> is the number of pixels in the image), then read the first bit of that byte, then skip <code>n</code> bytes again and read the first bit
+</p>
+
+
+<div class="figure">
+<p><img src="./lena_colors.png" alt="lena_colors.png" />
+</p>
+<p><span class="figure-number">Figure 2:</span> Graphic-planar EGA file with three channels</p>
+</div>
+
+<p>
+In <i>byte-planar</i> EGA, you store all channels of 8-pixel-groups sequentially, just like in the example above.
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline3" class="outline-2">
+<h2 id="orgheadline3">Available channels</h2>
+<div class="outline-text-2" id="text-orgheadline3">
+<p>
+So what channels are there? RGB? RGBA? Almost! Major Stryker mostly uses "BGRI". BGR are colors, I stands for "intensity". The idea is simple: You have three bytes for the color and one bit for "increase each channel's value a bit". So the nibble "0000" is "black", the nibble "0001" (with the I bit set) is "grey". "0010" is "dark red" and "0011" is, well, "pale red", because not only the red channel is amplified, but also the other two channels.
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline7" class="outline-2">
+<h2 id="orgheadline7">How it's done</h2>
+<div class="outline-text-2" id="text-orgheadline7">
+</div><div id="outline-container-orgheadline4" class="outline-3">
+<h3 id="orgheadline4">Graphic-planar EGA</h3>
+<div class="outline-text-3" id="text-orgheadline4">
+<p>
+Since by today's standards, the Major Stryker files are tiny, I decided to approach the problem in a simple yet slightly inefficient way. Let's first consider graphic-planar EGA files. For that, I wrote a function (which is very simple and I'm not going to show it here)
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c++">grid&lt;bool,2&gt; read_plane(std::istream &amp;,unsigned width,unsigned height);
+</pre>
+</div>
+
+<p>
+which returns a <a href="http://fcppt.org/d4/dfd/group__fcpptcontainergrid.html">grid</a>, a two-dimensional array of bools. By the way, the dimension of the image files has to be given externally, it's not contained in the image files.
+</p>
+
+<p>
+Calling this function four times one after the other, without resetting the get pointer of the input stream, you can read all the pixels easily:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c++">grid&lt;bool,2&gt; blue_plane{read_plane(s,w,h)};
+grid&lt;bool,2&gt; green_plane{read_plane(s,w,h)};
+grid&lt;bool,2&gt; red_plane{read_plane(s,w,h)};
+grid&lt;bool,2&gt; intensity_plane{read_plane(s,w,h)};
+</pre>
+</div>
+
+<p>
+Then, all you need to get the complete image is combine each pixel-nibble of all the four planes into an RGB pixel:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c++">rgb_pixel&lt;unsigned char&gt;
+bgri_indices_to_pixel(bool const b,bool const g,bool const r,bool const i)
+{
+  return
+    r &amp;&amp; g &amp;&amp; !i &amp;&amp; !b
+    ?
+      rgb_pixel&lt;unsigned char&gt;{0xaa,0x56,0}
+    :
+      rgb_pixel_static_cast&lt;unsigned char&gt;(
+	 ((i ? 1 : 0) * rgb_pixel&lt;int&gt;{0x56,0x56,0x56}) +
+	 rgb_pixel_map&lt;int&gt;(
+	   rgb_pixel&lt;bool&gt;{r,g,b},
+	   [](bool const p) { return p ? 0xaa : 0; }));
+}
+</pre>
+</div>
+
+<p>
+Note the strange if/else in there: One color (light brown) actually doesn't follow the usual conversion scheme and has to be treated separately. Also note that I invented a new type representing pixels that is templated on the channel type and which provides <code>operator+</code> and <code>operator*</code> with a scalar value, as well as an equivalent of <code>static_cast</code> and the <code>map</code> (or <code>transform</code>) function.
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline5" class="outline-3">
+<h3 id="orgheadline5">Byte-planar EGA</h3>
+<div class="outline-text-3" id="text-orgheadline5">
+<p>
+This works very well for graphic-planar EGA files. But how much extra work is needed in order to read <i>byte-planar</i> EGA files? Not much, as it turns out.
+</p>
+
+<p>
+You can think of byte-planar EGA files as "interleaved" graphic-planar files. To read the first plane, you read a byte containing 8 pixel channel values, and then instead of advancing to the <i>next</i> byte, you skip 3 bytes first, then read the next pixel.
+</p>
+
+<p>
+After that, to read the <i>second</i> plane...
+</p>
+
+<ol class="org-ol">
+<li>you rewind to the start of the file</li>
+<li>then ignore the first byte (it belongs to the first plane)</li>
+<li>then read a byte containing 8 pixel channels values of the second channel</li>
+<li>ignore 3 bytes (with the first plane)</li>
+<li>continue with step 3</li>
+</ol>
+
+<p>
+So all I had to do was add a parameter to my <code>read_plane</code> function:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c++">grid&lt;bool,2&gt; read_plane(std::istream &amp;,unsigned,unsigned,std::streamsize stride);
+</pre>
+</div>
+
+<p>
+And use it accordingly when reading the planes.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c++">std::streamoff const stream_start{s.tellg()};
+std::streamsize const stride{3};
+auto b_plane{read_plane(s,w,h,stride);
+s.seekg(stream_start+1,std::ios_base::beg);
+auto g_plane{read_plane(s,w,h,stride)};
+s.seekg(stream_start+2,std::ios_base::beg);
+auto r_plane{read_plane(s,w,h,stride)};
+s.seekg(stream_start+3,std::ios_base::beg);
+auto i_plane{read_plane(s,w,h,stride)};
+// Combine the planes
+// ...
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline6" class="outline-3">
+<h3 id="orgheadline6">Artifact with tile graphics</h3>
+<div class="outline-text-3" id="text-orgheadline6">
+<p>
+Now, when I tried to read in the level tiles that are <i>supposed</i> to look like the first image in this post, I instead got this:
+</p>
+
+
+<div class="figure">
+<p><img src="./broken_tiles.png" alt="broken_tiles.png" />
+</p>
+<p><span class="figure-number">Figure 3:</span> Something's fishy</p>
+</div>
+
+<p>
+Note that the tiles are 16x16. If you look <i>very</i> closely at this image, you can see that the lines of the first tile on the top left are <i>next</i> to each other in the first line of the broken image, instead of on top of each other. The shikadi.net wiki page suggested that the images have dimensions of 320x192, so I was very surprised to see this happening.
+</p>
+
+<p>
+Deducing from the observations, I guessed that the tiles are actually all on top of each other, instead of being arranged in a grid of (320/16=20)x(192/16=12) tiles. Using this assumption, however, reading an image with dimensions 16x3840 should work just fine. I changed the dimensions and it worked!
+</p>
+
+<p>
+I'm still a little confused as to <i>why</i> that is, and I'll update the article when I find out, but until now the code seems to work. It's available on <a href="https://github.com/pmiddend/openstryker">github</a>.
+</p>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+    <div>
+      <div class="post-meta">
+        <span title="post date" class="post-info">2015-12-28</span>
+        <span title="last modification date" class="post-info">2015-12-28</span>
+        <span title="tags" class="post-info"><a href="/tags/openstryker/">openstryker</a>, <a href="/tags/cpp/">cpp</a></span>
+        <span title="author" class="post-info">Philipp Middendorf</span>
+      </div>
+      <section>
+        <h1>Comments</h1>
+      </section>
+      <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.js"></script>
+      <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="/media/js/main.js"></script>
+      <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-65636503-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+      </script>
+      <div class="footer">
+        <p>Generated by <a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.x (<a href="http://orgmode.org">Org mode</a> 8.x)</p>
+        <p>
+          Copyright &copy; 2012 - <span id="footerYear"></span> <a href="mailto:pmidden &lt;at&gt; secure &lt;dot&gt; mailbox &lt;dot&gt; org">Philipp Middendorf</a>
+          &nbsp;&nbsp;-&nbsp;&nbsp;
+          Powered by <a href="https://github.com/kelvinh/org-page" target="_blank">org-page</a>
+          <script type="text/javascript">document.getElementById("footerYear").innerHTML = (new Date()).getFullYear();</script>
+        </p>
+      </div>
+    </div>
+
+  </body>
+</html>
