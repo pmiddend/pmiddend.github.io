@@ -61,7 +61,11 @@ Then, all you need to get the complete image is combine each pixel-nibble of all
 
 #+BEGIN_SRC c++
 rgb_pixel<unsigned char>
-bgri_indices_to_pixel(bool const b,bool const g,bool const r,bool const i)
+bgri_indices_to_pixel(
+  bool const b,
+  bool const g,
+  bool const r,
+  bool const i)
 {
   return
     r && g && !i && !b
