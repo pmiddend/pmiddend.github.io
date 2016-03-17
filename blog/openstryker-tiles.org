@@ -9,7 +9,7 @@
 #+OPTIONS:     H:3 num:nil toc:nil \n:nil ::t |:t ^:nil -:nil f:t *:t <:t
 #+DESCRIPTION: <TODO: insert your description here>
 * Intro
-So for my new project "openstryker", a clone of the 1993 side-scroller [[https://en.wikipedia.org/wiki/Major_Stryker][Major Stryker]], I just finished a first version of the code that loads the tile images for objects in the game. The images look like this:
+So for my new project "openstryker", a clone of the 1993 vertical scrolling scroller [[https://en.wikipedia.org/wiki/Major_Stryker][Major Stryker]], I just finished a first version of the code that loads the tile images for objects in the game. The images look like this:
 
 #+CAPTION: The Major Stryker tiles
 [[./os_tiles.png]]
@@ -34,7 +34,7 @@ In /graphic-planar/ EGA, you store the channels separately. In an RGB image, you
 
 In /byte-planar/ EGA, you store all channels of 8-pixel-groups sequentially, just like in the example above.
 * Available channels
-So what channels are there? RGB? RGBA? Almost! Major Stryker mostly uses "BGRI". BGR are colors, I stands for "intensity". The idea is simple: You have three bytes for the color and one bit for "increase each channel's value a bit". So the nibble "0000" is "black", the nibble "0001" (with the I bit set) is "grey". "0010" is "dark red" and "0011" is, well, "pale red", because not only the red channel is amplified, but also the other two channels.
+So what channels are there? RGB? RGBA? Almost! Major Stryker mostly uses "BGRI". BGR are colors, I stands for "intensity". The idea is simple: You have three bits for the color and one bit for "increase each channel's value a bit". So the nibble "0000" is "black", the nibble "0001" (with the I bit set) is "grey". "0010" is "dark red" and "0011" is, well, "pale red", because not only the red channel is amplified, but also the other two channels.
 * How it's done
 ** Graphic-planar EGA
 Since by today's standards, the Major Stryker files are tiny, I decided to approach the problem in a simple yet slightly inefficient way. Let's first consider graphic-planar EGA files. For that, I wrote a function (which is very simple and I'm not going to show it here)

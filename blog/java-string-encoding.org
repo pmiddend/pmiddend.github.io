@@ -1,0 +1,46 @@
+#+TITLE:       Java String encoding oddity
+#+AUTHOR:      Philipp Middendorf
+#+EMAIL:       pmidden@secure.mailbox.org
+#+DATE:        2016-03-17 Thu
+#+URI:         /blog/%y/%m/%d/java-string-encoding-oddity
+#+KEYWORDS:    java,string,programming
+#+TAGS:        <TODO: insert your tags here>
+#+LANGUAGE:    en
+#+OPTIONS:     H:3 num:nil toc:nil \n:nil ::t |:t ^:nil -:nil f:t *:t <:t
+#+DESCRIPTION: A short post about file encodings and strings
+
+At our company, we're using the usual Java toolchain: maven to define building, dependencies and packaging, jenkins to actually do it. Today we encountered something particularly odd regarding character encodings.
+
+So in one application, we're reading raw bytes from a file. We receive a =byte[]=, an offset and a length. We know that these bytes are coded in UTF-8 and want to convert them to a =java.util.String=. Easy enough, you say:
+
+#+BEGIN_SRC java
+byte[] bytes;
+int offset;
+int length;
+
+String s = new String(bytes,offset,length,StandardCharsets.UTF_8);
+#+END_SRC
+
+This indeed does the trick, and would not be worth a blog post, but what my colleague wrote was this:
+
+#+BEGIN_SRC java
+String s = new String(bytes,offset,length);
+#+END_SRC
+
+The result a string where the German characters were garbled. My initial thought was that this constructor uses some locale-dependent property and the server's locale is simply set to ASCII or latin1. But this was not the case. The server's locale was "de_DE.UTF-8" which is totally fine. However, the *build server's* locale was just "C". So is the platform's default encoding a compile-time property?
+
+To go from speculation to proof, let's consult the [[http://docs.oracle.com/javase/6/docs/api/java/lang/String.html#String(byte%5B%5D,%20int,%20int)][Java API documentation]]:
+
+#+BEGIN_EXAMPLE
+Constructs a new String by decoding the specified subarray of bytes using the platform's default charset.
+#+END_EXAMPLE
+
+Looking at the method's source code, I saw that it uses =Charset.defaultCharset()=, which does the following:
+
+  - Try to access the =file.encoding= property to get a charset name
+  - Try to resolve that name to an actualy charset
+  - If that fails, resolve "UTF-8"
+
+So how does the =file.encoding= property get set? Does it have a baked-in compile-time default? Unfortunately, I couldn't figure it out. All the blog posts refer to setting it on startup via =-Dfile.encoding=, so I will investigate if that's indeed what we're doing.
+
+Of course, since it was production relevant, we fixed the bug by just specifying the correct encoding, which is something you should do, anyway.
