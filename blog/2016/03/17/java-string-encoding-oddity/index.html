@@ -67,9 +67,11 @@ The result a string where the German characters were garbled. My initial thought
 To go from speculation to proof, let's consult the <a href="http://docs.oracle.com/javase/6/docs/api/java/lang/String.html#String(byte%5B%5D,%20int,%20int)">Java API documentation</a>:
 </p>
 
-<pre class="example">
+<blockquote>
+<p>
 Constructs a new String by decoding the specified subarray of bytes using the platform's default charset.
-</pre>
+</p>
+</blockquote>
 
 <p>
 Looking at the method's source code, I saw that it uses <code>Charset.defaultCharset()</code>, which does the following:
@@ -95,7 +97,7 @@ Of course, since it was production relevant, we fixed the bug by just specifying
       <div class="post-meta">
         <span title="post date" class="post-info">2016-03-17</span>
         <span title="last modification date" class="post-info">2016-03-17</span>
-        <span title="tags" class="post-info"><a href="/tags/&lt;todo/">&lt;TODO</a>, <a href="/tags/insert-your-tags-here&gt;/">insert your tags here&gt;</a></span>
+        <span title="tags" class="post-info"><a href="/tags/java/">java</a>, <a href="/tags/string/">string</a>, <a href="/tags/programming/">programming</a></span>
         <span title="author" class="post-info">Philipp Middendorf</span>
       </div>
       <section>
