@@ -1,0 +1,46 @@
+#+TITLE:       Update your kernel plus nvidia, quick
+#+AUTHOR:      Philipp Middendorf
+#+EMAIL:       pmidden@secure.mailbox.org
+#+DATE:        2016-03-17 Thu
+#+URI:         /blog/%y/%m/%d/update-your-kernel-plus-nvidia,-quick
+#+KEYWORDS:    gentoo, linux, kernel, script
+#+TAGS:        gentoo, linux, kernel, script
+#+LANGUAGE:    en
+#+OPTIONS:     H:3 num:nil toc:nil \n:nil ::t |:t ^:nil -:nil f:t *:t <:t
+#+DESCRIPTION: A short script to update your kernel without thinking about it
+Being bleeding edge (=~amd64= in Gentoo) means frequently updating your kernel. This is a repetitive process, so I automated it. Below is my =update_kernel= script. It's supposed to be run from =/usr/src= and the kernel needs to be built with =+symlink= to have the minimum amount of effort:
+
+#+BEGIN_SRC sh
+#!/bin/bash
+
+# safe bash ftw!
+set -e
+
+# Find the newest file called .config
+# (yes, using ls here is pretty ugly)
+latest_config="$(ls -t1 $(find . -name .config -type f) | head -n 1)"
+
+# copy the newest config to /usr/src/linux
+cp $latest_config linux/
+
+# switch to latest kernel
+cd linux;
+
+# call oldconfig, get asked a million unnecessary questions about stuff
+make oldconfig;
+
+# adjust parallelism for moar speed!
+make -j9;
+make modules_install;
+
+# mount boot partition on demand
+mount /dev/sda1 /mnt/boot;
+
+# safety first! save previous kernel...
+cp /mnt/boot/EFI/gentoo.efi /mnt/boot/EFI/gentoo-safe.efi
+cp arch/x86/boot/bzImage /mnt/boot/EFI/gentoo.efi
+
+# You can omit this if you have no nvidia card or use nouveau.
+# Omitting it otherwise causes errors on the next reboot.
+emerge -1 nvidia-drivers
+#+END_SRC
