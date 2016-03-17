@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
-    <title>Tag: linux - pmiddend&#39;s Blog</title>
+    <title>Update your kernel plus nvidia, quick - pmiddend&#39;s Blog</title>
     <meta charset="utf-8" />
     <meta name="author" content="Philipp Middendorf" />
+    <meta name="description" content="A short script to update your kernel without thinking about it" />
+    <meta name="keywords" content="gentoo, linux, kernel, script" />
     <link rel="stylesheet" href="/media/css/main.css" type="text/css">
     <link rel="stylesheet" href="/media/css/prettify.css" type="text/css">
   </head>
@@ -25,16 +27,63 @@
         </form>
       </header>
     </div>
+
+<div>
+<div class="post">
+<h1>Update your kernel plus nvidia, quick</h1>
+<p>
+Being bleeding edge (<code>~amd64</code> in Gentoo) means frequently updating your kernel. This is a repetitive process, so I automated it. Below is my <code>update_kernel</code> script. It's supposed to be run from <code>/usr/src</code> and the kernel needs to be built with <code>+symlink</code> to have the minimum amount of effort:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh">#!/bin/bash
+
+# safe bash ftw!
+set -e
+
+# Find the newest file called .config
+# (yes, using ls here is pretty ugly)
+latest_config="$(ls -t1 $(find . -name .config -type f) | head -n 1)"
+
+# copy the newest config to /usr/src/linux
+cp $latest_config linux/
+
+# switch to latest kernel
+cd linux;
+
+# call oldconfig, get asked a million unnecessary questions about stuff
+make oldconfig;
+
+# adjust parallelism for moar speed!
+make -j9;
+make modules_install;
+
+# mount boot partition on demand
+mount /dev/sda1 /mnt/boot;
+
+# safety first! save previous kernel...
+cp /mnt/boot/EFI/gentoo.efi /mnt/boot/EFI/gentoo-safe.efi
+cp arch/x86/boot/bzImage /mnt/boot/EFI/gentoo.efi
+
+# You can omit this if you have no nvidia card or use nouveau.
+# Omitting it otherwise causes errors on the next reboot.
+emerge -1 nvidia-drivers
+</pre>
+</div>
+
+</div>
+</div>
     <div>
-      <div class="post">
-	<h1>Tag: linux</h1>
-	<ul class="org-ul">
-          <li><a href="/blog/2015/07/26/multiple-monitor-configurations-in-linux">Multiple monitor configurations in Linux</a></li>
-          <li><a href="/blog/2016/03/17/update-your-kernel-plus-nvidia,-quick">Update your kernel plus nvidia, quick</a></li>
-	</ul>
+      <div class="post-meta">
+        <span title="post date" class="post-info">2016-03-17</span>
+        <span title="last modification date" class="post-info">2016-03-17</span>
+        <span title="tags" class="post-info"><a href="/tags/gentoo/">gentoo</a>, <a href="/tags/linux/">linux</a>, <a href="/tags/kernel/">kernel</a>, <a href="/tags/script/">script</a></span>
+        <span title="author" class="post-info">Philipp Middendorf</span>
       </div>
-    </div>
-    <div>
+      <section>
+        <h1>Comments</h1>
+      </section>
       <script src="//code.jquery.com/jquery-latest.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.js"></script>
       <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -59,5 +108,6 @@
         </p>
       </div>
     </div>
+
   </body>
 </html>
