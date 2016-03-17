@@ -4,7 +4,7 @@
 #+DATE:        2016-03-17 Thu
 #+URI:         /blog/%y/%m/%d/java-string-encoding-oddity
 #+KEYWORDS:    java,string,programming
-#+TAGS:        <TODO: insert your tags here>
+#+TAGS:        java,string,programming
 #+LANGUAGE:    en
 #+OPTIONS:     H:3 num:nil toc:nil \n:nil ::t |:t ^:nil -:nil f:t *:t <:t
 #+DESCRIPTION: A short post about file encodings and strings
@@ -31,9 +31,9 @@ The result a string where the German characters were garbled. My initial thought
 
 To go from speculation to proof, let's consult the [[http://docs.oracle.com/javase/6/docs/api/java/lang/String.html#String(byte%5B%5D,%20int,%20int)][Java API documentation]]:
 
-#+BEGIN_EXAMPLE
+#+BEGIN_QUOTE
 Constructs a new String by decoding the specified subarray of bytes using the platform's default charset.
-#+END_EXAMPLE
+#+END_QUOTE
 
 Looking at the method's source code, I saw that it uses =Charset.defaultCharset()=, which does the following:
 
