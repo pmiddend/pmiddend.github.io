@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
-    <title>this is just a test - pmiddend&#39;s Blog</title>
+    <title>Java String encoding oddity - pmiddend&#39;s Blog</title>
     <meta charset="utf-8" />
     <meta name="author" content="Philipp Middendorf" />
-    <meta name="description" content="Test post for org-page" />
-    <meta name="keywords" content="&lt;TODO: insert your keywords here&gt;" />
+    <meta name="description" content="A short post about file encodings and strings" />
+    <meta name="keywords" content="java,string,programming" />
     <link rel="stylesheet" href="/media/css/main.css" type="text/css">
     <link rel="stylesheet" href="/media/css/prettify.css" type="text/css">
   </head>
@@ -30,18 +30,71 @@
 
 <div>
 <div class="post">
-<h1>this is just a test</h1>
+<h1>Java String encoding oddity</h1>
+<p>
+At our company, we're using the usual Java toolchain: maven to define building, dependencies and packaging, jenkins to actually do it. Today we encountered something particularly odd regarding character encodings.
+</p>
 
-<div id="outline-container-orgheadline1" class="outline-2">
-<h2 id="orgheadline1">Test post please ignore</h2>
+<p>
+So in one application, we're reading raw bytes from a file. We receive a <code>byte[]</code>, an offset and a length. We know that these bytes are coded in UTF-8 and want to convert them to a <code>java.util.String</code>. Easy enough, you say:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java">byte[] bytes;
+int offset;
+int length;
+
+String s = new String(bytes,offset,length,StandardCharsets.UTF_8);
+</pre>
 </div>
+
+<p>
+This indeed does the trick, and would not be worth a blog post, but what my colleague wrote was this:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java">String s = new String(bytes,offset,length);
+</pre>
+</div>
+
+<p>
+The result a string where the German characters were garbled. My initial thought was that this constructor uses some locale-dependent property and the server's locale is simply set to ASCII or latin1. But this was not the case. The server's locale was "de_DE.UTF-8" which is totally fine. However, the <b>build server's</b> locale was just "C". So is the platform's default encoding a compile-time property?
+</p>
+
+<p>
+To go from speculation to proof, let's consult the <a href="http://docs.oracle.com/javase/6/docs/api/java/lang/String.html#String(byte%5B%5D,%20int,%20int)">Java API documentation</a>:
+</p>
+
+<pre class="example">
+Constructs a new String by decoding the specified subarray of bytes using the platform's default charset.
+</pre>
+
+<p>
+Looking at the method's source code, I saw that it uses <code>Charset.defaultCharset()</code>, which does the following:
+</p>
+
+<ul class="org-ul">
+<li>Try to access the <code>file.encoding</code> property to get a charset name</li>
+<li>Try to resolve that name to an actualy charset</li>
+<li>If that fails, resolve "UTF-8"</li>
+</ul>
+
+<p>
+So how does the <code>file.encoding</code> property get set? Does it have a baked-in compile-time default? Unfortunately, I couldn't figure it out. All the blog posts refer to setting it on startup via <code>-Dfile.encoding</code>, so I will investigate if that's indeed what we're doing.
+</p>
+
+<p>
+Of course, since it was production relevant, we fixed the bug by just specifying the correct encoding, which is something you should do, anyway.
+</p>
 
 </div>
 </div>
     <div>
       <div class="post-meta">
-        <span title="post date" class="post-info">2015-12-28</span>
-        <span title="last modification date" class="post-info">2015-12-28</span>
+        <span title="post date" class="post-info">2016-03-17</span>
+        <span title="last modification date" class="post-info">2016-03-17</span>
         <span title="tags" class="post-info"><a href="/tags/&lt;todo/">&lt;TODO</a>, <a href="/tags/insert-your-tags-here&gt;/">insert your tags here&gt;</a></span>
         <span title="author" class="post-info">Philipp Middendorf</span>
       </div>

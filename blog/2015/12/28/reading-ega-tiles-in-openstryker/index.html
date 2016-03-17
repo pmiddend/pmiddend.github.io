@@ -21,7 +21,7 @@
           <li><a href="https://github.com/pmiddend">GitHub</a></li>
           <li><a href="/rss.xml">RSS</a></li>
         </ul>
-        <form method="get" id="searchform" action="http://www.google.com/search">
+        <form method="get" id="searchform" action="//www.google.com/search">
           <input type="text" class="field" name="q" id="s" placeholder="Search">
           <input type="hidden" name="as_sitesearch" value="pmiddend.github.io">
         </form>
@@ -35,7 +35,7 @@
 <h2 id="orgheadline1">Intro</h2>
 <div class="outline-text-2" id="text-orgheadline1">
 <p>
-So for my new project "openstryker", a clone of the 1993 side-scroller <a href="https://en.wikipedia.org/wiki/Major_Stryker">Major Stryker</a>, I just finished a first version of the code that loads the tile images for objects in the game. The images look like this:
+So for my new project "openstryker", a clone of the 1993 vertical scrolling scroller <a href="https://en.wikipedia.org/wiki/Major_Stryker">Major Stryker</a>, I just finished a first version of the code that loads the tile images for objects in the game. The images look like this:
 </p>
 
 
@@ -90,7 +90,7 @@ In <i>byte-planar</i> EGA, you store all channels of 8-pixel-groups sequentially
 <h2 id="orgheadline3">Available channels</h2>
 <div class="outline-text-2" id="text-orgheadline3">
 <p>
-So what channels are there? RGB? RGBA? Almost! Major Stryker mostly uses "BGRI". BGR are colors, I stands for "intensity". The idea is simple: You have three bytes for the color and one bit for "increase each channel's value a bit". So the nibble "0000" is "black", the nibble "0001" (with the I bit set) is "grey". "0010" is "dark red" and "0011" is, well, "pale red", because not only the red channel is amplified, but also the other two channels.
+So what channels are there? RGB? RGBA? Almost! Major Stryker mostly uses "BGRI". BGR are colors, I stands for "intensity". The idea is simple: You have three bits for the color and one bit for "increase each channel's value a bit". So the nibble "0000" is "black", the nibble "0001" (with the I bit set) is "grey". "0010" is "dark red" and "0011" is, well, "pale red", because not only the red channel is amplified, but also the other two channels.
 </p>
 </div>
 </div>
@@ -149,10 +149,10 @@ bgri_indices_to_pixel(
       rgb_pixel&lt;unsigned char&gt;{0xaa,0x56,0}
     :
       rgb_pixel_static_cast&lt;unsigned char&gt;(
-	 ((i ? 1 : 0) * rgb_pixel&lt;int&gt;{0x56,0x56,0x56}) +
-	 rgb_pixel_map&lt;int&gt;(
-	   rgb_pixel&lt;bool&gt;{r,g,b},
-	   [](bool const p) { return p ? 0xaa : 0; }));
+         ((i ? 1 : 0) * rgb_pixel&lt;int&gt;{0x56,0x56,0x56}) +
+         rgb_pixel_map&lt;int&gt;(
+           rgb_pixel&lt;bool&gt;{r,g,b},
+           [](bool const p) { return p ? 0xaa : 0; }));
 }
 </pre>
 </div>
@@ -254,14 +254,14 @@ I'm still a little confused as to <i>why</i> that is, and I'll update the articl
     <div>
       <div class="post-meta">
         <span title="post date" class="post-info">2015-12-28</span>
-        <span title="last modification date" class="post-info">2015-12-28</span>
+        <span title="last modification date" class="post-info">2015-12-30</span>
         <span title="tags" class="post-info"><a href="/tags/openstryker/">openstryker</a>, <a href="/tags/cpp/">cpp</a></span>
         <span title="author" class="post-info">Philipp Middendorf</span>
       </div>
       <section>
         <h1>Comments</h1>
       </section>
-      <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+      <script src="//code.jquery.com/jquery-latest.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.js"></script>
       <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       <script src="/media/js/main.js"></script>

@@ -4,10 +4,24 @@
     <title>pmiddend&#39;s Blog</title>
     <link>https://pmiddend.github.io</link>
     <description>Stuff about Haskell, nutrition, learning and life in general</description>
-    <pubDate>Mon, 28 Dec 2015 14:20:36 CET</pubDate>
-    <lastBuildDate>Mon, 28 Dec 2015 14:20:36 CET</lastBuildDate>
+    <pubDate>Thu, 17 Mar 2016 17:48:37 CET</pubDate>
+    <lastBuildDate>Thu, 17 Mar 2016 17:48:37 CET</lastBuildDate>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>Org-page static site generator (https://github.com/kelvinh/org-page)</generator>
+    <item>
+      <title>Java String encoding oddity</title>
+      <link>https://pmiddend.github.io/blog/2016/03/17/java-string-encoding-oddity</link>
+      <description><![CDATA[A short post about file encodings and strings]]></description>
+      <pubDate>2016-03-17</pubDate>
+      <guid>https://pmiddend.github.io/blog/2016/03/17/java-string-encoding-oddity</guid>
+    </item>
+    <item>
+      <title>Reading EGA tiles in openstryker</title>
+      <link>https://pmiddend.github.io/blog/2015/12/28/reading-ega-tiles-in-openstryker</link>
+      <description><![CDATA[<TODO: insert your description here>]]></description>
+      <pubDate>2015-12-30</pubDate>
+      <guid>https://pmiddend.github.io/blog/2015/12/28/reading-ega-tiles-in-openstryker</guid>
+    </item>
     <item>
       <title>Italian definite and indefinite articles</title>
       <link>https://pmiddend.github.io/blog/2015/07/26/italian-definite-and-indefinite-articles</link>
@@ -23,11 +37,11 @@
       <guid>https://pmiddend.github.io/blog/2015/07/26/multiple-monitor-configurations-in-linux</guid>
     </item>
     <item>
-      <title>Reading EGA tiles in openstryker</title>
-      <link>https://pmiddend.github.io/blog/2015/12/28/reading-ega-tiles-in-openstryker</link>
-      <description><![CDATA[<TODO: insert your description here>]]></description>
+      <title>First post</title>
+      <link>https://pmiddend.github.io/blog/2015/07/26/new-post</link>
+      <description><![CDATA[First post]]></description>
       <pubDate>2015-12-28</pubDate>
-      <guid>https://pmiddend.github.io/blog/2015/12/28/reading-ega-tiles-in-openstryker</guid>
+      <guid>https://pmiddend.github.io/blog/2015/07/26/new-post</guid>
     </item>
     <item>
       <title>this is just a test</title>
@@ -35,13 +49,6 @@
       <description><![CDATA[Test post for org-page]]></description>
       <pubDate>2015-12-28</pubDate>
       <guid>https://pmiddend.github.io/blog/2015/12/28/this-is-just-a-test</guid>
-    </item>
-    <item>
-      <title>First post</title>
-      <link>https://pmiddend.github.io/blog/2015/07/26/new-post</link>
-      <description><![CDATA[First post]]></description>
-      <pubDate>2015-07-26</pubDate>
-      <guid>https://pmiddend.github.io/blog/2015/07/26/new-post</guid>
     </item>
   </channel>
 </rss>
