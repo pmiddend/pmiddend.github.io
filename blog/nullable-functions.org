@@ -285,7 +285,7 @@ interface NullableFunction<T,U> {
 }
 #+END_SRC
 
-There are some functions that cannot be transferred from =Optional: =get= doesn't make sense, because we have a function, not a value. There's nothing in it to get, it's the "between the values". =of= and =ofNullable= you cannot meaningfully define, because they refer to a single value, not a transformation. You /could/ define =constant=, the function that, given any argument, ignores it and always returns a certain =t=:
+There are some functions that cannot be transferred from =Optional=: =get= doesn't make sense, because we have a function, not a value. There's nothing in it to get, it's the "between the values". =of= and =ofNullable= you cannot meaningfully define, because they refer to a single value, not a transformation. You /could/ define =constant=, the function that, given any argument, ignores it and always returns a certain =t=:
 
 #+BEGIN_SRC java
 interface NullableFunction<T,U> {
