@@ -63,7 +63,7 @@ public void printMaleTenantsSpouse(Optional<Apartment> a) {
 
 This is slightly shorter and looks cleaner, because the code doesn't expand to the right, and we don't have to assign any names which we only use once.
 
-Great, now what's the problem? Well, we're actually misusing =Optional=! As =Optional='s creator Stuart Marks often notes (for example in [[http://stackoverflow.com/questions/23454952/uses-for-java8-optional/23464794#23464794][this StackOverflow answer]]), there are some "intended" uses for =Optional=, such as the return type of functions so you can "continue a chain of fluent method calls", which is actually one of the main reason why =Optional= was introduced -- to make chained calls with =Stream= operations prettier:
+Great, now what's the problem? Well, we're actually misusing =Optional=! As Stuart Marks often notes (for example in [[http://stackoverflow.com/questions/23454952/uses-for-java8-optional/23464794#23464794][this StackOverflow answer]]), there are some "intended" uses for =Optional=, such as the return type of functions so you can "continue a chain of fluent method calls", which is actually one of the main reason why =Optional= was introduced -- to make chained calls with =Stream= operations prettier:
 
 #+BEGIN_SRC java
 collection.stream()
