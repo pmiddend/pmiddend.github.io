@@ -295,10 +295,14 @@ hr {
 	background: #eee;
 }
 
-span.code { font-family:Menlo, Monaco, Courier; background-color:#EEE; font-size:14px; }
+code {
+    font-family: monospace
+}
+
+span.code { font-family:Menlo, Monaco, Courier,monospace; background-color:#EEE; font-size:14px; }
 
 pre	{
-	font-family:Menlo, Monaco, Courier;
+	font-family:Menlo, Monaco, Courier,monospace;
 	white-space:pre-wrap;
 	/*border: 1px solid #ddd;*/
 	padding:20px;
