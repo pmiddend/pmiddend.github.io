@@ -1,0 +1,367 @@
+% Created 2016-06-18 Sat 15:44
+% Indented LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Philipp Middendorf}
+\date{2016-06-18 Sat}
+\title{An alternative to Optional - nullable composition}
+\hypersetup{
+ pdfauthor={Philipp Middendorf},
+ pdftitle={An alternative to Optional - nullable composition},
+ pdfkeywords={java, fp},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 8.3.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\section*{An alternative to optional - nullable composition}
+\label{sec:orgheadline6}
+\subsection*{Prerequisite and disclaimer}
+\label{sec:orgheadline1}
+In order to understand this post, you have to be familiar with \textbf{lambdas}, \textbf{default methods}, \textbf{functional interfaces} and ideally \texttt{Optional}. Also, please read this post more as a brain teaser than something to live by. I'm not advocating ditching \texttt{null}, \texttt{Optional} or using the functions below everywhere. It's an exercise in thinking functionally, above all.
+
+Also, what I describe is probably some bastardized version of a simple concept that the Haskell people use on a regular basis. If so, please tell me, I'm eager to put all of this in context.
+\subsection*{Prelude: Booooo! \texttt{null}!}
+\label{sec:orgheadline2}
+Since day one, Java has had \texttt{null} as a special value that inhabits every type deriving from \texttt{Object}. In this article, I won't go into detail over why that's \href{https://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare}{widely considered a bad idea}. It's in the language an we have to deal with it properly. Typical code handling \texttt{null} values looks like this:
+
+\begin{verbatim}
+public void printMaleTenantsSpouse(Apartment a) {
+ if(a != null) {
+   Person t = a.getTenant();
+   if(t != null) {
+     if(t.isMale()) {
+       Person spouse = t.getSpouse();
+       if(spouse != null) {
+         System.out.println(spouse.getName());
+       }
+     }
+   }
+ }
+}
+\end{verbatim}
+
+Here, I am assuming that \emph{every} value in the object tree might be \texttt{null}, which mostly makes sense. An apartment doesn't have to have a tenant; that tenant doesn't have to have a spouse, and so on. Because we have to test for \texttt{null} on every level, this leads to some deeply nested code. I also threw in some other \texttt{if} just for kicks.
+\subsection*{The savior, \texttt{Optional}!}
+\label{sec:orgheadline3}
+In Java 8 though, there's \texttt{Optional}. This type and its operations were borrowed from languages like \href{https://hackage.haskell.org/package/base/docs/Data-Maybe.html}{Haskell} and \href{http://en.cppreference.com/w/cpp/utility/optional/optional}{C++}, where you're in the opposite position: nothing can be null unless you wrap it in an optional type. It exposes the following \href{https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html}{operations} (slightly simplified for readability):
+
+\begin{itemize}
+\item \texttt{Optional<T> empty()}: creates an empty \texttt{Optional}.
+\item \texttt{Optional<T> of(T t)}: creates a non-empty \texttt{Optional} from a non-null value (throws if \texttt{null} is passed).
+\item \texttt{Optional<T> ofNullable(T t)}: creates an empty \texttt{Optional} if passed \texttt{null}, otherwise a non-empty \texttt{Optional}.
+\item \texttt{T get()}: returns the value inside the optional, throwing if it's empty.
+\item \texttt{boolean isPresent()}: returns \texttt{true} if the optional is non-empty.
+\item \texttt{T orElse(T t)}: returns \texttt{t} if the \texttt{Optional} is empty, otherwise returns the value inside the \texttt{Optional}.
+\item \texttt{T orElseGet(Supplier<T> f)}: returns the result of applying \texttt{f} if the \texttt{Optional} is empty, otherwise returns the value inside the \texttt{Optional}.
+\item \texttt{T orElseThrow(Supplier<Throwable> f)}: throws if empty, otherwise returns the value inside the \texttt{Optional}.
+\item \texttt{void ifPresent(Consumer<T> f)}: executes \texttt{f}, passing the value if it's non-empty; otherwise does nothing.
+\item \texttt{Optional<T> filter(Predicate<T> p)}: checks the value inside the \texttt{Optional} against the predicate and maybe empties (literally) the optional accordingly.
+\item \texttt{Optional<U> map(Function<T,U> f)}: leaves empty \texttt{Optionals} empty, otherwise executes \texttt{f} on the value.
+\item \texttt{Optional<U> flatMap(Function<T,Optional<U>> f)}: leaves empty \texttt{Optionals} empty (switching the types), applies \texttt{f} to non-empty \texttt{Optionals} and returns the result.
+\end{itemize}
+
+Assuming we litter our data structures with getters that return \texttt{Optional} instead of \texttt{null} and using Java 8's method references, the code above could be written as follows:
+
+\begin{verbatim}
+public void printMaleTenantsSpouse(Optional<Apartment> a) {
+  a.flatMap(Apartment::getTenant)
+   .filter(Person::isMale)
+   .flatMap(Person::getSpouse)
+   .map(Person::getName)
+   .ifPresent(System.out::println);
+}
+\end{verbatim}
+
+This is slightly shorter and looks cleaner, because the code doesn't expand to the right, and we don't have to assign any names which we only use once.
+
+Great, now what's the problem? Well, we're actually misusing \texttt{Optional}! As \texttt{Optional}'s creator Stuart Marks often notes (for example in \href{http://stackoverflow.com/questions/23454952/uses-for-java8-optional/23464794#23464794}{this StackOverflow answer}), there are some "intended" uses for \texttt{Optional}, such as the return type of functions so you can "continue a chain of fluent method calls", which is actually one of the main reason why \texttt{Optional} was introduced -- to make chained calls with \texttt{Stream} operations prettier:
+
+\begin{verbatim}
+collection.stream()
+          .map(f)
+          .filter(p)
+          // findFirst returns the first found value in the stream 
+          // as an Optional<T> (the stream could be empty)
+          .findFirst()
+          .map(f2)
+          .orElse(x);
+\end{verbatim}
+
+However, using \texttt{Optional} as a parameter to a function (as seen above) or as a field of a data structure is "considered misuse", and many articles have been written about that fact (pro and contra). Also, \texttt{Optional} deliberately does not extend \texttt{Serializable} and framework support to serialize to JSON, for example, might have to to be enabled explicitly.
+
+Also, from a more idealistic perspective, why have another type that represents the absence of a value? As we discovered, every variable can already be absent, containing \texttt{null}. What we're doing with \texttt{Optional} is wrapping it in another layer and unwrapping it at the end.
+\subsection*{Burn \texttt{Optional}, hooray for \texttt{null}!}
+\label{sec:orgheadline4}
+If we want this functional style operations, can't we define them on nullable types instead? Let's quickly go through the operations and how we might adapt them to work on plain types \texttt{T} that might contain \texttt{null}:
+
+\begin{itemize}
+\item \texttt{empty()}: we don't need a function for that, just write \texttt{null} and you're done!
+\item \texttt{of(t)}: this is also just packaging we don't need
+\item \texttt{ofNullable(t)}: see above
+\item \texttt{get()}: See above; just use the nullable value like you normally would; you'll get a \texttt{NullPointerException} if it's empty.
+\item \texttt{isPresent()}: this is just an if statement:
+\begin{verbatim}
+public <T> boolean isPresent(T t) {
+  return t != null;
+}
+\end{verbatim}
+\item \texttt{orElse(t)}: another if:
+\begin{verbatim}
+public <T> boolean orElse(T t,T u) {
+  return t != null ? t : Objects.requireNonNull(u);
+}
+\end{verbatim}
+\item \texttt{orElseGet(t)}: an if with a \texttt{get}:
+\begin{verbatim}
+public <T> boolean orElseGet(T t,Supplier<T> f) {
+  return t != null ? t : Objecs.requireNonNull(f.get());
+}
+\end{verbatim}
+\item \texttt{orElseThrow(t)}: an if with a throw:
+\begin{verbatim}
+public <T> boolean orElseThrow(T t,Supplier<Throwable> f) {
+  if(t == null)
+    throw f.get();
+  return t;
+}
+\end{verbatim}
+\item \texttt{ifPresent(f)}: slightly more interesting:
+\begin{verbatim}
+public <T> void ifPresent(T t,Consumer<T> f) {
+  if(t != null)
+    f.accept(t);
+}
+\end{verbatim}
+\item \texttt{filter(p)}: given \texttt{null} (previously an empty \texttt{Optional}), just return \texttt{null}. Given non-null, return \texttt{null} if the predicate doesn't match, otherwise return the given value:
+\begin{verbatim}
+public static <T> T filter(T t,Predicate<T> p) {
+  return t == null || !p.test(t) ? null : t;
+}
+\end{verbatim}
+\item \texttt{map(f)}: does nothing if passed \texttt{null}, otherwise applies the function (which returns a \texttt{U}, not another \texttt{Optional}, so we have to be sure that it doesn't return \texttt{null}!)
+\begin{verbatim}
+public static <T,U> T map(T t,Function<T,U> f) {
+  if (t == null)
+    return null;
+  return Objects.requireNonNull(f.apply(t));
+}
+\end{verbatim}
+\item \texttt{flatMap(f)}: strikingly similar to \texttt{map}, but without the null check - the given function is allowed to return another \texttt{Optional} (or \texttt{null} in our case):
+\begin{verbatim}
+public static <T,U> T flatMap(T t,Function<T,U> f) {
+  if (t == null)
+    return null;
+  return f.apply(t);
+}
+\end{verbatim}
+\end{itemize}
+
+Using these operations, we can indeed rewrite the code as such:
+
+\begin{verbatim}
+ifPresent(
+  map(
+    flatMap(
+      filter(
+        flatMap(
+          a,
+          Apartment::getTenant),
+        Person::isMale),
+      Person::getSpouse),
+    Person::getName),
+  System.out::println)
+\end{verbatim}
+
+Beautiful, isn't it! Such functional, very monadic!
+
+So there's a reason Haskell has support for defining custom operators and an even more special syntax for \texttt{flatMap} operations, and Java has these chained method calls: functional code looks pretty ugly without them!
+\subsection*{Burn \texttt{Optional} \emph{and} \texttt{null}, use functions!}
+\label{sec:orgheadline5}
+But we don't have to abandon ship just yet. What both the \texttt{Optional} code and the ugly-as-hell monster code above \emph{did} hide is the conditional code, the "glue code" between our functions \texttt{Apartment::getTenant}, \texttt{Person::getName} and so on. Can't we concatenate these functions in a chained style, without using \texttt{Optional}, but hiding away the \texttt{if-else}?
+
+What if instead of wrapping the \emph{value}, we wrap the \emph{function}? Instead of looking at a \emph{value} that can be \texttt{null}, we're now looking at a \emph{function} that can \emph{return} \texttt{null}. In pseudocode with an annotation to remind you:
+
+\begin{verbatim}
+@FunctionalInterface
+interface NullableFunction<T,U> {
+  @Nullable
+  U apply(@Nonnull T t);
+
+  static <A,B> NullableFunction<A,B> of(NullableFunction<A,B> f) {
+    return f;
+  }
+}
+\end{verbatim}
+
+The function \texttt{of()} is necessary to force the type system to create the \texttt{NullableFunction} out of a method reference. I won't go into it here, so if you're not sure what it does, please read about \texttt{@FunctionalInterface}.
+
+Now, assuming we have such a \texttt{NullableFunction}, we want to compose that with another function that returns \texttt{null}, thus defining the equivalent of \texttt{flatMap}:
+
+\begin{verbatim}
+interface NullableFunction<T,U> {
+  // ...
+
+  default <R> NullableFunction<T,R> flatMap(NullableFunction<U,R> f) {
+    return t -> {
+      U u = this.apply(t);
+      if(u == null)
+        return null;
+      return f.apply(u);
+    };
+  }
+}
+\end{verbatim}
+
+Since we introduced a \texttt{null}-based \texttt{flatMap} before, this code is easy (we could even re-use the code from above, but I chose to expose it again). \texttt{filter} is a little tricky, because we have two choices: we can filter the argument of the function and the result (which can be null, of course). So I've provided both:
+
+\begin{verbatim}
+interface NullableFunction<T,U> {
+  // ...
+  default NullableFunction<T,U> filterArgument(Predicate<T> p) {
+    return t -> {
+      return p.test(t) ? this.apply(t) : null;
+    };
+  }
+
+  default NullableFunction<T,U> filterResult(Predicate<U> p) {
+    return t -> {
+      U u = this.apply(t);
+      if(u == null || !p.test(u))
+        return null;
+      return u;
+    };
+  }
+}
+\end{verbatim}
+
+The function \texttt{map}, is interesting, because it requires a function that does \emph{not} return \texttt{null}. So we can't pass another \texttt{NullableFunction}. We could invent another interface \texttt{NonnullFunction}, but I've decided to just take \texttt{java.util.Function}:
+
+\begin{verbatim}
+interface NullableFunction<T,U> {
+  // ...
+  default NullableFunction<T,R> map(Function<U,R> p) {
+    return t -> {
+      U u = this.apply(t);
+      if(u == null)
+        return null;
+      return p.apply(u);
+    };
+  }
+}
+\end{verbatim}
+
+The \texttt{orElse} family of functions can be defined, too:
+
+\begin{verbatim}
+interface NullableFunction<T,U> {
+  // ...
+
+  default NullableFunction<T,U> orElse(U fallback) {
+    return t -> {
+      U u = this.apply(t);
+      return u == null ? fallback : u;
+    };
+  }
+
+  default NullableFunction<T,U> orElseGet(Supplier<U> fallback) {
+    return t -> {
+      U u = this.apply(t);
+      return u == null ? fallback.get() : u;
+    };
+  }
+
+  // I am deliberately ignoring the fact that lambdas cannot 
+  // throw in Java.
+  default NullableFunction<T,U> orElseThrow(Supplier<U> thrower) {
+    return t -> {
+      U u = this.apply(t);
+      if(u == null)
+        throw thrower.get();
+      return u;
+    };
+  }
+}
+\end{verbatim}
+
+The function \texttt{ifPresent} can be defined. In \texttt{Optional}, it returns \texttt{void}, but it's much more usable as an equivalent of the \texttt{Stream} function \texttt{peek}, so you can continue chaining:
+
+\begin{verbatim}
+interface NullableFunction<T,U> {
+  // ...
+
+  default NullableFunction<T,U> ifPresent(Consumer<U> presenter) {
+    return t -> {
+      U u = this.apply(t);
+      if(u != null)
+        presenter.accept(u);
+      return u;
+    };
+  }
+}
+\end{verbatim}
+
+There are some functions that cannot be transferred from \texttt{Optional: =get} doesn't make sense, because we have a function, not a value. There's nothing in it to get, it's the "between the values". \texttt{of} and \texttt{ofNullable} you cannot meaningfully define, because they refer to a single value, not a transformation. You \emph{could} define \texttt{constant}, the function that, given any argument, ignores it and always returns a certain \texttt{t}:
+
+\begin{verbatim}
+interface NullableFunction<T,U> {
+  // ...
+
+  static NullableFunction<T,U> constant(U u) {
+    return ignoreThisArgument -> {
+      return u;
+    };
+  }
+}
+\end{verbatim}
+
+With this new machinery, let's rewrite the initial example again:
+
+\begin{verbatim}
+NullableFunction.of(Apartment::getTenant)
+                .filter(Person::isMale)
+                .flatMap(Person::getSpouse)
+                .map(Person::getName)
+                .ifPresent(System.out::println)
+                .apply(a);
+\end{verbatim}
+
+This looks as clean as the \texttt{Optional} solution, but doesn't extend to the right like the other solution without it. It is, however, not quite correct: We said that the \texttt{Apartment} we pass into it might be \texttt{null}, too. In the chaining methods we assumed that the value we pass is non-null (the \emph{result}, however, can be null). To mitigate this, we add another convenience function \texttt{applyNullable} to \texttt{NullableFunction}:
+
+\begin{verbatim}
+interface NullableFunction<T,U> {
+  // ...
+
+  default U applyNullable(T t) {
+    return t != null ? this.apply(t) : null;
+  }
+}
+\end{verbatim}
+
+So the chain becomes:
+
+\begin{verbatim}
+NullableFunction.of(Apartment::getTenant)
+                .filter(Person::isMale)
+                .flatMap(Person::getSpouse)
+                .map(Person::getName)
+                .ifPresent(System.out::println)
+                .applyNullable(a);
+\end{verbatim}
+
+That's it folks. If you have questions or comments, please leave them in the according reddit thread in \texttt{/r/java}.
+\end{document}
