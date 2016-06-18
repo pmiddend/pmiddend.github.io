@@ -296,7 +296,8 @@ hr {
 }
 
 code {
-    font-family: monospace
+    font-family: monospace;
+    font-size:80%;
 }
 
 span.code { font-family:Menlo, Monaco, Courier,monospace; background-color:#EEE; font-size:14px; }
