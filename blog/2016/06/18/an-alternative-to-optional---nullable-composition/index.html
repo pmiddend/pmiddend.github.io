@@ -115,7 +115,7 @@ This is slightly shorter and looks cleaner, because the code doesn't expand to t
 </p>
 
 <p>
-Great, now what's the problem? Well, we're actually misusing <code>Optional</code>! As <code>Optional</code>'s creator Stuart Marks often notes (for example in <a href="http://stackoverflow.com/questions/23454952/uses-for-java8-optional/23464794#23464794">this StackOverflow answer</a>), there are some "intended" uses for <code>Optional</code>, such as the return type of functions so you can "continue a chain of fluent method calls", which is actually one of the main reason why <code>Optional</code> was introduced -- to make chained calls with <code>Stream</code> operations prettier:
+Great, now what's the problem? Well, we're actually misusing <code>Optional</code>! As Stuart Marks often notes (for example in <a href="http://stackoverflow.com/questions/23454952/uses-for-java8-optional/23464794#23464794">this StackOverflow answer</a>), there are some "intended" uses for <code>Optional</code>, such as the return type of functions so you can "continue a chain of fluent method calls", which is actually one of the main reason why <code>Optional</code> was introduced -- to make chained calls with <code>Stream</code> operations prettier:
 </p>
 
 <div class="org-src-container">
