@@ -425,7 +425,7 @@ The function <code>ifPresent</code> can be defined. In <code>Optional</code>, it
 </div>
 
 <p>
-There are some functions that cannot be transferred from <code>Optional: =get</code> doesn't make sense, because we have a function, not a value. There's nothing in it to get, it's the "between the values". <code>of</code> and <code>ofNullable</code> you cannot meaningfully define, because they refer to a single value, not a transformation. You <i>could</i> define <code>constant</code>, the function that, given any argument, ignores it and always returns a certain <code>t</code>:
+There are some functions that cannot be transferred from <code>Optional</code>: <code>get</code> doesn't make sense, because we have a function, not a value. There's nothing in it to get, it's the "between the values". <code>of</code> and <code>ofNullable</code> you cannot meaningfully define, because they refer to a single value, not a transformation. You <i>could</i> define <code>constant</code>, the function that, given any argument, ignores it and always returns a certain <code>t</code>:
 </p>
 
 <div class="org-src-container">
