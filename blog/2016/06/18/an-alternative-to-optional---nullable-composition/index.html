@@ -51,19 +51,19 @@ Since day one, Java has had <code>null</code> as a special value that inhabits e
 
 <div class="org-src-container">
 
-<pre class="src src-java">public void printMaleTenantsSpouse(Apartment a) {
- if(a != null) {
-   Person t = a.getTenant();
-   if(t != null) {
-     if(t.isMale()) {
-       Person spouse = t.getSpouse();
-       if(spouse != null) {
-         System.out.println(spouse.getName());
-       }
-     }
-   }
- }
-}
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">public</span> <span style="color: #7CB8BB;">void</span> <span style="color: #93E0E3;">printMaleTenantsSpouse</span><span style="color: #DCDCCC;">(</span><span style="color: #7CB8BB;">Apartment</span> <span style="color: #DFAF8F;">a</span><span style="color: #DCDCCC;">)</span> <span style="color: #DCDCCC;">{</span>
+ <span style="color: #F0DFAF; font-weight: bold;">if</span><span style="color: #BFEBBF;">(</span>a != <span style="color: #BFEBBF;">null</span><span style="color: #BFEBBF;">)</span> <span style="color: #BFEBBF;">{</span>
+   <span style="color: #7CB8BB;">Person</span> <span style="color: #DFAF8F;">t</span> = a.getTenant<span style="color: #D0BF8F;">()</span>;
+   <span style="color: #F0DFAF; font-weight: bold;">if</span><span style="color: #D0BF8F;">(</span>t != <span style="color: #BFEBBF;">null</span><span style="color: #D0BF8F;">)</span> <span style="color: #D0BF8F;">{</span>
+     <span style="color: #F0DFAF; font-weight: bold;">if</span><span style="color: #93E0E3;">(</span>t.isMale<span style="color: #9FC59F;">()</span><span style="color: #93E0E3;">)</span> <span style="color: #93E0E3;">{</span>
+       <span style="color: #7CB8BB;">Person</span> <span style="color: #DFAF8F;">spouse</span> = t.getSpouse<span style="color: #9FC59F;">()</span>;
+       <span style="color: #F0DFAF; font-weight: bold;">if</span><span style="color: #9FC59F;">(</span>spouse != <span style="color: #BFEBBF;">null</span><span style="color: #9FC59F;">)</span> <span style="color: #9FC59F;">{</span>
+         System.out.println<span style="color: #94BFF3;">(</span>spouse.getName<span style="color: #E0CF9F;">()</span><span style="color: #94BFF3;">)</span>;
+       <span style="color: #9FC59F;">}</span>
+     <span style="color: #93E0E3;">}</span>
+   <span style="color: #D0BF8F;">}</span>
+ <span style="color: #BFEBBF;">}</span>
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div>
 
@@ -100,13 +100,13 @@ Assuming we litter our data structures with getters that return <code>Optional</
 
 <div class="org-src-container">
 
-<pre class="src src-java">public void printMaleTenantsSpouse(Optional&lt;Apartment&gt; a) {
-  a.flatMap(Apartment::getTenant)
-   .filter(Person::isMale)
-   .flatMap(Person::getSpouse)
-   .map(Person::getName)
-   .ifPresent(System.out::println);
-}
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">public</span> <span style="color: #7CB8BB;">void</span> <span style="color: #93E0E3;">printMaleTenantsSpouse</span><span style="color: #DCDCCC;">(</span><span style="color: #7CB8BB;">Optional</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">Apartment</span><span style="color: #BFEBBF;">&gt;</span> <span style="color: #DFAF8F;">a</span><span style="color: #DCDCCC;">)</span> <span style="color: #DCDCCC;">{</span>
+  a.flatMap<span style="color: #BFEBBF;">(</span>Apartment::getTenant<span style="color: #BFEBBF;">)</span>
+   .filter<span style="color: #BFEBBF;">(</span>Person::isMale<span style="color: #BFEBBF;">)</span>
+   .flatMap<span style="color: #BFEBBF;">(</span>Person::getSpouse<span style="color: #BFEBBF;">)</span>
+   .map<span style="color: #BFEBBF;">(</span>Person::getName<span style="color: #BFEBBF;">)</span>
+   .ifPresent<span style="color: #BFEBBF;">(</span>System.out::println<span style="color: #BFEBBF;">)</span>;
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div>
 
@@ -120,14 +120,14 @@ Great, now what's the problem? Well, we're actually misusing <code>Optional</cod
 
 <div class="org-src-container">
 
-<pre class="src src-java">collection.stream()
-          .map(f)
-          .filter(p)
-          // findFirst returns the first found value in the stream 
-          // as an Optional&lt;T&gt; (the stream could be empty)
-          .findFirst()
-          .map(f2)
-          .orElse(x);
+<pre class="src src-java">collection.stream<span style="color: #DCDCCC;">()</span>
+          .map<span style="color: #DCDCCC;">(</span>f<span style="color: #DCDCCC;">)</span>
+          .filter<span style="color: #DCDCCC;">(</span>p<span style="color: #DCDCCC;">)</span>
+          <span style="color: #5F7F5F;">// </span><span style="color: #7F9F7F;">findFirst returns the first found value in the stream </span>
+          <span style="color: #5F7F5F;">// </span><span style="color: #7F9F7F;">as an Optional&lt;T&gt; (the stream could be empty)</span>
+          .findFirst<span style="color: #DCDCCC;">()</span>
+          .map<span style="color: #DCDCCC;">(</span>f2<span style="color: #DCDCCC;">)</span>
+          .orElse<span style="color: #DCDCCC;">(</span>x<span style="color: #DCDCCC;">)</span>;
 </pre>
 </div>
 
@@ -157,9 +157,9 @@ If we want this functional style operations, can't we define them on nullable ty
 </p>
 <div class="org-src-container">
 
-<pre class="src src-java">public &lt;T&gt; boolean isPresent(T t) {
-  return t != null;
-}
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">public</span> <span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #7CB8BB;">boolean</span> <span style="color: #93E0E3;">isPresent</span><span style="color: #DCDCCC;">(</span><span style="color: #7CB8BB;">T</span> <span style="color: #DFAF8F;">t</span><span style="color: #DCDCCC;">)</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #F0DFAF; font-weight: bold;">return</span> t != <span style="color: #BFEBBF;">null</span>;
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div></li>
 <li><p>
@@ -167,9 +167,9 @@ If we want this functional style operations, can't we define them on nullable ty
 </p>
 <div class="org-src-container">
 
-<pre class="src src-java">public &lt;T&gt; boolean orElse(T t,T u) {
-  return t != null ? t : Objects.requireNonNull(u);
-}
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">public</span> <span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #7CB8BB;">boolean</span> <span style="color: #93E0E3;">orElse</span><span style="color: #DCDCCC;">(</span><span style="color: #7CB8BB;">T</span> <span style="color: #DFAF8F;">t</span>,<span style="color: #7CB8BB;">T</span> <span style="color: #DFAF8F;">u</span><span style="color: #DCDCCC;">)</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #F0DFAF; font-weight: bold;">return</span> t != <span style="color: #BFEBBF;">null</span> ? t : Objects.requireNonNull<span style="color: #BFEBBF;">(</span>u<span style="color: #BFEBBF;">)</span>;
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div></li>
 <li><p>
@@ -177,9 +177,9 @@ If we want this functional style operations, can't we define them on nullable ty
 </p>
 <div class="org-src-container">
 
-<pre class="src src-java">public &lt;T&gt; boolean orElseGet(T t,Supplier&lt;T&gt; f) {
-  return t != null ? t : Objecs.requireNonNull(f.get());
-}
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">public</span> <span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #7CB8BB;">boolean</span> <span style="color: #93E0E3;">orElseGet</span><span style="color: #DCDCCC;">(</span><span style="color: #7CB8BB;">T</span> <span style="color: #DFAF8F;">t</span>,<span style="color: #7CB8BB;">Supplier</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span><span style="color: #BFEBBF;">&gt;</span> <span style="color: #DFAF8F;">f</span><span style="color: #DCDCCC;">)</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #F0DFAF; font-weight: bold;">return</span> t != <span style="color: #BFEBBF;">null</span> ? t : Objecs.requireNonNull<span style="color: #BFEBBF;">(</span>f.get<span style="color: #D0BF8F;">()</span><span style="color: #BFEBBF;">)</span>;
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div></li>
 <li><p>
@@ -187,11 +187,11 @@ If we want this functional style operations, can't we define them on nullable ty
 </p>
 <div class="org-src-container">
 
-<pre class="src src-java">public &lt;T&gt; boolean orElseThrow(T t,Supplier&lt;Throwable&gt; f) {
-  if(t == null)
-    throw f.get();
-  return t;
-}
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">public</span> <span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #7CB8BB;">boolean</span> <span style="color: #93E0E3;">orElseThrow</span><span style="color: #DCDCCC;">(</span><span style="color: #7CB8BB;">T</span> <span style="color: #DFAF8F;">t</span>,<span style="color: #7CB8BB;">Supplier</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">Throwable</span><span style="color: #BFEBBF;">&gt;</span> <span style="color: #DFAF8F;">f</span><span style="color: #DCDCCC;">)</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #F0DFAF; font-weight: bold;">if</span><span style="color: #BFEBBF;">(</span>t == <span style="color: #BFEBBF;">null</span><span style="color: #BFEBBF;">)</span>
+    <span style="color: #F0DFAF; font-weight: bold;">throw</span> f.get<span style="color: #BFEBBF;">()</span>;
+  <span style="color: #F0DFAF; font-weight: bold;">return</span> t;
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div></li>
 <li><p>
@@ -199,10 +199,10 @@ If we want this functional style operations, can't we define them on nullable ty
 </p>
 <div class="org-src-container">
 
-<pre class="src src-java">public &lt;T&gt; void ifPresent(T t,Consumer&lt;T&gt; f) {
-  if(t != null)
-    f.accept(t);
-}
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">public</span> <span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #7CB8BB;">void</span> <span style="color: #93E0E3;">ifPresent</span><span style="color: #DCDCCC;">(</span><span style="color: #7CB8BB;">T</span> <span style="color: #DFAF8F;">t</span>,<span style="color: #7CB8BB;">Consumer</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span><span style="color: #BFEBBF;">&gt;</span> <span style="color: #DFAF8F;">f</span><span style="color: #DCDCCC;">)</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #F0DFAF; font-weight: bold;">if</span><span style="color: #BFEBBF;">(</span>t != <span style="color: #BFEBBF;">null</span><span style="color: #BFEBBF;">)</span>
+    f.accept<span style="color: #BFEBBF;">(</span>t<span style="color: #BFEBBF;">)</span>;
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div></li>
 <li><p>
@@ -210,9 +210,9 @@ If we want this functional style operations, can't we define them on nullable ty
 </p>
 <div class="org-src-container">
 
-<pre class="src src-java">public static &lt;T&gt; T filter(T t,Predicate&lt;T&gt; p) {
-  return t == null || !p.test(t) ? null : t;
-}
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">public</span> <span style="color: #F0DFAF; font-weight: bold;">static</span> <span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #7CB8BB;">T</span> <span style="color: #93E0E3;">filter</span><span style="color: #DCDCCC;">(</span><span style="color: #7CB8BB;">T</span> <span style="color: #DFAF8F;">t</span>,<span style="color: #7CB8BB;">Predicate</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span><span style="color: #BFEBBF;">&gt;</span> <span style="color: #DFAF8F;">p</span><span style="color: #DCDCCC;">)</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #F0DFAF; font-weight: bold;">return</span> t == <span style="color: #BFEBBF;">null</span> || <span style="color: #F0DFAF; font-weight: bold;">!</span>p.test<span style="color: #BFEBBF;">(</span>t<span style="color: #BFEBBF;">)</span> ? <span style="color: #BFEBBF;">null</span> : t;
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div></li>
 <li><p>
@@ -220,11 +220,11 @@ If we want this functional style operations, can't we define them on nullable ty
 </p>
 <div class="org-src-container">
 
-<pre class="src src-java">public static &lt;T,U&gt; T map(T t,Function&lt;T,U&gt; f) {
-  if (t == null)
-    return null;
-  return Objects.requireNonNull(f.apply(t));
-}
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">public</span> <span style="color: #F0DFAF; font-weight: bold;">static</span> <span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #7CB8BB;">T</span> <span style="color: #93E0E3;">map</span><span style="color: #DCDCCC;">(</span><span style="color: #7CB8BB;">T</span> <span style="color: #DFAF8F;">t</span>,<span style="color: #7CB8BB;">Function</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #BFEBBF;">&gt;</span> <span style="color: #DFAF8F;">f</span><span style="color: #DCDCCC;">)</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #F0DFAF; font-weight: bold;">if</span> <span style="color: #BFEBBF;">(</span>t == <span style="color: #BFEBBF;">null</span><span style="color: #BFEBBF;">)</span>
+    <span style="color: #F0DFAF; font-weight: bold;">return</span> <span style="color: #BFEBBF;">null</span>;
+  <span style="color: #F0DFAF; font-weight: bold;">return</span> Objects.requireNonNull<span style="color: #BFEBBF;">(</span>f.apply<span style="color: #D0BF8F;">(</span>t<span style="color: #D0BF8F;">)</span><span style="color: #BFEBBF;">)</span>;
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div></li>
 <li><p>
@@ -232,11 +232,11 @@ If we want this functional style operations, can't we define them on nullable ty
 </p>
 <div class="org-src-container">
 
-<pre class="src src-java">public static &lt;T,U&gt; T flatMap(T t,Function&lt;T,U&gt; f) {
-  if (t == null)
-    return null;
-  return f.apply(t);
-}
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">public</span> <span style="color: #F0DFAF; font-weight: bold;">static</span> <span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #7CB8BB;">T</span> <span style="color: #93E0E3;">flatMap</span><span style="color: #DCDCCC;">(</span><span style="color: #7CB8BB;">T</span> <span style="color: #DFAF8F;">t</span>,<span style="color: #7CB8BB;">Function</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #BFEBBF;">&gt;</span> <span style="color: #DFAF8F;">f</span><span style="color: #DCDCCC;">)</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #F0DFAF; font-weight: bold;">if</span> <span style="color: #BFEBBF;">(</span>t == <span style="color: #BFEBBF;">null</span><span style="color: #BFEBBF;">)</span>
+    <span style="color: #F0DFAF; font-weight: bold;">return</span> <span style="color: #BFEBBF;">null</span>;
+  <span style="color: #F0DFAF; font-weight: bold;">return</span> f.apply<span style="color: #BFEBBF;">(</span>t<span style="color: #BFEBBF;">)</span>;
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div></li>
 </ul>
@@ -247,17 +247,17 @@ Using these operations, we can indeed rewrite the code as such:
 
 <div class="org-src-container">
 
-<pre class="src src-java">ifPresent(
-  map(
-    flatMap(
-      filter(
-        flatMap(
+<pre class="src src-java">ifPresent<span style="color: #DCDCCC;">(</span>
+  map<span style="color: #BFEBBF;">(</span>
+    flatMap<span style="color: #D0BF8F;">(</span>
+      filter<span style="color: #93E0E3;">(</span>
+        flatMap<span style="color: #9FC59F;">(</span>
           a,
-          Apartment::getTenant),
-        Person::isMale),
-      Person::getSpouse),
-    Person::getName),
-  System.out::println)
+          Apartment::getTenant<span style="color: #9FC59F;">)</span>,
+        Person::isMale<span style="color: #93E0E3;">)</span>,
+      Person::getSpouse<span style="color: #D0BF8F;">)</span>,
+    Person::getName<span style="color: #BFEBBF;">)</span>,
+  System.out::println<span style="color: #DCDCCC;">)</span>
 </pre>
 </div>
 
@@ -283,15 +283,15 @@ What if instead of wrapping the <i>value</i>, we wrap the <i>function</i>? Inste
 
 <div class="org-src-container">
 
-<pre class="src src-java">@FunctionalInterface
-interface NullableFunction&lt;T,U&gt; {
-  @Nullable
-  U apply(@Nonnull T t);
+<pre class="src src-java"><span style="color: #BFEBBF;">@FunctionalInterface</span>
+<span style="color: #F0DFAF; font-weight: bold;">interface</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #BFEBBF;">@Nullable</span>
+  <span style="color: #7CB8BB;">U</span> <span style="color: #93E0E3;">apply</span><span style="color: #BFEBBF;">(</span><span style="color: #BFEBBF;">@Nonnull</span> <span style="color: #7CB8BB;">T</span> <span style="color: #DFAF8F;">t</span><span style="color: #BFEBBF;">)</span>;
 
-  static &lt;A,B&gt; NullableFunction&lt;A,B&gt; of(NullableFunction&lt;A,B&gt; f) {
-    return f;
-  }
-}
+  <span style="color: #F0DFAF; font-weight: bold;">static</span> <span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">A</span>,<span style="color: #7CB8BB;">B</span><span style="color: #BFEBBF;">&gt;</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">A</span>,<span style="color: #7CB8BB;">B</span><span style="color: #BFEBBF;">&gt;</span> <span style="color: #93E0E3;">of</span><span style="color: #BFEBBF;">(</span><span style="color: #7CB8BB;">NullableFunction</span><span style="color: #D0BF8F;">&lt;</span><span style="color: #7CB8BB;">A</span>,<span style="color: #7CB8BB;">B</span><span style="color: #D0BF8F;">&gt;</span> <span style="color: #DFAF8F;">f</span><span style="color: #BFEBBF;">)</span> <span style="color: #BFEBBF;">{</span>
+    <span style="color: #F0DFAF; font-weight: bold;">return</span> f;
+  <span style="color: #BFEBBF;">}</span>
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div>
 
@@ -305,18 +305,18 @@ Now, assuming we have such a <code>NullableFunction</code>, we want to compose t
 
 <div class="org-src-container">
 
-<pre class="src src-java">interface NullableFunction&lt;T,U&gt; {
-  // ...
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">interface</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #5F7F5F;">// </span><span style="color: #7F9F7F;">...</span>
 
-  default &lt;R&gt; NullableFunction&lt;T,R&gt; flatMap(NullableFunction&lt;U,R&gt; f) {
-    return t -&gt; {
-      U u = this.apply(t);
-      if(u == null)
-        return null;
-      return f.apply(u);
-    };
-  }
-}
+  <span style="color: #F0DFAF; font-weight: bold;">default</span> &lt;R&gt; <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">R</span><span style="color: #BFEBBF;">&gt;</span> flatMap<span style="color: #BFEBBF;">(</span>NullableFunction&lt;<span style="color: #7CB8BB;">U</span>,R&gt; f<span style="color: #BFEBBF;">)</span> <span style="color: #BFEBBF;">{</span>
+    <span style="color: #F0DFAF; font-weight: bold;">return</span> t -&gt; <span style="color: #D0BF8F;">{</span>
+      <span style="color: #7CB8BB;">U</span> <span style="color: #DFAF8F;">u</span> = <span style="color: #F0DFAF; font-weight: bold;">this</span>.apply<span style="color: #93E0E3;">(</span>t<span style="color: #93E0E3;">)</span>;
+      <span style="color: #F0DFAF; font-weight: bold;">if</span><span style="color: #93E0E3;">(</span>u == <span style="color: #BFEBBF;">null</span><span style="color: #93E0E3;">)</span>
+        <span style="color: #F0DFAF; font-weight: bold;">return</span> <span style="color: #BFEBBF;">null</span>;
+      <span style="color: #F0DFAF; font-weight: bold;">return</span> f.apply<span style="color: #93E0E3;">(</span>u<span style="color: #93E0E3;">)</span>;
+    <span style="color: #D0BF8F;">}</span>;
+  <span style="color: #BFEBBF;">}</span>
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div>
 
@@ -326,23 +326,23 @@ Since we introduced a <code>null</code>-based <code>flatMap</code> before, this 
 
 <div class="org-src-container">
 
-<pre class="src src-java">interface NullableFunction&lt;T,U&gt; {
-  // ...
-  default NullableFunction&lt;T,U&gt; filterArgument(Predicate&lt;T&gt; p) {
-    return t -&gt; {
-      return p.test(t) ? this.apply(t) : null;
-    };
-  }
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">interface</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #5F7F5F;">// </span><span style="color: #7F9F7F;">...</span>
+  <span style="color: #F0DFAF; font-weight: bold;">default</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #BFEBBF;">&gt;</span> filterArgument<span style="color: #BFEBBF;">(</span><span style="color: #7CB8BB;">Predicate</span><span style="color: #D0BF8F;">&lt;</span><span style="color: #7CB8BB;">T</span><span style="color: #D0BF8F;">&gt;</span> <span style="color: #DFAF8F;">p</span><span style="color: #BFEBBF;">)</span> <span style="color: #BFEBBF;">{</span>
+    <span style="color: #F0DFAF; font-weight: bold;">return</span> t -&gt; <span style="color: #D0BF8F;">{</span>
+      <span style="color: #F0DFAF; font-weight: bold;">return</span> p.test<span style="color: #93E0E3;">(</span>t<span style="color: #93E0E3;">)</span> ? <span style="color: #F0DFAF; font-weight: bold;">this</span>.apply<span style="color: #93E0E3;">(</span>t<span style="color: #93E0E3;">)</span> : <span style="color: #BFEBBF;">null</span>;
+    <span style="color: #D0BF8F;">}</span>;
+  <span style="color: #BFEBBF;">}</span>
 
-  default NullableFunction&lt;T,U&gt; filterResult(Predicate&lt;U&gt; p) {
-    return t -&gt; {
-      U u = this.apply(t);
-      if(u == null || !p.test(u))
-        return null;
-      return u;
-    };
-  }
-}
+  <span style="color: #F0DFAF; font-weight: bold;">default</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #BFEBBF;">&gt;</span> filterResult<span style="color: #BFEBBF;">(</span><span style="color: #7CB8BB;">Predicate</span><span style="color: #D0BF8F;">&lt;</span><span style="color: #7CB8BB;">U</span><span style="color: #D0BF8F;">&gt;</span> <span style="color: #DFAF8F;">p</span><span style="color: #BFEBBF;">)</span> <span style="color: #BFEBBF;">{</span>
+    <span style="color: #F0DFAF; font-weight: bold;">return</span> t -&gt; <span style="color: #D0BF8F;">{</span>
+      <span style="color: #7CB8BB;">U</span> <span style="color: #DFAF8F;">u</span> = <span style="color: #F0DFAF; font-weight: bold;">this</span>.apply<span style="color: #93E0E3;">(</span>t<span style="color: #93E0E3;">)</span>;
+      <span style="color: #F0DFAF; font-weight: bold;">if</span><span style="color: #93E0E3;">(</span>u == <span style="color: #BFEBBF;">null</span> || <span style="color: #F0DFAF; font-weight: bold;">!</span>p.test<span style="color: #9FC59F;">(</span>u<span style="color: #9FC59F;">)</span><span style="color: #93E0E3;">)</span>
+        <span style="color: #F0DFAF; font-weight: bold;">return</span> <span style="color: #BFEBBF;">null</span>;
+      <span style="color: #F0DFAF; font-weight: bold;">return</span> u;
+    <span style="color: #D0BF8F;">}</span>;
+  <span style="color: #BFEBBF;">}</span>
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div>
 
@@ -352,17 +352,17 @@ The function <code>map</code>, is interesting, because it requires a function th
 
 <div class="org-src-container">
 
-<pre class="src src-java">interface NullableFunction&lt;T,U&gt; {
-  // ...
-  default NullableFunction&lt;T,R&gt; map(Function&lt;U,R&gt; p) {
-    return t -&gt; {
-      U u = this.apply(t);
-      if(u == null)
-        return null;
-      return p.apply(u);
-    };
-  }
-}
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">interface</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #5F7F5F;">// </span><span style="color: #7F9F7F;">...</span>
+  <span style="color: #F0DFAF; font-weight: bold;">default</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">R</span><span style="color: #BFEBBF;">&gt;</span> map<span style="color: #BFEBBF;">(</span>Function&lt;<span style="color: #7CB8BB;">U</span>,R&gt; p<span style="color: #BFEBBF;">)</span> <span style="color: #BFEBBF;">{</span>
+    <span style="color: #F0DFAF; font-weight: bold;">return</span> t -&gt; <span style="color: #D0BF8F;">{</span>
+      <span style="color: #7CB8BB;">U</span> <span style="color: #DFAF8F;">u</span> = <span style="color: #F0DFAF; font-weight: bold;">this</span>.apply<span style="color: #93E0E3;">(</span>t<span style="color: #93E0E3;">)</span>;
+      <span style="color: #F0DFAF; font-weight: bold;">if</span><span style="color: #93E0E3;">(</span>u == <span style="color: #BFEBBF;">null</span><span style="color: #93E0E3;">)</span>
+        <span style="color: #F0DFAF; font-weight: bold;">return</span> <span style="color: #BFEBBF;">null</span>;
+      <span style="color: #F0DFAF; font-weight: bold;">return</span> p.apply<span style="color: #93E0E3;">(</span>u<span style="color: #93E0E3;">)</span>;
+    <span style="color: #D0BF8F;">}</span>;
+  <span style="color: #BFEBBF;">}</span>
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div>
 
@@ -372,34 +372,34 @@ The <code>orElse</code> family of functions can be defined, too:
 
 <div class="org-src-container">
 
-<pre class="src src-java">interface NullableFunction&lt;T,U&gt; {
-  // ...
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">interface</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #5F7F5F;">// </span><span style="color: #7F9F7F;">...</span>
 
-  default NullableFunction&lt;T,U&gt; orElse(U fallback) {
-    return t -&gt; {
-      U u = this.apply(t);
-      return u == null ? fallback : u;
-    };
-  }
+  <span style="color: #F0DFAF; font-weight: bold;">default</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #BFEBBF;">&gt;</span> orElse<span style="color: #BFEBBF;">(</span><span style="color: #7CB8BB;">U</span> <span style="color: #DFAF8F;">fallback</span><span style="color: #BFEBBF;">)</span> <span style="color: #BFEBBF;">{</span>
+    <span style="color: #F0DFAF; font-weight: bold;">return</span> t -&gt; <span style="color: #D0BF8F;">{</span>
+      <span style="color: #7CB8BB;">U</span> <span style="color: #DFAF8F;">u</span> = <span style="color: #F0DFAF; font-weight: bold;">this</span>.apply<span style="color: #93E0E3;">(</span>t<span style="color: #93E0E3;">)</span>;
+      <span style="color: #F0DFAF; font-weight: bold;">return</span> u == <span style="color: #BFEBBF;">null</span> ? fallback : u;
+    <span style="color: #D0BF8F;">}</span>;
+  <span style="color: #BFEBBF;">}</span>
 
-  default NullableFunction&lt;T,U&gt; orElseGet(Supplier&lt;U&gt; fallback) {
-    return t -&gt; {
-      U u = this.apply(t);
-      return u == null ? fallback.get() : u;
-    };
-  }
+  <span style="color: #F0DFAF; font-weight: bold;">default</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #BFEBBF;">&gt;</span> orElseGet<span style="color: #BFEBBF;">(</span><span style="color: #7CB8BB;">Supplier</span><span style="color: #D0BF8F;">&lt;</span><span style="color: #7CB8BB;">U</span><span style="color: #D0BF8F;">&gt;</span> <span style="color: #DFAF8F;">fallback</span><span style="color: #BFEBBF;">)</span> <span style="color: #BFEBBF;">{</span>
+    <span style="color: #F0DFAF; font-weight: bold;">return</span> t -&gt; <span style="color: #D0BF8F;">{</span>
+      <span style="color: #7CB8BB;">U</span> <span style="color: #DFAF8F;">u</span> = <span style="color: #F0DFAF; font-weight: bold;">this</span>.apply<span style="color: #93E0E3;">(</span>t<span style="color: #93E0E3;">)</span>;
+      <span style="color: #F0DFAF; font-weight: bold;">return</span> u == <span style="color: #BFEBBF;">null</span> ? fallback.get<span style="color: #93E0E3;">()</span> : u;
+    <span style="color: #D0BF8F;">}</span>;
+  <span style="color: #BFEBBF;">}</span>
 
-  // I am deliberately ignoring the fact that lambdas cannot 
-  // throw in Java.
-  default NullableFunction&lt;T,U&gt; orElseThrow(Supplier&lt;U&gt; thrower) {
-    return t -&gt; {
-      U u = this.apply(t);
-      if(u == null)
-        throw thrower.get();
-      return u;
-    };
-  }
-}
+  <span style="color: #5F7F5F;">// </span><span style="color: #7F9F7F;">I am deliberately ignoring the fact that lambdas cannot </span>
+  <span style="color: #5F7F5F;">// </span><span style="color: #7F9F7F;">throw in Java.</span>
+  <span style="color: #F0DFAF; font-weight: bold;">default</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #BFEBBF;">&gt;</span> orElseThrow<span style="color: #BFEBBF;">(</span><span style="color: #7CB8BB;">Supplier</span><span style="color: #D0BF8F;">&lt;</span><span style="color: #7CB8BB;">U</span><span style="color: #D0BF8F;">&gt;</span> <span style="color: #DFAF8F;">thrower</span><span style="color: #BFEBBF;">)</span> <span style="color: #BFEBBF;">{</span>
+    <span style="color: #F0DFAF; font-weight: bold;">return</span> t -&gt; <span style="color: #D0BF8F;">{</span>
+      <span style="color: #7CB8BB;">U</span> <span style="color: #DFAF8F;">u</span> = <span style="color: #F0DFAF; font-weight: bold;">this</span>.apply<span style="color: #93E0E3;">(</span>t<span style="color: #93E0E3;">)</span>;
+      <span style="color: #F0DFAF; font-weight: bold;">if</span><span style="color: #93E0E3;">(</span>u == <span style="color: #BFEBBF;">null</span><span style="color: #93E0E3;">)</span>
+        <span style="color: #F0DFAF; font-weight: bold;">throw</span> thrower.get<span style="color: #93E0E3;">()</span>;
+      <span style="color: #F0DFAF; font-weight: bold;">return</span> u;
+    <span style="color: #D0BF8F;">}</span>;
+  <span style="color: #BFEBBF;">}</span>
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div>
 
@@ -409,18 +409,18 @@ The function <code>ifPresent</code> can be defined. In <code>Optional</code>, it
 
 <div class="org-src-container">
 
-<pre class="src src-java">interface NullableFunction&lt;T,U&gt; {
-  // ...
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">interface</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #5F7F5F;">// </span><span style="color: #7F9F7F;">...</span>
 
-  default NullableFunction&lt;T,U&gt; ifPresent(Consumer&lt;U&gt; presenter) {
-    return t -&gt; {
-      U u = this.apply(t);
-      if(u != null)
-        presenter.accept(u);
-      return u;
-    };
-  }
-}
+  <span style="color: #F0DFAF; font-weight: bold;">default</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #BFEBBF;">&gt;</span> ifPresent<span style="color: #BFEBBF;">(</span><span style="color: #7CB8BB;">Consumer</span><span style="color: #D0BF8F;">&lt;</span><span style="color: #7CB8BB;">U</span><span style="color: #D0BF8F;">&gt;</span> <span style="color: #DFAF8F;">presenter</span><span style="color: #BFEBBF;">)</span> <span style="color: #BFEBBF;">{</span>
+    <span style="color: #F0DFAF; font-weight: bold;">return</span> t -&gt; <span style="color: #D0BF8F;">{</span>
+      <span style="color: #7CB8BB;">U</span> <span style="color: #DFAF8F;">u</span> = <span style="color: #F0DFAF; font-weight: bold;">this</span>.apply<span style="color: #93E0E3;">(</span>t<span style="color: #93E0E3;">)</span>;
+      <span style="color: #F0DFAF; font-weight: bold;">if</span><span style="color: #93E0E3;">(</span>u != <span style="color: #BFEBBF;">null</span><span style="color: #93E0E3;">)</span>
+        presenter.accept<span style="color: #93E0E3;">(</span>u<span style="color: #93E0E3;">)</span>;
+      <span style="color: #F0DFAF; font-weight: bold;">return</span> u;
+    <span style="color: #D0BF8F;">}</span>;
+  <span style="color: #BFEBBF;">}</span>
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div>
 
@@ -430,15 +430,15 @@ There are some functions that cannot be transferred from <code>Optional: =get</c
 
 <div class="org-src-container">
 
-<pre class="src src-java">interface NullableFunction&lt;T,U&gt; {
-  // ...
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">interface</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #5F7F5F;">// </span><span style="color: #7F9F7F;">...</span>
 
-  static NullableFunction&lt;T,U&gt; constant(U u) {
-    return ignoreThisArgument -&gt; {
-      return u;
-    };
-  }
-}
+  <span style="color: #F0DFAF; font-weight: bold;">static</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #BFEBBF;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #BFEBBF;">&gt;</span> <span style="color: #93E0E3;">constant</span><span style="color: #BFEBBF;">(</span><span style="color: #7CB8BB;">U</span> <span style="color: #DFAF8F;">u</span><span style="color: #BFEBBF;">)</span> <span style="color: #BFEBBF;">{</span>
+    <span style="color: #F0DFAF; font-weight: bold;">return</span> ignoreThisArgument -&gt; <span style="color: #D0BF8F;">{</span>
+      <span style="color: #F0DFAF; font-weight: bold;">return</span> u;
+    <span style="color: #D0BF8F;">}</span>;
+  <span style="color: #BFEBBF;">}</span>
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div>
 
@@ -448,12 +448,12 @@ With this new machinery, let's rewrite the initial example again:
 
 <div class="org-src-container">
 
-<pre class="src src-java">NullableFunction.of(Apartment::getTenant)
-                .filterResult(Person::isMale)
-                .flatMap(Person::getSpouse)
-                .map(Person::getName)
-                .ifPresent(System.out::println)
-                .apply(a);
+<pre class="src src-java">NullableFunction.of<span style="color: #DCDCCC;">(</span>Apartment::getTenant<span style="color: #DCDCCC;">)</span>
+                .filterResult<span style="color: #DCDCCC;">(</span>Person::isMale<span style="color: #DCDCCC;">)</span>
+                .flatMap<span style="color: #DCDCCC;">(</span>Person::getSpouse<span style="color: #DCDCCC;">)</span>
+                .map<span style="color: #DCDCCC;">(</span>Person::getName<span style="color: #DCDCCC;">)</span>
+                .ifPresent<span style="color: #DCDCCC;">(</span>System.out::println<span style="color: #DCDCCC;">)</span>
+                .apply<span style="color: #DCDCCC;">(</span>a<span style="color: #DCDCCC;">)</span>;
 </pre>
 </div>
 
@@ -463,13 +463,13 @@ This looks as clean as the <code>Optional</code> solution, but doesn't extend to
 
 <div class="org-src-container">
 
-<pre class="src src-java">interface NullableFunction&lt;T,U&gt; {
-  // ...
+<pre class="src src-java"><span style="color: #F0DFAF; font-weight: bold;">interface</span> <span style="color: #7CB8BB;">NullableFunction</span><span style="color: #DCDCCC;">&lt;</span><span style="color: #7CB8BB;">T</span>,<span style="color: #7CB8BB;">U</span><span style="color: #DCDCCC;">&gt;</span> <span style="color: #DCDCCC;">{</span>
+  <span style="color: #5F7F5F;">// </span><span style="color: #7F9F7F;">...</span>
 
-  default U applyNullable(T t) {
-    return t != null ? this.apply(t) : null;
-  }
-}
+  <span style="color: #F0DFAF; font-weight: bold;">default</span> U applyNullable<span style="color: #BFEBBF;">(</span><span style="color: #7CB8BB;">T</span> <span style="color: #DFAF8F;">t</span><span style="color: #BFEBBF;">)</span> <span style="color: #BFEBBF;">{</span>
+    <span style="color: #F0DFAF; font-weight: bold;">return</span> t != <span style="color: #BFEBBF;">null</span> ? <span style="color: #F0DFAF; font-weight: bold;">this</span>.apply<span style="color: #D0BF8F;">(</span>t<span style="color: #D0BF8F;">)</span> : <span style="color: #BFEBBF;">null</span>;
+  <span style="color: #BFEBBF;">}</span>
+<span style="color: #DCDCCC;">}</span>
 </pre>
 </div>
 
@@ -479,12 +479,12 @@ So the chain becomes:
 
 <div class="org-src-container">
 
-<pre class="src src-java">NullableFunction.of(Apartment::getTenant)
-                .filterResult(Person::isMale)
-                .flatMap(Person::getSpouse)
-                .map(Person::getName)
-                .ifPresent(System.out::println)
-                .applyNullable(a);
+<pre class="src src-java">NullableFunction.of<span style="color: #DCDCCC;">(</span>Apartment::getTenant<span style="color: #DCDCCC;">)</span>
+                .filterResult<span style="color: #DCDCCC;">(</span>Person::isMale<span style="color: #DCDCCC;">)</span>
+                .flatMap<span style="color: #DCDCCC;">(</span>Person::getSpouse<span style="color: #DCDCCC;">)</span>
+                .map<span style="color: #DCDCCC;">(</span>Person::getName<span style="color: #DCDCCC;">)</span>
+                .ifPresent<span style="color: #DCDCCC;">(</span>System.out::println<span style="color: #DCDCCC;">)</span>
+                .applyNullable<span style="color: #DCDCCC;">(</span>a<span style="color: #DCDCCC;">)</span>;
 </pre>
 </div>
 

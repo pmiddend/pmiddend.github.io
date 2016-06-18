@@ -33,37 +33,37 @@ Being bleeding edge (<code>~amd64</code> in Gentoo) means frequently updating yo
 
 <div class="org-src-container">
 
-<pre class="src src-sh">#!/bin/bash
+<pre class="src src-sh"><span style="color: #5F7F5F;">#</span><span style="color: #7F9F7F;">!/bin/</span><span style="color: #F0DFAF; font-weight: bold;">bash</span>
 
-# safe bash ftw!
-set -e
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">safe bash ftw!</span>
+<span style="color: #DCDCCC; font-weight: bold;">set</span> -e
 
-# Find the newest file called .config
-# (yes, using ls here is pretty ugly)
-latest_config="$(ls -t1 $(find . -name .config -type f) | head -n 1)"
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Find the newest file called .config</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">(yes, using ls here is pretty ugly)</span>
+<span style="color: #DFAF8F;">latest_config</span>=<span style="color: #CC9393;">"$(</span><span style="color: #CC9393;">ls</span><span style="color: #CC9393;"> -t1 $(</span><span style="color: #CC9393;">find</span><span style="color: #CC9393;"> . -name .config -type f) | head -n 1)"</span>
 
-# copy the newest config to /usr/src/linux
-cp $latest_config linux/
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">copy the newest config to /usr/src/linux</span>
+cp $<span style="color: #DFAF8F;">latest_config</span> linux/
 
-# switch to latest kernel
-cd linux;
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">switch to latest kernel</span>
+<span style="color: #DCDCCC; font-weight: bold;">cd</span> linux;
 
-# call oldconfig, get asked a million unnecessary questions about stuff
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">call oldconfig, get asked a million unnecessary questions about stuff</span>
 make oldconfig;
 
-# adjust parallelism for moar speed!
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">adjust parallelism for moar speed!</span>
 make -j9;
 make modules_install;
 
-# mount boot partition on demand
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">mount boot partition on demand</span>
 mount /dev/sda1 /mnt/boot;
 
-# safety first! save previous kernel...
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">safety first! save previous kernel...</span>
 cp /mnt/boot/EFI/gentoo.efi /mnt/boot/EFI/gentoo-safe.efi
 cp arch/x86/boot/bzImage /mnt/boot/EFI/gentoo.efi
 
-# You can omit this if you have no nvidia card or use nouveau.
-# Omitting it otherwise causes errors on the next reboot.
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">You can omit this if you have no nvidia card or use nouveau.</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Omitting it otherwise causes errors on the next reboot.</span>
 emerge -1 nvidia-drivers
 </pre>
 </div>

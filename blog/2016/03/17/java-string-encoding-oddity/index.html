@@ -37,11 +37,11 @@ So in one application, we're reading raw bytes from a file. We receive a <code>b
 
 <div class="org-src-container">
 
-<pre class="src src-java">byte[] bytes;
-int offset;
-int length;
+<pre class="src src-java"><span style="color: #7CB8BB;">byte</span><span style="color: #DCDCCC;">[]</span> <span style="color: #DFAF8F;">bytes</span>;
+<span style="color: #7CB8BB;">int</span> <span style="color: #DFAF8F;">offset</span>;
+<span style="color: #7CB8BB;">int</span> <span style="color: #DFAF8F;">length</span>;
 
-String s = new String(bytes,offset,length,StandardCharsets.UTF_8);
+<span style="color: #7CB8BB;">String</span> <span style="color: #DFAF8F;">s</span> = <span style="color: #F0DFAF; font-weight: bold;">new</span> <span style="color: #7CB8BB;">String</span><span style="color: #DCDCCC;">(</span>bytes,offset,length,<span style="color: #BFEBBF;">StandardCharsets</span>.UTF_8<span style="color: #DCDCCC;">)</span>;
 </pre>
 </div>
 
@@ -51,7 +51,7 @@ This indeed does the trick, and would not be worth a blog post, but what my coll
 
 <div class="org-src-container">
 
-<pre class="src src-java">String s = new String(bytes,offset,length);
+<pre class="src src-java"><span style="color: #7CB8BB;">String</span> <span style="color: #DFAF8F;">s</span> = <span style="color: #F0DFAF; font-weight: bold;">new</span> <span style="color: #7CB8BB;">String</span><span style="color: #DCDCCC;">(</span>bytes,offset,length<span style="color: #DCDCCC;">)</span>;
 </pre>
 </div>
 
