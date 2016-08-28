@@ -1,0 +1,14 @@
+digraph {
+	// rankdir=LR;
+	node [shape=doublecircle] "🚽";
+	// node [shape=point] qi;
+	node [shape=circle];
+	// "qi" -> "❓";
+	"❓" -> "💥" [ label=<fail/<i>wait</i>> ];
+	"💥" -> "❓" [ label=<retry/<i>retry</i>> ];
+	"❓" -> "😄" [ label=<success> ];
+	"😄" -> "😄" [ label=<delay/<i>store</i><br />flush/<i>flush</i>> ];
+	"😄" -> "❓" [ label=<expired/<i>retry</i>> ];
+	"😄" -> "💩" [ label=<terminate/<i>delete</i>> ];
+	"💩" -> "🚽" [ label=<🚽success,🚽fail> ];
+}

@@ -1,0 +1,92 @@
+#+TITLE:       Designing State Machines in Java
+#+AUTHOR:      Philipp Middendorf
+#+EMAIL:       pmidden@secure.mailbox.org
+#+DATE:        2016-08-27 Sat
+#+URI:         /blog/%y/%m/%d/encoding-state-machines-in-java
+#+KEYWORDS:    java, state
+#+TAGS:        java, state
+#+LANGUAGE:    en
+#+OPTIONS:     H:3 num:nil toc:nil \n:nil ::t |:t ^:nil -:nil f:t *:t <:t
+#+DESCRIPTION: A simple introduction to state machines and how to implement them in Java
+* Designing State Machines in Java
+
+State machines are everywhere! Even if the term is new to you, I'm sure you encounter state machines every day in your programming and everyday life. This article will try to explain how state machines manifest themselves and how to explicitly model them in Java.
+
+** Running example: A subscription service
+
+Simple, easy to describe examples are generally a great idea. To drive home some of the points of state machines, however, an example that's too simplistic will make you doubt what the fuss is all about. Because of that, my running example is a little more complicated. It was, however, the reason this post exists in the first place, though.
+
+I work at a company that processes real-time traffic data. In a typical use-case, you have a Bus Company "ÜBERBUS" and Train Company "Blitztrain". The train passengers of Blitztrain have to opportunity to switch to busses of ÜBERBUS, given the arrivals of the trains and departures of busses match. However, trouble arises when busses are late (or the trains are early, but that never happens in Germany). In order to inform the train passengers that they might have to wait for the next bus after they arrive at the station, they exchange information about their delays - using the so-called "VDV 453" standard.
+
+This standard defines a time-restricted subscription-based exchange protocol. Let's say the Blitztrains want to be informed about the Überbusse. So in VDV453, the train company sends one or more subscriptions to the bus company, telling them "For the next 24 hours, inform us about the delays of your busses, please.". If the subscription is valid, the bus company accepts the subscription and then begins to send delay data, until the subscription expires or the other side deletes the subscription manually.
+
+#+CAPTION: The VDV subscription model
+[[./vdvsubscription.png]]
+
+** From concrete to abstract to concrete
+What we are going to model is a /single subscription/ on the /receiving/ end (e.g. Blitzzug). A subscription's life time begins with a subscription request, which, after some time, is hopefully followed by a reply. After that, we receive and buffer all the delay data until somebody consumes it (presumably to display it on the trains' displays). 
+
+However, the subscription request might *fail*. Maybe ÜBERBUS' system is currently down for maintenance. In this case, we wait a few seconds and then retry the subscription.
+
+Also, after the subscription's lifetime, we have to *renew* the subscription, otherwise the data stream just dries up.
+
+When our program is terminated, we send a request to *delete* our subscription, wait for the reply and then gracefully shut down. This way, ÜBERBUS doesn't send delays into nirvana until the subscription expires.
+
+In the begining I told you that there's a state machine in there. When you read the definition of a state machine that follows, try to identify the components form our example.
+
+A state machine[fn:transducer] consists of the following parts:
+
+[fn:transducer] Technically, I'm describing a "transducer" here. And yeah, some people call it "output function" instead of a set of actions. I find this more instructive.
+
+  - A set S of *states*
+  - Exactly one *start state* s₀
+  - Zero or more *final states* F
+  - An *input alphabet* Σ
+  - A *transition function* δ from one state to the next.
+  - A set of *actions* Γ attached to a transition.
+    
+Now, there is more than one way to fit our example into this model. So the following is just a suggestion. Please don't be mad about the emoji. The program I use for creating the graph image below has serious trouble with long state names, so I had to improvise. While reading following info, peek at the image below.
+
+Let's have one state ❓ for "Subscription request sent, no answer received yet". After that, we have a state 💥 for "Subscription request failed, waiting for next request attempt". Parallel to that, there's a state 😄: "Subscription succeded, buffering delays". For graceful shutdown, we have a state 💩 for "subscription deletion request sent, waiting for reply". When the reply to that request arrives, we can go to a state 🚽. Our set of states is S = {❓,💥,😄,💩,🚽}.
+
+The start state s₀ is clearly ❓. The set F of final states just consists of 🚽.
+
+The input alphabet Σ consists of all the "external events" that might occur. We have:
+
+  - "subscription request succeeded": =success=
+  - "subscription request failed", =fail=
+  - "subscription retry timer expired", =retry=
+  - "delay received": =delay=
+  - "delays requested": =flush=
+  - "subscription expired": =expired=
+  - "termination requested": =terminate=
+  - "deletion succeeded": 🚽success
+  - "deletion failed": 🚽fail
+
+And the set of actions Γ is as follows:
+
+ - =wait= is instructing the scheduler to wait for a minute or so to retry the subscription
+ - =retry= sends the subscription request again
+ - =store= stores the received delay in the according buffer
+ - =flush= empties the delay buffer
+ - =delete= sends a subscription deletion request
+
+Note that some actions have the same names as input alphabet elements. This will not cause confusion later, as context will determine which is meant. The transition function and the actions are best explained in the following diagram:
+
+#+CAPTION: Our finished state machine. The edge labels are from the input alphabet, then slash, then an optional action.
+[[./subgraph.png]]
+
+
+** Representing the graph in Java
+
+Now why did we define the state machine using this formal kerfuffle. Why not just write some code‽ Well, the idea is that for this one underlying model, we have more than one implementation coming up. And going /back/ to the model, we can tell if all implementations are equal, and one is just more elegant than the other (in your subjective opinion).
+
+*** The "dumb" way
+
+To illustrate one way of implementing this state machine, we ask ourselves: If we knew nothing about inheritance, OOP, even functional programm and all that modern stuff, how would we do it, "C style", so to speak?
+
+What we have neglected to mention - and what the model doesn't account for - is that each state has...state to store! It's a little confusing because two types of state overlap here.
+
+** Noch zu besprechen
+
+State in Modell unterbringen, irgendwas mit Semiringen machen? "Partial state" aufbauen?

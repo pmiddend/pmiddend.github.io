@@ -1,0 +1,12 @@
+@startuml
+Blitzzug -> ÜBERBUS: Subscription request, 24 hours
+Blitzzug <-- ÜBERBUS: Subscription accepted
+Blitzzug <- ÜBERBUS: Delay bus A
+Blitzzug <- ÜBERBUS: Delay bus B
+Blitzzug <- ÜBERBUS: ... //24 hours pass// ...
+ÜBERBUS <- ÜBERBUS: Delete expired subscription
+Blitzzug -> ÜBERBUS: New subscription request, 24 hours
+Blitzzug <-- ÜBERBUS: New subscription accepted
+Blitzzug <- ÜBERBUS: Delay bus B
+Blitzzug <- ÜBERBUS: ...
+@enduml
