@@ -1,0 +1,79 @@
+#+TITLE:       Why do we have distributions in Linux?
+#+AUTHOR:      Philipp Middendorf
+#+EMAIL:       pmidden@secure.mailbox.org
+#+DATE:        2016-11-26 Sat
+#+URI:         /blog/%y/%m/%d/why-do-we-have-distributions-in-linux?
+#+KEYWORDS:    linux, distributions
+#+TAGS:        linux, distributions
+#+LANGUAGE:    en
+#+OPTIONS:     H:3 num:nil toc:nil \n:nil ::t |:t ^:nil -:nil f:t *:t <:t
+#+DESCRIPTION: <TODO: insert your description here>
+* Who do we have distributions in Linux?
+** Stichpunkte
+
+ - Erklären, was Distributionen sind und welche es gibt (skip-bar)
+ - Erklären, wieso man sie braucht
+ - Was Gentoo/NixOS tun
+ - Was Windows tut
+ - Was z.B. Java tut
+ - Was OSX tut
+
+Links: 
+
+ - Generell Erklärung Linking: http://www.yolinux.com/TUTORIALS/LibraryArchives-StaticAndDynamic.html
+
+ - [[http://silmor.de/qtstuff.distallshared.php][Distributing all shared libraries]]
+
+ - [[http://stackoverflow.com/questions/847179/multiple-glibc-libraries-on-a-single-host/851229#851229][linux - Multiple glibc libraries on a single host - Stack Overflow]]
+
+ - Außerdem Problem: der dynamische Linker steht in der ELF mit drin, hartkodiert. Kann man da einen lokalen Pfad eintragen?
+ - Problem beim Binärverteilen: Man kann die libc nicht mit ausliefern. Theorie: Das liegt daran, dass da malloc/free drin ist und das mit dem OS reden muss.
+** What's a distribution?
+
+First of all, what is "distribution"? Wikipedia defines [[https://en.wikipedia.org/wiki/Linux_distribution][Linux distribution]] as such:
+
+#+BEGIN_QUOTE
+A Linux distribution (often abbreviated as distro) is an operating system made from a software collection, which is based upon the Linux kernel and, often, a package management system.
+#+END_QUOTE
+
+Of course, you can replace "Linux" by "FreeBSD" or even "Windows" or "OSX". However, in Linux[fn:unix], distributions serve another important cause: they allow for /binary/ software packages to be distributed easily. Explaining why that is will be the goal in this article.
+
+[fn:unix] or UNIX-like systems in general, I will simply use Linux in this article.
+
+** Package managers
+In Windows, when you want to install a piece of software, you typically download an installer (think =setup.exe=, or =install.msi= or something), then run that, click "Next" a couple of times, not read the EULA, and voila, the software is installed. Similarly for OSX.
+
+On Linux, this is possible, too. Many closed source software packages make you download and run an installer file (often a BASH script with an installer at the top and binary data at the bottom). 
+
+But most of the software, including the system tools and the kernel, are installed via a /package manager/. If you've used Ubuntu, Mint or Debian, you've probably at least heard of =apt-get install kate=. If you're used to Fedora you might have seen =dnf install kate= or =yum install kate= somewhere. These are package managers.
+** Dynamic libraries
+In the first paragraph, I told you about binary compatibility. To see why that's important, you have to know about /dynamic libraries/ first.
+
+The thing with software is, it's generally built up from smaller components, called /libraries/. For example, every browser, be it Chrome, Firefox or Edge, can decode compressed images - let's say in the JPEG format. This is seriously difficult to do! You can imagine that instead of writing the code for that three times, somebody wrote a /library/ and the three projects use this library instead.
+
+You might be asking yourself, where is this library? Is it inside =firefox.exe=, =chrome.exe= and =edge.exe=? The answer is, it /could/ be.
+
+There are two ways to use libraries: statically and dynamically. Using a library statically /basically/ means you're copying the library code and pasting it into your project. Then after compilation, "from the outside", nobody sees that the library is there.
+
+The other way is dynamically. That means there are two files: =firefox.exe= and =libjpeg.dll= (or just =firefox= and =libjpeg.so= in Linux). Whenever Firefox (e.g. =firefox.exe=) wants to decode an image, it looks for =libjpeg.dll=, opens it, looks for the =decodeJpeg= function, and calls it [fn:simplified].
+
+This has two immediate benefits [fn:licenses]: 
+
+  1. If there's a performance or security problem in =libjpeg.dll=, you can just replace the file with a newer version and leave =firefox.exe= as it is.
+  2. If you have Firefox and Chrome installed, and both use this library, they can use the same =libjpeg.dll= on disk, saving space.
+
+This is another function of package managers. They not only download and install the software you want, but also the libraries needed to run it.
+
+[fn:simplified] Of course, this is very much simplified. 
+
+[fn:licenses] There are also license issues with static linking, which I'll not discuss here.
+** Binary compatibility
+It seems that dynamic libraries have clear advantages, which is why at least on Linux, they're /everywhere/. If you're currently on a Linux machine, look inside the =/usr/lib= or =/usr/lib64/= directory. On my machine, there are about 3.000 dynamic libraries installed.
+
+So usually, the Linux world is simple: the package manager magic takes care of dependencies, you just type in some commands and the software with all its dependencies will be installed.
+
+But what about packages that are /not/ in the package manager? Say you're working at a company, developing a piece of closed-source software that you want to deploy to customer's Linux machines. And you're fond of dynamic libraries (maybe to issue smaller patches in case there's a security hole in one of your libraries), so you don't want to link statically.
+
+Easy, you just distribute all the necessary dynamic libraries with your executable file. The package will be large, of course, but it'll work. Sadly, this is not a foolproof solution, and here's why...
+** glibc
+There's actually one dynamic library that you cannot binary distribute: glibc. This library 
