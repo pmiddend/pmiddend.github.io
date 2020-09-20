@@ -1,0 +1,292 @@
+---
+title: "GnuCash für das persönliche Haushaltsbuch"
+date: 2020-09-15T14:27:10+02:00
+draft: true
+---
+* Einleitung
+
+Um einen Überblick über meine Finanzen zu erhalten, führe ich seit ein paar Monaten ein sogenanntes *Haushaltsbuch*. [[https://de.wikipedia.org/wiki/Haushaltsbuch][Wikipedia]] beschreibt den Aufbau und Zweck ganz gut:
+
+#+begin_quote
+Ein Haushaltsbuch wird in der Regel von Privatpersonen geführt. Es stellt dabei alle Einnahmen den Ausgabenposten gegenüber. Alle Einnahmen und Ausgaben sollten dabei übersichtlich und nach Monaten und eventuell nach Kategorien (wie z. B. Ausgaben für Lebensmittel, Haushaltsartikel, Auto oder öffentliche Verkehrsmittel – je nach Bedarf) geordnet sein, um eine klare Budgetierung zu ermöglichen.
+#+end_quote
+
+* Ziele
+
+Mir waren vier Ziele bei meinem Haushaltsbuch wichtig:
+
+1) Die Buchungsdaten sollen direkt von der Bank kommen. Heißt, ich will keine Daten und Beträge direkt in ein Programm eingeben, sondern lediglich importieren und eventuell etwas nachbearbeiten. Dies soll möglichst reibungslos passieren, sodass ich regelmäßig nur geringen Aufwand in das Haushaltsbuch stecken muss.
+2) Ich möchte pro Monat wissen, wie viel Geld ich eingespart habe.
+   #+CAPTION: Nanu, was war denn da im September los? Ich habe mehr ausgegeben als ich durchs Gehalt bekommen habe?
+   [[/ertrag-aufwand.png]]
+3) Außerdem sollten meine Ausgaben in von mir definierte Kategorien einsortiert werden und es soll Auswertungen geben, in welchem Monat welche Kategorie (oder Oberkategorie) wie viel Geldfluss hatte.
+   #+CAPTION: Ah ja, der Urlaub hat die Bilanz versaut.
+   [[/aufwendungen.png]]
+4) Ich besitze drei Konten bei zwei unterschiedlichen Banken. Mithilfe des Onlinebankings ist es also nicht möglich, mir einen Überblick über mein Vermögen zu schaffen. Das Haushaltsbuch sollte alle Konten abbilden und zusammenfassen können.
+
+* GnuCash als Lösung
+
+Als Lösung für mein Haushaltsbuch habe ich mich für das Programm [[https://www.gnucash.org/][GnuCash]] entschieden. GnuCash ist ein Open-Source-Projekt und eine normale Desktopanwendung, der Quellcode ist also für jeden einsehbar und jeder kann das Programm selber aus dem Quellcode bauen. Das hat folgende Konsequenzen:
+
+- Es gibt keine Firma hinter GnuCash, die eventuell insolvent oder gekauft wird und das Programm nicht weiterentwickelt. Wenn so etwas passiert, kann man nur hoffen, dass man seine Daten in einem guten Austauschformat exportieren und in ein neues Tool importieren kann. Umgekehrt ist die Weiterentwicklung von GnuCash nur von der Community getrieben. Das Projekt kann also auch „sterben“, wenn niemand mehr daran arbeitet. Es werden außerdem salopp gesagt nur Features entwickelt und Bugs gefixt, auf die „jemand Lust hat“. Wenn ich mir Open-Source-Software anschaue, gucke ich daher auf die Häufigkeit von neuen Releases und die Aktivität der Mailingliste. Bei der GnuCash-Community verbleibt bei mir ein sehr positiver Eindruck.
+- Es gibt (theoretisch) keine Datenlecks oder Hintertüren in der Software. Da sie auf dem Desktop läuft, werden per se keine Daten an irgendwelche Server geschickt (was mit entsprechenden Werkzeugen auch leicht nachzuprüfen ist) und da der Code öffentlich begutachtet wird, haben es Bösewichte außerdem schwer, Hintertüren einzuschleusen. Das ist mir persönlich bei einer Finanzsoftware schon wichtig. Man ist im Umkehrschluss selber für seine Daten (in Form von Dateien, die GnuCash schreibt) verantwortlich. Wer auf Nummer sicher gehen will, kann diese verschlüsselt speichern oder, ganz paranoid, auf einem USB-Stick ablegen.
+- Falls man selber über Programmierkenntnisse verfügt, kann man GnuCash verändern und verbessern. Dies ist in der Praxis meist relativ schwer, da man sich zuerst mit den verwendeten Bibliotheken und dem Kompilierprozess auseinandersetzen muss, ist aber bei GnuCash keine unüberwindbare Hürde.
+- Das Dateiformat, in das GnuCash schreibt, ist offen und dokumentiert. Es hat also Bestand, und man muss nicht fürchten, seine Daten irgendwann nicht mehr lesen zu können.
+
+* Vorbereitung: Doppelte Buchführung
+
+Die Verwaltung von Finanzen in GnuCash erfolgt nach dem Prinzip der [[https://de.wikipedia.org/wiki/Buchf%C3%BChrung#Doppelte_Buchf%C3%BChrung_%E2%80%93_Grundlagen][doppelten Buchführung]]. Es gibt vom Beancount-Autor eine nette [[https://beancount.github.io/docs/the_double_entry_counting_method.html][Einführung]] hierzu, ich werde in diesem Artikel versuchen, die wichtigsten Punkte kurz zusammenzufassen. Es ist unerlässlich, zumindest das Grundprinzip der doppelten Buchführung verstanden zu haben, sonst kommt man früher oder später mit den Konten und Vorzeichen der Beträge in GnuCash durcheinander.
+
+Doppelte Buchführung heißt so, weil jeder Geschäftsvorgang doppelt erfasst wird. Stellt euch einen Geschäftsvorgang als eine Zeile in eurem Kontoauszug vor. Beispiel: Ihr hebt Geld ab, ihr bezahlt beim Supermarkt, oder ihr bekommt euer Gehalt. Euer Kontoauszug sieht dann schematisch so aus:
+
+|     Datum | Buchungstext | Betrag   |
+|-----------+--------------+----------|
+| 15.9.2020 | Geldautomat  | -20,0€   |
+| 16.9.2020 | Gehalt       | +1000,0€ |
+| 17.9.2020 | Supermarkt   | -35,50€  |
+
+Zur doppelten Buchführung — zumindest was GnuCash angeht — fehlt tatsächlich nicht mehr viel, nur das „Gegenkonto“ zu jeder Buchung. Beim Gehalt ist der Begriff leicht nachzuvollziehen. Das Vorzeichen bei =+1000,0€= bezieht sich darauf, dass nach der Buchung /euer/ Konto 1000€ mehr enthält und das /Gegenkonto/ eures Arbeitgebers eben 1000€ weniger. Die Buchung lautet also eigentlich:
+
+|     Datum | Konto                 | Betrag   |
+|-----------+-----------------------+----------|
+| 16.9.2020 | Mitarbeiter/Girokonto | +1000,0€ |
+|           | Firma/Firmenkonto     | -1000,0€ |
+
+Ebenso kann man sich das beim Geldautomaten (Gegenkonto ist hier die Sparkasse) und beim Supermarkt vorstellen. Übrigens, den Begriff Konto müsst ihr nicht konkret als „Girokonto“ mit Kontonummer, Kontoführungsgebühren usw. verstehen. Er meint in der Buchführung eher eine „Kategorie“, in die Beträge gebucht werden können.
+
+Statt hier theoretisch weiterzumachen, starten wir lieber GnuCash und pflegen unsere Daten ein.
+
+* Einrichtung und erste Buchung
+
+GnuCash ist unter allen großen Betriebssystemen verfügbar. Schaut am besten auf die [[https://www.gnucash.org/][Webseite]], um zu erfahren, wo ihr das Programm für euer System herbekommt. Ich benutze aktuell Version 4.1 und ich hoffe, dieser Artikel hat auch auf höheren Versionen Bestand.
+
+Dieser Artikel ist so geschrieben, dass ihr ihn lesen und direkt mit eurer Bank nachvollziehen könnt.
+
+Wenn ihr GnuCash zum ersten Mal startet, werdet ihr vermutlich zuerst vom „Tipp des Tages“ begrüsst. Den könnt ihr schließen. Danach bekommt ihr eine Auswahl angezeigt, in der ihr einfach „Ok “klickt, um eine neue Kontendatei anzulegen. Danach landet ihr im Einrichtungsdialog:
+
+#+CAPTION: Die Einrichtung, erster Schritt.
+[[/gnucash-einrichtung-1.png]]
+
+Der Dialog stellt einen Wizard dar, und wie mit den meisten Wizards ist man gut beraten, erstmal einfach „Weiter“ zu klicken. Ich gehe hier ganz bewusst nicht auf die einzelnen Schritte ein, um dieses Tutorial klein zu halten. Am Ende heisst der Knopf „Anwenden“ statt „Weiter“. Klickt ihr den auch noch, habt ihr ein gutes Ausgangssetup vor euch:
+
+[[/gnucash-einrichtung-2.png]]
+
+Was ihr jetzt seht, ist eure Kontenhierarchie. Alle Überweisungen, Ausgaben, Einnahmen müssen in genau zwei (doppelte Buchführung!) der Konten eingetragen werden, die hier aufgeführt sind. Recht minimalistisch, oder? Klickt euch ruhig durch die einzelnen Konten durch und schaut euch die Hierarchie an. Hier eine kurze Erläuterung zu den obersten Einträgen:
+
+- Aktiva :: Bezeichnet allgemein das euch zur Verfügung stehende Vermögen, also letztlich euer Bargeld, plus das Geld auf allen Konten (theoretisch auch noch Dinge wie Immobilien usw., aber wir konzentrieren uns hier ja auf Geld)
+- Aufwendungen :: Wie der Name sagt sind hier Konten für alle eure Aufwendungen (sprich Ausgaben) aufgeführt. In diesem Unterbaum werdet ihr sicher am meisten rumdoktoren, denn obwohl die vorgegebenen Konten ganz sinnvoll sind, werdet ihr sicher noch eigene Vorstellungen von Kategorien haben.
+- Erträge :: Sind auch fast selbsterklärend. Hier ordnet ihr euer Gehalt ein, sowie Erstattungen (nach der Steuererklärung z.B.) und Geldgeschenke.
+- Fremdkapital :: Hier finden sich Kredite bzw. allgemein Schulden wieder
+- Anfangsbestand :: Ist sicher am schwersten nachzuvollziehen. Was soll dieses Konto? Die Sache ist, ihr könnt euer Haushaltsbuch zu einem beliebigen Zeitpunkt beginnen lassen. Sagen wir, ihr fangt am 01. Juli 2020 an, Buchungen in GnuCash einzutragen. Zu dem Zeitpunkt lautet euer Kontostand 5,000€. Dieser Kontostand ergibt sich natürlich aus hunderten oder tausenden von Abbuchungen und Eingängen seit Beginn eures Kontos, die ihr nicht alle eingeben wollt. Ihr müsst GnuCash also den Anfangskontostand doppeltbuchführungskonform mitteilen — zumindest falls ihr immer euren aktuellen Kontostand im Programm sehen wollt. Dafür gibt es das Konto „Anfangsbestand“.
+
+Unter „Aktiva“ → „Barvermögen“ findet ihr standardmäßig „Girokonto“ und „Sparkonto“. Falls ihr nur ein Konto verwalten wollt und beispielsweise kein Sparkonto besitzt, rechtsklickt auf das Sparkonto und wählt „Konto löschen“. Habt ihr /mehr/ als diese Konten, rechtsklickt auf „Barvermögen“ und wählt „Neues Konto“. Daraufhin öffnet sich ein relativ umfangreicher Dialog:
+
+#+CAPTION: Hilfe!
+[[/gnucash-einrichtung-3.png]]
+
+Die Einstellungen hier sind alle unwichtig, bis auf „Kontobezeichnung“. Tragt hier einfach einen beschreibenden Namen ein und drückt auf „OK“.
+
+Nun zum „Anfangsbestand“. Dies ist das einzige Konto, in das wir explizit etwas eintragen wollen, statt es uns von unserer Bank zu holen und zuzuordnen. Gehen wir wieder von einem Kontostand von 5,000€ am 1. Juli 2020 aus. Wenn ihr diesen Kontostand festhalten wollt, doppelklickt auf „Anfangsbestand“ und es öffnet sich ein neues Fenster mit den Buchungen für dieses Konto:
+
+#+CAPTION: Wieder werden wir mit Minimalismus konfrontiert.
+[[/gnucash-einrichtung-4.png]]
+
+Es ist anfangs leer. Wir fügen eine Buchung hinzu, indem wir die einzige (gelbliche) Zeile ausfüllen:
+
+- Beim *Datum* wähle ich den 1. Juli 2020 aus
+- Die Spalte *Buchen* will mit dem „Gegenkonto“ befüllt werden. Hier wählen wir also z.B. unser Girokonto aus.
+- Schließlich tragen wir unter *Zunahme* unsere 5,000€ ein
+
+Das Ergebnis:
+
+#+CAPTION: Unsere erste Buchung
+[[/gnucash-einrichtung-5.png]]
+
+Auf die gleiche Weise könnt ihr Anfangsbestände für andere Konten buchen. Fügt einfach weitere Zeilen hinzu. Wenn ihr einen Fehler gemacht habt, editiert einfach die Tabelle (Zeilen löschen geht im Rechtsklickmenü unter „Buchung löschen“). Über der Tabelle findet sich eine Leiste mit Reitern. Seid ihr fertig mit Eintragen, schließt den Reiter „Anfangsbestand“ wieder. Das Interface hat sich verändert. Unter *Summe* des Anfangsbestands findet sich nun 5,000€ und ebenso unter Girokonto. Außerdem habt ihr unterhalb der Konten nun ein Eigenkapital von 5,000€.
+
+#+CAPTION: Der Grundzustand
+[[/gnucash-einrichtung-6.png]]
+
+Die Einrichtung ist vollständig und wir können jetzt Buchungen unserer Bank importieren.
+
+* Einschub: Hilfe, GnuCash hängt
+
+Wenn man GnuCash noch nie gestartet hat und man grade fleißig am Eintragen ist, kann es sein, dass es nicht mehr reagiert und eingefroren wirkt. Mir ist das Programm noch nicht abgestürzt, allerdings gibt es einen Dialog, der nach einer bestimmten Zeit aufpoppt und einen daran erinnert, dass GnuCash automatisch /Backups/ machen kann. Wieso einem dieser Dialog aus heiterem Himmel präsentiert wird und nicht direkt beim Start ist mir schleierhaft und wird sich hoffentlich in einer weiteren Version ändern. Bis dahin: Ruhe bewahren, im Hintergrund aufpoppenden Dialog wiederfinden und sich für eine Backuplösung entscheiden.
+
+* Importieren von Banktransaktionen
+
+Ihr könntet jetzt eure alten Kontoauszüge rauskramen oder euer Onlinebanking öffnen und eure Buchungen von Hand eintippern. Allerdings ist das vor allem eins: fehleranfällig. Nach der hundersten Transaktion verippt ihr euch sicher mal, und der Kontostand in GnuCash weicht von eurem echten Kontostand ab. Außerdem ist es vergleichsweise langsam.
+
+Es gibt zwei Alternativen hierzu: einerseits bieten einige Banken eine Anbindung an GnuCash mit dem sogenannten [[https://de.wikipedia.org/wiki/Homebanking_Computer_Interface][Homebanking Computer Interface (HBCI)]]. Diese Möglichkeit habe ich bisher noch nicht erforscht.
+
+Die andere Möglichkeit ist, Onlinebanking zu verwenden und dann die Export-Funktionen eurer Bank auszunutzen. Dazu müsst ihr typischerweise eure Kontoumsätze auflisten lassen (schränkt hier den Zeitraum am besten erst mal auf einen Monat ein) und dann einen „Export“-Knopf drücken. Bei meiner Sparkasse werde ich dann wie folgt nach einem Exportformat gefragt:
+
+#+CAPTION: Einige Sparkassen bieten auch nur zwei Formate an.
+[[/sparkasse-export.png]]
+
+GnuCash kann einige Formate importieren, ich habe Erfahrung mit MT940 und CSV gesammelt. Im Folgenden erkläre ich euch erstmal den wesentlich einfacheren MT940-Import und dann den etwas aufwändigeren CSV-Import.
+
+* MT940-Import
+
+Wählt also „MT940“ als Format und ihr erhaltet eine Datei mit allen Buchungen in dem von euch gewählten Zeitraum. Ihr könnt die Datei sogar mit einem Editor öffnen und mit viel Rätseln ungefähr verstehen was drinsteht. Einerlei, GnuCash versteht das Format, wenn ihr auf „Datei“ → „Importieren“ → „MT940 importieren“ klickt und die Datei auswählt. Wir müssen als nächstes ein Konto auswählen, auf das sich der Import bezieht:
+
+#+CAPTION: Hier habe ich bereits mein Girokonto als Bezugskonto gewählt
+[[/mt940-kontowahl.png]]
+
+Nach Bestätigung mit „Ok“ öffnet sich eine eventuell recht lange Tabellenansicht. Sie enthält alle Buchungen in der Datei:
+
+[[/mt940-tabelle-vorher.png]]
+
+Eure Aufgabe besteht nun darin, den einzelnen Buchungen passende /Konten/, also /Kategorien/ zuzuordnen. Das ist sehr einfach zu bewerkstelligen. Doppelklickt eine Zeile, wählt ein passendes Konto und klickt auf „Ok“. Der zugehörige Eintrag in der Tabelle wird grün. Wenn ihr mehrere Einträge auswählt, könnt ihr mit Rechtsklick → „Gegenkonto zu Auswahl zuweisen“ ein Gegenkonto wählen.
+
+Beispiel: Sehr ihr die Buchungen mit Beschreibung „… Fahrschein“? Das sind Fahrkarten der DB. Ich wähle beide aus (mit gedrückter Strg-Taste klicken), rechtsklicke und wähle „Gegenkonto zu Auswahl zuweisen“. Im darauffolgenden Dialog wähle ich das Konto „Aufwendungen“ → „Fahrtkosten“ → „Fahrkarten“ aus und klicke „Ok“:
+
+[[/kontoauswahl.png]]
+
+Die Tabelle sieht jetzt so aus:
+
+[[/mt940-tabelle-nachher.png]]
+
+Ihr könnt übrigens auch hier noch neue Konten anlegen. Klickt im „Konto auswählen“-Dialog einfach unten auf „Neues Konto“, nachdem ihr ein Konto als Oberkonto ausgewählt habt.
+
+Diesen relativ simplen Prozess des Auswählens müsst ihr nun für jede Buchung wiederholen. Auch wenn euch das zu aufwändig vorkommt, macht es einmal; wir kommen gleich dazu, wie GnuCash aus ihren Eingaben fürs nächste Mal lernt. Achtet bei der Bearbeitung darauf, dass ihr Eingänge wie Gehalt auch unter „Erträge“ bucht. Man vergisst das teilweise, weil die Aufwendungen normalerweise die Erträge in Masse überwiegen.
+
+Wenn ihr fertig seid, klickt auf „Ok“. Euer Eigenkapital und Barvermögen, sowie die Summe der Aufwendungen sollte sich nun verändert haben. Ihr könnt zur Kontrolle die einzelnen Konten mit Doppelklick öffnen und weiter reinschauen. Hier seht ihr schon eine Stärke des Haushaltsbuchs: ihr habt haarklein aufgeschlüsselt, wofür ihr wie viel verbraucht. Praktisch, oder?
+
+* Lernen
+
+Der Import-Prozess kam euch sicher sehr aufwendig vor. Anfangs ist er das auch, aber GnuCash /lernt/ und versucht bei den folgenden Imports Dinge automatisch zuzuordnen. Das funktioniert relativ gut, sodass man pro Import nur noch wenige Einträge nachjustieren muss. Deshalb empfehle ich, anfangs monatsweise zu importieren, damit GnuCash sein Gedächtnis nach jedem Monat trainieren kann. Beim zweiten Import sieht die Tabelle bei mir schon wie folgt aus:
+
+[[/mt940-zweiter-import.png]]
+
+Sehen wir uns das genauer an. Zunächst fallen die /roten Zeilen/ auf. Hier hat GnuCash aus irgendeinem wirren Grund entschieden, die Buchung lieber nicht zu importieren. Ihr könnt dem Programm eines besseren belehren, indem ihr das Häkchen in der „Neu“-Spalte setzt. Meist ordnet GnuCash die Buchung dann sogar schon richtig ein.
+
+Man sieht außerdem, dass die meisten Buchungen schon grün sind und sinnvoll eingeordnet sind. Rewe, Edeka, … sind unter „Aufwendungen:Lebensmittel“ einsortiert, meine Fahrkarten auch. Den Bäcker kennt er nicht und man muss ihn extra eintragen, wie gehabt. Das bleibt nicht aus.
+
+Bei zwei Buchungen ist eine Art Ampel in der „Information“-Spalte zu sehen.
+
+[[/mt940-ampel.png]]
+
+Dies ist ein Ausreißer eines eigentlich sehr guten Features. Man kann mit GnuCash mehrere Konten gleichzeitig verwalten. Beim Importieren wird versucht, Buchungen, die zwischen Konten stattfinden, automatisch abzugleichen.
+
+Ein Beispiel: Ich habe ein Konto bei einer Direktbank, das ich nur nutze, weil ich dort eine Kreditkarte umsonst bekomme und keine Kontoführungsgebühren zahle. Dieses Konto „lade ich auf“, indem ich Geld von meinem Girokonto dorthin überweise. Das sieht man auf dem Bild sogar in der letzten Zeile. Da ich auch für das Zweitkonto GnuCash nutze, führe ich den Import, den ich euch grade beschreibe, für beide Konten aus. Die Transaktion über 350€, die ihr oben seht, gibt es also auch in zwei Imports. /Eingegeben/ werden muss sie aber nur einmal, es ist schließlich nur eine Buchung.
+
+Hier kommt GnuCash ins Spiel und versucht, die beiden Imports zu harmonisieren anhand der Buchungsbeschreibung, des Datums und des Betrags (glaube ich). Allerdings geht das hier schief und GnuCash denkt, die Transaktion am 05.02.2020 gäbe es schon. Und tatsächlich, wenn ich die Zeile ausklappe sehe ich, dass ich am 24.01.2020 einen gleich teuren Fahrschein erworben habe. Anhand der Ampel sehe ich, dass sich GnuCash relativ sicher ist, hier dieselbe Buchung gefunden zu haben wie damals. Tja, und da sieht man, dass GnuCash noch ein bisschen was über meine Buchungen lernen muss. Ich kann das Programm auch hier mit Klick auf das Häkchen in der Spalte „Neu“ überzeugen, dass es eine neue Buchung ist.
+
+* CSV-Import
+
+  Der CSV-Import unterscheidet sich vom MT940-Import nur durch einen neuen Zwischenschritt. Während MT940 ein spezielles Format für Buchungen ist, ist CSV ein sehr allgemeines Format für tabellarische Daten. Und so allgemein das Format, so unterschiedlich die Ausprägungen. Bei einer Bank mag der CSV-Export folgende Datei erzeugen:
+
+#+begin_example
+Auftragskonto,Buchungstag,Valutadatum,Buchungstext,Verwendungszweck,Beguenstigter/Zahlungspflichtiger,Kontonummer,BLZ,Betrag,Waehrung,Info
+DE11111111111111111111,31.01.20,31.01.20,KARTENZAHLUNG,SVWZ+2020-01-30T15.46 12015Debitk.6 999ZZZZ+REWE SAGT DANKE. 123456678//Hans Dampf/DE,REWE Markt GmbH,DE22222222222222222222,AAAAAAMMXXX,"-4,46",EUR,Umsatz gebucht
+…
+#+end_example
+
+Hier sieht man an der ersten Zeile, welche Spalten es gibt (die Spalten sind mit Kommata getrennt) und alle nachfolgenden Zeilen geben die Werte der Spalten an für eine Buchung an. Einfach zu lesen, einfach zu importieren. Eine andere Bank mag es wie folgt halten:
+
+#+begin_example
+DE11111111111111111111;01/31/2020;REWE SAGT DANKE.;4,46
+#+end_example
+
+Ebenfalls eine gültige CSV-Datei. Hier gibt es keine erste, die Spalten beschreibende Zeile, und die Spalten sind mit Semikola (Semikolons? Kolonne?) getrennt. Und das Datumsformat ist anders. Und die Währung existiert nicht. Puh.
+
+Ihr müsst GnuCash hier also unter die Arme greifen. Nehmen wir die erste CSV-Datei und importieren sie mittels „Datei“ → „Importieren“ → „Buchungen importieren aus CSV“. Wir werden erschlagen:
+
+#+CAPTION: HILFE!
+[[/csv-import-vorher.png]]
+
+Aber nachdem ich euch erklärt habe, wie „vielseitig“ CSV ist, sollte euch diese Auswahl zumindest nur noch ein /wenig/ erschlagen. Gehen wir es nacheinander durch: Erstmal wählt ihr bei *Konto* oben rechts das Konto aus, das den Import betrifft (wie beim MT940-Import).
+
+Weiter gehts zum Format der Spalten:
+
+[[/csv-import-trennzeichen.png]]
+
+Das *Trennzeichen* kann, wie erwähnt, alles mögliche sein. Meiner Erfahrung nach ist sind Komma und Semikolon am häufigsten. Wenn es was ganz abgefahrenes ist, könnt ihr es hier auch eingeben, ansonsten reicht ein Klick auf die entsprechende Checkbox. Unten in der Ansicht sollte sich direkt eine schönere Tabelle auftun, wenn ihr richtig geklickt habt:
+
+#+CAPTION: Trennzeichen: passt!
+[[/csv-import-trennzeichen-fertig.png]]
+
+Es gibt auch CSV-Dateien, die gar nicht mit Trennzeichen arbeiten. Hier hat jede Spalte einfach eine bestimmte Anzahl an Zeichen. Dies könnt ihr mit „Feste Breite“ einstellen. Ich verweise hier ausnahmsweise mal auf die Hilfe, denn das ist mir bisher noch nicht untergekommen und ich will nichts falsches erzählen.
+
+Weiter gehts:
+
+[[/csv-import-verschiedenes.png]]
+
+In der unteren Hälfte seht ihr, dass ihr die *erste Zeile ignorieren* lassen könnt. Sie hilft beim dechiffrieren der Spalten, aber eine Buchung stellt sie sicher nicht dar. In meinem ersten Beispiel würde ich hier also „Zeilen am Anfang ignorieren“ auf „1“ setzen. GnuCash streicht daraufhin die erste Zeile durch:
+
+[[/csv-import-erste-zeile.png]]
+
+*Zeichenkodierung* ist etwas, das euch erst auffällt, wenn ihr Sonderzeichen wie Umlaute oder ein Eszett in Buchungstexten habt. UTF-8 ist sicher eine gute Wahl, ISO-8859-15 ist für deutschsprachige Regionen meist das richtige. Probiert rum, bis die Zeichen nicht mehr komisch aussehen.
+
+Das *Datumsformat* ist enorm wichtig, aber selbsterklärend. Ebenso wichtig ist das *Währungsformat*, denn hier wird hin und wieder Punkt und Komma vertauscht. Stellt sicher, dass ihr hier das korrekte Format einstellt.
+
+Schließlich müsst ihr GnuCash noch sagen, welche Spalten was beinhalten — selbst, wenn diese Informationen bereits in der ersten Zeile enthalten sind. Drei Spalten sind auszuwählen, und zwar, indem ihr in der unten angesiedelten Tabelle auf den jeweiligen Spaltennamen klickt (dort, wo anfangs „Keine“ steht) und eine Bedeutung der Spalte auswählt:
+
+1. Die *Datumsspalte* sollte klar sein. GnuCash beschwert sich hier teilweise, wenn euer Datumsformat (siehe ein paar Absätze vorher) nicht stimmt.
+2. Die *Beschreibungsspalte* sollte den Verwendungszweck beinhalten. Sie hilft GnuCash beim Lernprozess.
+3. Die *Einzahlungsspalte* sollte den eigentlichen Betrag beinhalten.
+
+Klickt danach auf „Weiter“, dann wieder auf „Weiter“. Ihr gelangt nun zum selben Dialog wie beim MT940-Import und die gleichen Vorgehensweisen gelten. Wenn ihr fertig seid, klickt auf „Anwenden“.
+
+* Auswertungen
+
+Jetzt, wo wir unsere Finanzdaten in GnuCash eingetragen haben, können wir einige Auswertungen darauf machen. Natürlich sieht man in der Kontenübersicht bereits, zu welchem Konto (z.B. Abonnements, Kleidung, …) wie viel Geld insgesamt ausgegeben wurde. Aber das bezieht sich immer auf den Beginn der Aufzeichnungen.
+
+** Aufwendungen pro Zeit
+
+Viel interessanter ist so eine Aufschlüsselung pro Monat, oder gar pro Woche. Allgemein befinden sich Auswertungen im Menüpunkt „Berichte“. Eine Aufschlüsselung eurer Aufwendungen nach Konto erhaltet ihr im Menü via „Berichte“ → „Aufwand & Ertrag“ → „Aufwendungen-Diagramm“. Ein Beispiel hiervon hatten wir bereits am Anfang des Artikels:
+
+[[/aufwendungen.png]]
+
+Das Diagramm wird mit einer Standardkonfiguration erstellt. Beispielsweise wählt GnuCash standardmäßig das gesamte aktuelle Jahr als Zeitraum aus. Außerdem enthält es alle Unterkonten des „Aufwendungen“-Kontos. Vielleicht seid ihr damit zufrieden, aber vermutlich sind diese Standards nicht optimal für eure Ansprüche. Im Diagramm oben nimmt beispielsweise das Konto für „Wohnen“ relativ viel Platz ein, und zwar mit einem konstanten Wert. Das ergibt Sinn, denn wenn man nicht gerade umzieht oder den Stromanbieter wechselt, ist die Miete nunmal relativ konstant. Wollt ihr den Platz also mit den restlichen Konten füllen, klickt auf „Optionen“ oben in der Buttonliste:
+
+#+CAPTION: Weil ich es auch nicht sofort endeckt habe, da ist der Knopf!
+[[/diagramm-optionen.png]]
+
+Ihr seht nun einiges an Einstellungen:
+
+[[/diagramm-optionen-dialog.png]]
+
+In diesem Dialog ist unter „Allgemein“ die Anfangs- und Endzeit interessant. Unter „Anzeige“ ist die „Maximale Anzahl Balken“ eventuell relevant. GnuCash zeigt standardmäßig Balken nur für die sieben größten Aufwendungen an. Alle weiteren werden unter einem generischen Balken „Weitere“ aufgeführt. Hier könnt ihr diesen Wert ggf. vergrößern, um mehr Balken angezeigt zu bekommen. Diese bekommen eigene Farben, und das ganze wird irgendwann auch zu bunt. Unter „Konten“ könnt ihr schließlich einzelne Konten von der Anzeige ausschließen (wie oben erwähnt die Miete). Spielt ein bisschen mit den ganzen Optionen herum. GnuCash kommt hier absichtlich eher als Baukasten daher.
+
+Wenn ihr eine Konfiguration in der Zukunft immer wieder aufrufen wollt, könnt ihr sie oben in der Buttonleiste (da, wo auch die Optionen stehen) speichern und dann direkt unterhalb des Menüs „Berichte“ abrufen.
+
+** Aktiva, Reinvermögen
+
+Wenn ihr (wie ich) wissen wollt, wie euer Kontostand sich über die Zeit entwickelt hat, klickt auf „Berichte“ → „Aktiva & Passiva“ → „Reinvermögen-Liniendiagramm“. Hier sehr ihr unter der Linie „Reinvermögen“ euer Vermögen (also nicht ganz euren Kontostand, sondern die interessantere Kennzahl) über die Monate. In den Optionen könnt ihr als Zeitraum auch pro Woche oder gar pro Tag einstellen:
+
+#+CAPTION: Hier ein zweiwöchiges Beispiel.
+[[/reinvermoegen-linien.png]]
+
+** Übersicht
+
+Um eine Übersicht über verschiedene Dinge gleichzeitig zu bekommen, klickt auf ̈„Berichte“ → „Mehrspaltig“ → „Übersicht“. Hier bekommt ihr ein Aufwands-Tortendiagramm, sowie ein Diagramm mit Erträgen, Aufwendungen und Reingewinn, sowie eine tabellarische Kontenübersicht:
+
+[[/uebersicht.png]]
+
+** Pro Wochentag?
+
+GnuCash wird von verschiedenen Benutzergruppen entwickelt und verwendet. Ich nehme an, es sind auch Restaurantbesitzer darunter. Eine andere Erklärung habe ich für das Tortendiagramm unter „Berichte“ → „Beispiele“ → „Aufwendungen pro Wochentag“ nicht, aber interessant fand ich es bei meinen privaten Konten dennoch. Habt ihr auch am meisten Ausgaben am Montag?
+
+#+CAPTION: Aufwendungen pro Wochentag, was ist am Montag los?
+[[/pro-wochentag.png]]
+
+Das Diagramm existiert auch für Erträge. Das ist für Geschäfte sicherlich irgendwie interessant.
+
+* Alternative und Fazit
+** Die offene Alternative: Plain Text Accounting
+
+ Ich habe mich als Linuxnutzer direkt nach offenen Lösungen für dieses Problem umgesehen. Mein Weg führte allerdings erst zu [[http://furius.ca/beancount/][Beancount]]. Hier pflegt man seine Finanzen in normalen Textdateien, die man mit seinem Lieblings-Texteditor pflegt und die man dann entweder mit Beancount selber abfragen, oder z.B. mit dem hervorragenden [[https://beancount.github.io/fava/][Tool Fava]] auswerten kann.
+
+ #+CAPTION: Fava in Aktion. Ein solches Diagramm über die Ausgaben vermisse ich noch in GnuCash.
+ [[/fava.png]]
+
+Die Vorgehensweise nennt sich auch "plain text accounting", und es gibt hier eine Fülle von Werkzeugen und eine [[https://plaintextaccounting.org/][Community]] darumherum. Da mir hier ausnahmsweise das händische Editieren von Textdateien...nervig erschien, habe ich irgendwann zu GnuCash geschwenkt. Hier musste ich mir die automatische Zuordnung von Kontoauszügen auch nicht selber basteln, sondern sie war bereits integriert.
+
+** Fazit
+
+Ich hoffe, ich konnte euch ein wenig für GnuCash begeistern oder wenigstens der Idee eines privaten Haushaltsbuchs. Viel Pflege benötigt das dank dem Abgleich mit der Bank nicht, und der Nutzen ist enorm.
+
+GnuCash kann viel mehr. Ich plane, damit meine Aktien und ETFs zu verwalten, muss mich aber in viele Dinge noch einarbeiten. Vielleicht folgt also ein weiterer Artikel in Kürze.
+
