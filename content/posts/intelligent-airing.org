@@ -1,0 +1,73 @@
+---
+title: "Intelligent Airing"
+date: 2020-09-20T10:40:30+02:00
+draft: true
+---
+* Introduction
+
+In this post, I will detail my solution to intelligently air a room in order to ensure proper humidity. The solution is based on an Arduino board, a humidity sensor and some other components. This post is aimed at technically minded people, ideally posessing some Arduino experience.
+* How can you air a room intelligently?
+
+A quick backstory on this. There’s a German project called [[https://luftdaten.info/][luftdaten.info]] (literally “airdata.info”). It was founded in order to establish a crowd-sourced network of sensors for measuring air quality. It isn’t about humidity, but about fine dust, which, in some German cities like Stuttgart, is a real problem and we need more data in order to put pressure on politicians.
+
+Anyway, in order to participate, you build a sensor yourself, install it outside your home somwhere, connect it to the internet, and can then view your sensor’s data on a publicly accessible [[https://grafana.com/][Grafana]] instance:
+
+#+CAPTION: The sensor apparatus, some more assembly required.
+[[/feinstaub-sensor.jpg]]
+
+Before attaching it outside, however, I kept it inside, just to see how the humidity in the room is and, especially, how it /changes/:
+
+# Hier Bild von Grafana mit der Feuchtigkeitskurve
+
+Quick Googling tells me that your home shouln’t have more than 65% humidity. Otherwise, mould develops, which is a health hazard. In order to lower the humidity, the best thing in my climate region is to just open the windows. The usual recommendation to do this is “inrush airing”, meaning you open the windows wide for about 5-10 minutes, then close them again. You do that multiple times a day.
+
+So far the theory. But…does it work?
+
+* Investigating
+
+Let’s look at a typical example of the effects of airing my apartment:
+
+[[/humidity-slow.png]]
+
+As you can see, our baseline is a flat 65% humidity. Around 2pm, I opened all the windows. Humidity quickly drops and peters out at around 4pm. Of course, that’s not the recommended “inrush airing” method. Inrush airing for about 5-10 minutes would’ve decreased humidity from 65% to only around 60%. To really flatten the curve, we need about 4 hours of airing, not 5 minutes. You can see this type of curve again, here:
+
+[[/humidity-semislow.png]]
+
+This time, we only need about 1-2 hours of airing to get to around 40%.
+
+So in summation, inrush airing doesn’t work well, and there’s no general rule of thumb available to gauge when to stop airing. Consequently, we need something smart. I decided to build just that.
+
+* The Project
+
+What I envisioned was the following:
+
+- Use a sensor to measure humidity in discrete time intervals. For example, measure every minute. Keep a history of recent measurements. For example, keep the last hour of measurements
+- If the humidity is *above* a certain threshold (65%, for example), enable a *red LED*.
+- If the humidity is *currently sinking*, enable a *yellow LED*.
+- If the humidity is *below* a certain threshold and stays there, enable a *green LED*.
+
+When you apply these rules, the following “LED color zones” result:
+
+[[/humidity-colored.png]]
+
+This leads to the following simple airing method: When you see a red LED, you open all windows until it’s green.
+
+Why the yellow LED, you might ask. Couldn’t we just switch from red to green when a threshold is crossed? The thing is, there’s no fixed lowest humidity. Sometimes after hours of airing, we get to around 40%. Sometimes, after half an hour, humidity stays at 50%. It depends on the temperature and exterior humidity. So “airing until lower than 50%” doesn’t cut it. We need to know if /something is happening/ instead, so we don’t “under-air” or “over-air”.
+
+Of course, theoretically, this method might never end. If the humidity oscillates — falling, then rising again, and so on — then we’ll always be yellow or red. Observational evidence suggests, however, that this scenario doesn’t happen. If the windows are open, humidity falls until stagnant.
+
+* Assembling the tools
+
+We don’t need much for this project:
+
+- three LEDs, red, green, and yellow
+- an Arduino
+- some cables
+- some resistors
+- a humidity sensor; I’m using the DHT22
+
+# add assembly instructions here
+
+* Coding
+
+# add coding here
