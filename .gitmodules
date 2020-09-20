@@ -1,7 +1,3 @@
 [submodule "themes/ananke"]
 	path = themes/ananke
 	url = https://github.com/budparr/gohugo-theme-ananke.git
-[submodule "pmiddend.github.io"]
-	path = pmiddend.github.io
-	url = git@github.com:pmiddend/pmiddend.github.io.git
-	branch = master
