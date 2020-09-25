@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Intelligent Airing | Plato’s Blog</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.74.3" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    
+
+    
+    
+      <link href="/dist/css/app.4fc0b62e4b82c997bb0041217cd6b979.css" rel="stylesheet">
+    
+
+    
+
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="Intelligent Airing" />
+<meta property="og:description" content="Introduction   In this post, I will detail my solution to intelligently air a room in order to ensure proper humidity. The solution is based on an Arduino board, a humidity sensor and some other components. This post is aimed at technically minded people, ideally posessing some Arduino experience.
+  What I’ll not tell you   This post will not be one of the many “here’s the code and diagram, just copy and paste” Arduino posts." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://pmiddend.github.io/posts/intelligent-airing/" />
+<meta property="article:published_time" content="2020-09-20T10:40:30+02:00" />
+<meta property="article:modified_time" content="2020-09-20T10:40:30+02:00" />
+<meta itemprop="name" content="Intelligent Airing">
+<meta itemprop="description" content="Introduction   In this post, I will detail my solution to intelligently air a room in order to ensure proper humidity. The solution is based on an Arduino board, a humidity sensor and some other components. This post is aimed at technically minded people, ideally posessing some Arduino experience.
+  What I’ll not tell you   This post will not be one of the many “here’s the code and diagram, just copy and paste” Arduino posts.">
+<meta itemprop="datePublished" content="2020-09-20T10:40:30+02:00" />
+<meta itemprop="dateModified" content="2020-09-20T10:40:30+02:00" />
+<meta itemprop="wordCount" content="2801">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Intelligent Airing"/>
+<meta name="twitter:description" content="Introduction   In this post, I will detail my solution to intelligently air a room in order to ensure proper humidity. The solution is based on an Arduino board, a humidity sensor and some other components. This post is aimed at technically minded people, ideally posessing some Arduino experience.
+  What I’ll not tell you   This post will not be one of the many “here’s the code and diagram, just copy and paste” Arduino posts."/>
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        Plato’s Blog
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        POSTS
+      </aside>
+      
+
+
+
+
+  <div id="sharing" class="mt3">
+
+    
+    <a href="https://www.facebook.com/sharer.php?u=https://pmiddend.github.io/posts/intelligent-airing/" class="facebook no-underline" aria-label="share on Facebook">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+
+    </a>
+
+    
+    
+    <a href="https://twitter.com/share?url=https://pmiddend.github.io/posts/intelligent-airing/&amp;text=Intelligent%20Airing" class="twitter no-underline" aria-label="share on Twitter">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+    </a>
+
+    
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://pmiddend.github.io/posts/intelligent-airing/&amp;title=Intelligent%20Airing" class="linkedin no-underline" aria-label="share on LinkedIn">
+      <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+    </a>
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Intelligent Airing</h1>
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2020-09-20T10:40:30+02:00">September 20, 2020</time>
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l">
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+Introduction
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p>
+In this post, I will detail my solution to intelligently air a room in order to ensure proper humidity. The solution is based on an Arduino board, a humidity sensor and some other components. This post is aimed at technically minded people, ideally posessing some Arduino experience.</p>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
+<h2 id="headline-2">
+What I’ll not tell you
+</h2>
+<div id="outline-text-headline-2" class="outline-text-2">
+<p>
+This post will not be one of the many “here’s the code and diagram, just copy and paste” Arduino posts. Instead, I’ll describe the hardware I used and most of the code. But my point here is to make you understand <strong>which methods I used</strong> and <strong>why</strong> I built what I build. <strong>Not</strong> to encourage you to just copy and paste it. I don’t think that’s how you learn things, and I think most of the Arduino tutorials around are not really tutorials.</p>
+<p>
+Also, what I currently have is much more than what I’m showing you, and I was simply too lazy to strip it down again just to make describe it here.</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-2">
+<h2 id="headline-3">
+How can you air a room intelligently?
+</h2>
+<div id="outline-text-headline-3" class="outline-text-2">
+<p>
+A quick backstory on this. There’s a German project called <a href="https://luftdaten.info/">luftdaten.info</a> (literally “airdata.info”). It was founded in order to establish a crowd-sourced network of sensors for measuring air quality. It isn’t about humidity, but about fine dust, which, in some German cities like Stuttgart, is a real problem and we need more data in order to put pressure on politicians.</p>
+<p>
+Anyway, in order to participate, you build a sensor yourself, install it outside your home somwhere, connect it to the internet, and can then view your sensor’s data on a publicly accessible <a href="https://grafana.com/">Grafana</a> instance:</p>
+<figure>
+<img src="/feinstaub-sensor.jpg" alt="/feinstaub-sensor.jpg" title="/feinstaub-sensor.jpg" /><figcaption>
+The sensor apparatus, some more assembly required.
+</figcaption>
+</figure>
+<p>
+Before attaching it outside, however, I kept it inside, just to see how the humidity in the room is and, especially, how it <em>changes</em>:</p>
+<p>
+Quick Googling tells me that your home shouln’t have more than 65% humidity. Otherwise, mould develops, which is a health hazard. In order to lower the humidity, the best thing in my climate region is to just open the windows. The usual recommendation to do this is “inrush airing”, meaning you open the windows wide for about 5-10 minutes, then close them again. You do that multiple times a day.</p>
+<p>
+So far the theory. But…does it work?</p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-2">
+<h2 id="headline-4">
+Investigating
+</h2>
+<div id="outline-text-headline-4" class="outline-text-2">
+<p>
+Let’s look at a typical example of the effects of airing my apartment:</p>
+<p>
+<img src="/humidity-slow.png" alt="/humidity-slow.png" title="/humidity-slow.png" /></p>
+<p>
+As you can see, our baseline is a flat 65% humidity. Around 2pm, I opened all the windows. Humidity quickly drops and peters out at around 4pm. Of course, that’s not the recommended “inrush airing” method. Inrush airing for about 5-10 minutes would’ve decreased humidity from 65% to only around 60%. To really flatten the curve, we need about 4 hours of airing, not 5 minutes. You can see this type of curve again, here:</p>
+<p>
+<img src="/humidity-semislow.png" alt="/humidity-semislow.png" title="/humidity-semislow.png" /></p>
+<p>
+This time, we only need about 1-2 hours of airing to get to around 40%.</p>
+<p>
+So in summation, inrush airing doesn’t work well, and there’s no general rule of thumb available to gauge when to stop airing. Consequently, we need something smart. I decided to build just that.</p>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-2">
+<h2 id="headline-5">
+The Project
+</h2>
+<div id="outline-text-headline-5" class="outline-text-2">
+<p>
+What I envisioned was the following:</p>
+<ul>
+<li>
+<p>Use a sensor to measure humidity in discrete time intervals. For example, measure every minute. Keep a history of recent measurements. For example, keep the last hour of measurements</p>
+</li>
+<li>
+<p>If the humidity is <strong>above</strong> a certain threshold (65%, for example), enable a <strong>red LED</strong>.</p>
+</li>
+<li>
+<p>If the humidity is <strong>currently sinking</strong>, enable a <strong>yellow LED</strong>.</p>
+</li>
+<li>
+<p>If the humidity is <strong>below</strong> a certain threshold and stays there, enable a <strong>green LED</strong>.</p>
+</li>
+</ul>
+<p>When you apply these rules, the following “LED color zones” result:</p>
+<p>
+<img src="/humidity-colored.png" alt="/humidity-colored.png" title="/humidity-colored.png" /></p>
+<p>
+This leads to the following simple airing method: When you see a red LED, you open all windows until it’s green.</p>
+<p>
+Why the yellow LED, you might ask. Couldn’t we just switch from red to green when a threshold is crossed? The thing is, there’s no fixed lowest humidity. Sometimes after hours of airing, we get to around 40%. Sometimes, after half an hour, humidity stays at 50%. It depends on the temperature and exterior humidity. So “airing until lower than 50%” doesn’t cut it. We need to know if <em>something is happening</em> instead, so we don’t “under-air” or “over-air”.</p>
+<p>
+Of course, theoretically, this method might never end. If the humidity oscillates — falling, then rising again, and so on — then we’ll always be yellow or red. Observational evidence suggests, however, that this scenario doesn’t happen. If the windows are open, humidity falls until stagnant.</p>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-2">
+<h2 id="headline-6">
+Waiting for the sensor, writing tests (you can skip this section)
+</h2>
+<div id="outline-text-headline-6" class="outline-text-2">
+<div id="outline-container-headline-7" class="outline-3">
+<h3 id="headline-7">
+Test setup
+</h3>
+<div id="outline-text-headline-7" class="outline-text-3">
+<p>After specifying what I wanted to do, I ordered a DHT22 sensor, and then the project was stuck. Or was it? Could I start coding beforehand, possibly testing everything and then just assemble the whole thing? Maybe.</p>
+<p>
+My idea can be summarized as follows:</p>
+<ul>
+<li>
+<p>I write the whole Arduino code in a <code class="verbatim">.ino</code> file, which is just C with some implicit <code class="verbatim">#include</code> statements and without a <code class="verbatim">main</code> function.</p>
+</li>
+<li>
+<p>This <code class="verbatim">.ino</code> file I can then later upload to the actual Arduino.</p>
+</li>
+<li>
+<p>However, I can also <code class="verbatim">#include</code> this <code class="verbatim">.ino</code> file inside a mocked Arduino C environment, where all the functions accessing the outside world are replaced by ones that I can explicitly feed input into.</p>
+</li>
+</ul>
+<p>I tried implementing that, and quickly got results. The basic setup looks like this:</p>
+<div class="src src-cpp">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">digitalWrite</span>(<span style="color:#66d9ef">uint8_t</span> pin, <span style="color:#66d9ef">uint8_t</span> val) {
+  std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;pin &#34;</span> <span style="color:#f92672">&lt;&lt;</span> pin <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;: write &#34;</span> <span style="color:#f92672">&lt;&lt;</span> val <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+}
+
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">digitalRead</span>(<span style="color:#66d9ef">uint8_t</span> <span style="color:#66d9ef">const</span> pin) {
+  <span style="color:#75715e">// We’ll get to that later
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#75715e">// Current time since the arduino started
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> my_current_time_us <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">delay</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> ms) {
+  std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;waiting &#34;</span> <span style="color:#f92672">&lt;&lt;</span> ms <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;ms</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+  my_current_time_us <span style="color:#f92672">+=</span> ms<span style="color:#f92672">*</span><span style="color:#ae81ff">1000</span>;
+}
+
+<span style="color:#75715e">// same for micros, and so on
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// Include my actual Arduino code here
+</span><span style="color:#75715e"></span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;my-sensor-stuff.ino&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// Mock the Arduino behavior.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+  setup();
+  <span style="color:#66d9ef">while</span> (true)
+    loop();
+}
+</code></pre></div>
+</div>
+<p>
+You can compile this using a normal C++ compiler such as gcc and run it.</p>
+<p>
+The Arduino code we write we now consider as a black box. The code reads via <code class="verbatim">digitalRead</code> and outputs via <code class="verbatim">digitalWrite</code>, and we need to feed it data whenever it requests it.</p>
+<p>
+What data to we feed it? In my project, I only need the Arduino’s digital pins, and there’s 13 of them. Whenever a <code class="verbatim">digitalRead</code> happens, we get a pin number from the calling code (a number from 1 to 13) and have to return a boolean, indicating if this pin is currently high or low.</p>
+<p>
+Thus, to simulate “the outside world”, all we need is a sequence of answers to these “is pin x high or low”. I decided to encode these answers in a plain text file. One line of the file consists of one answer to one query. It contains either <em>zero</em> or a <em>pin number</em>. Zero indicating that the requested pin (whatever it is) is low, otherwise indicating which pin is high.</p>
+<p>
+An example might help explain this. Consider the following Arduino code:</p>
+<div class="src src-cpp">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">if</span> (digitalRead(<span style="color:#ae81ff">13</span>) <span style="color:#f92672">&amp;&amp;</span> digitalRead(<span style="color:#ae81ff">10</span>)) {
+  digitalWrite(<span style="color:#ae81ff">8</span>, HIGH);
+}
+</code></pre></div>
+</div>
+<p>
+This tests of both pins 13 and 10 are high, and if so, writes a high value to pin 8. We can trigger this write using the following protocol:</p>
+<pre class="example">
+13
+10
+</pre>
+<p>
+Whereas this protocol file wouldn’t trigger the write:</p>
+<pre class="example">
+0
+10
+</pre>
+<p>
+Here, the first <code class="verbatim">digitalRead(13)</code> will return low, the second one will return high.</p>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-3">
+<h3 id="headline-8">
+DHT22
+</h3>
+<div id="outline-text-headline-8" class="outline-text-3">
+<p>
+Since the DHT22 I ordered was still on the way, I couldn’t really test its output, I had to look up the spec. Reading from the chip seemed a bit daunting, and usually, you shouldn’t bother implementing it yourself. Adafruit has <a href="https://github.com/adafruit/DHT-sensor-library/blob/master/DHT.h">a finished implementation</a> of the read functions. However, since I wanted to test the sensor with my little test framework, I had to look at the code and figure out which <code class="verbatim">digitalRead</code> calls to answer which way. Let me explain this briefly, considering we want to plug the DHT code into our test framework.</p>
+<p>
+Whenever you read from the DHT22, you need to…</p>
+<ol>
+<li>
+<p>…set the data pin to <code class="verbatim">INPUT_PULLUP</code> mode</p>
+</li>
+<li>
+<p>…then wait a bit</p>
+</li>
+<li>
+<p>…then set the data pin to <code class="verbatim">OUTPUT</code> and write a low value</p>
+</li>
+<li>
+<p>…then wait a bit</p>
+</li>
+<li>
+<p>…then set the data pin to <code class="verbatim">INPUT_PULLUP</code> mode again</p>
+</li>
+<li>
+<p>…then wait a bit</p>
+</li>
+<li>
+<p>…then wait until you read a high value on the data pin</p>
+</li>
+<li>
+<p>…then wait until you read a low value on the data pin</p>
+</li>
+<li>
+<p>…then read the bytes</p>
+</li>
+</ol>
+<p>For testing, we can ignore all the waiting and mode setting. Let’s assume the data pin is pin 13. The protocol for reading a sensor always starts with:</p>
+<pre class="example">
+13
+0
+</pre>
+<p>
+Signifying the high and low waits at the start.</p>
+<p>
+To read a single bit, the sensor code waits until it receives a high value, then waits until it receives a low value, and remembers for how long it waited for each one. If we waited longer for a low than a high, we have a 1, otherwise we read a 0. Simple as that.</p>
+<p>
+We can simplify this in the testing protocol. To let the Arduino code read a 1, we encode</p>
+<pre class="example">
+13
+13
+0
+</pre>
+<p>
+Meaning we waited 1 cycle for a low. To let it read a 0, we encode</p>
+<pre class="example">
+0
+13
+0
+</pre>
+<p>
+Meaning we waited 1 cycle for a high.</p>
+<p>
+And with that in place, we can encode a whole sensor reading. It consists of <em>five</em> bytes:</p>
+<ol>
+<li>
+<p>First, the humidity is encoded using two bytes. To encode “34.5%” humidity, you take the number “345” and encode its bytes h₀ and h₁. Later, this is decoded as h₀+h₁·0.1.</p>
+</li>
+<li>
+<p>Same thing with two temperature bytes t₀, t₁</p>
+</li>
+<li>
+<p>Then you encode one checksum byte with the formula: <code class="verbatim">(h₀+h₁+t₀+t₁) &amp; 0xff</code></p>
+</li>
+</ol>
+<p>And each bit of these bytes you encode as three protocol lines, as shown above. I wrote a small
+<a href="https://github.com/pmiddend/arduino-mocking/blob/master/EncodeProtocol.hs">Haskell tool</a> that lets me generate sensor readings for me. This way, I could program away without the sensor.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-2">
+<h2 id="headline-9">
+The algorithm
+</h2>
+<div id="outline-text-headline-9" class="outline-text-2">
+<p>
+To check if the humidity is falling, I implemented a simple <a href="https://en.wikipedia.org/wiki/Linear_regression">linear regression</a> algorithm. This method is used to fit a straight line through a point cloud:</p>
+<p>
+<img src="/linear-regression.png" alt="/linear-regression.png" title="/linear-regression.png" /></p>
+<p>
+More formally, the idea is we have a set of points (xᵢ, yᵢ), where in our case, xᵢ represents the time a measurement occured, and yᵢ represents the humidity. We have a function f(t) = α + tβ representing a line which we’d like to fit to the point cloud. This means we need to find suitable values for α and β. α represents the vertical displacement of the line and β represents the inclination. We’re <em>actually</em> only interested in the inclination, so we only need to find a good value for β.</p>
+<p>
+There’s more than one way to “fit” the line to the point cloud, but one way that works good is by minimizing the quadratic distance of the measurement points to the line (sometimes called <a href="https://en.wikipedia.org/wiki/Simple_linear_regression">Simple linear regression</a> or least squares method). The somewhat daunting formula for this is:</p>
+<p>
+<img src="/beta-least-squares.png" alt="/beta-least-squares.png" title="/beta-least-squares.png" /></p>
+<p>
+Some symbols I already explained, so you know xᵢ and yᵢ. The variants with the <em>bar</em> above it are simply the <em>average</em> values for the time and humidity. For xᵢ, this seems a bit silly (what’s the average time of a measurement‽), but just go with it.</p>
+<p>
+Instead of using milliseconds or something based in reality, I chose to simply <em>number</em> the measurements and use that as my xᵢ values. So really, xᵢ is i. yᵢ are of course decimal numbers representing humidity.</p>
+<p>
+To represent our measurements, I use the following variables:</p>
+<div class="src src-cpp">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">const</span> max_readings <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+<span style="color:#66d9ef">float</span> readings[] <span style="color:#f92672">=</span> { <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span> };
+<span style="color:#66d9ef">unsigned</span> no_readings <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+<span style="color:#66d9ef">unsigned</span> current_reading <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</code></pre></div>
+</div>
+<p>
+Let’s go thorugh them:</p>
+<dl>
+<dt>
+<code class="verbatim">max_readings</code>
+</dt>
+<dd>
+<p>is the maximum number of measurements we want to accumulate; setting this to 10 means we gather 10 data points (meaning 10 minutes if we measure every minute)</p>
+</dd>
+<dt>
+<code class="verbatim">readings</code>
+</dt>
+<dd>
+<p>stores the actual measurements, so our yᵢ</p>
+</dd>
+<dt>
+<code class="verbatim">no_readings</code>
+</dt>
+<dd>
+<p>is the number of measurements we took so far; this’ll be less than 10 initially, but won’t go above 10.</p>
+</dd>
+<dt>
+<code class="verbatim">current_reading</code>
+</dt>
+<dd>
+<p>is the <em>index</em> of the next humidity value to write inside the <code class="verbatim">readings</code> array</p>
+</dd>
+</dl>
+<p>The reason this is a bit more complicated is that we want to store a constant amount of measurement values inside the Arduino, without changing the measurement array too much. Let’s go through our measurement process:</p>
+<ul>
+<li>
+<p>Initially, we have no measurements at all, so <code class="verbatim">no_readings</code> will be zero.</p>
+</li>
+<li>
+<p>The first measurement will then be written to <code class="verbatim">readings[0]</code> and <code class="verbatim">current_reading</code> will afterwards be 1.</p>
+</li>
+<li>
+<p>The second reading will be written to <code class="verbatim">readings[1]</code> and <code class="verbatim">current_reading</code> will be 2.</p>
+</li>
+<li>
+<p>And so on until we hit the tenth reading, <code class="verbatim">readings[9]</code>. After this is written, we store the next data point in <code class="verbatim">readings[0]</code> again. At this point, we have, from oldest to newest, our data points at <code class="verbatim">readings[1]</code> to <code class="verbatim">readings[9]</code>, then <code class="verbatim">readings[0]</code>. We wrap around with our history.</p>
+</li>
+<li>
+<p>The twelfth reading will be stored in <code class="verbatim">readings[1]</code>. Now we go from <code class="verbatim">readings[2]</code> to <code class="verbatim">readings[9]</code>, then <code class="verbatim">readings[0]</code>, then <code class="verbatim">readings[1]</code>.</p>
+</li>
+</ul>
+<p>I hope that’s not too confusing.</p>
+<p>
+Let’s calculate the different parts of the formula above. First, we need ̄x, the average x value. As I said, the x values are simply indices. So we need the sum of all numbers from 1 to 10 (<code class="verbatim">max_readings</code>). Didn’t Gauß <a href="http://mathandmultimedia.com/2010/09/15/sum-first-n-positive-integers/">invent something for that</a>? He did, it’s really simple, even in C!</p>
+<div class="src src-cpp">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">float</span> <span style="color:#a6e22e">average_x_values</span>() {
+  <span style="color:#66d9ef">return</span> (no_readings <span style="color:#f92672">*</span> (no_readings <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0f</span>) <span style="color:#f92672">/</span> no_readings;
+}
+</code></pre></div>
+</div>
+<p>
+It’s simply <code class="verbatim">n · (n+1) / 2</code>, and since we need the average, we divide by <code class="verbatim">no_readings</code> at the end.</p>
+<p>
+Okay, now we need ȳ, the average of all measurements. That’s pretty simple too, although we need a loop this time:</p>
+<div class="src src-cpp">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">float</span> <span style="color:#a6e22e">average_humidity_values</span>() {
+  <span style="color:#66d9ef">float</span> result <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0f</span>;
+  <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">unsigned</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> no_readings; <span style="color:#f92672">++</span>i)
+    result <span style="color:#f92672">+=</span> readings[i];
+  <span style="color:#66d9ef">return</span> result <span style="color:#f92672">/</span> no_readings;
+}
+</code></pre></div>
+</div>
+<p>
+As you can see, this is really just the usual average.</p>
+<p>
+With that in place, we have xᵢ, yᵢ, ̄x and ȳ, so we can calculate β. Let’s separate the fraction and calculate the denominator first:</p>
+<div class="src src-cpp">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">float</span> <span style="color:#a6e22e">regression_denominator</span>() {
+  <span style="color:#66d9ef">float</span> result <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0f</span>;
+  <span style="color:#66d9ef">float</span> avg <span style="color:#f92672">=</span> average_x_values();
+  <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">unsigned</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;=</span> no_readings; <span style="color:#f92672">++</span>i)
+    result <span style="color:#f92672">+=</span> (i <span style="color:#f92672">-</span> avg) <span style="color:#f92672">*</span> (i <span style="color:#f92672">-</span> avg);
+  <span style="color:#66d9ef">return</span> result;
+}
+</code></pre></div>
+</div>
+<p>
+Here we’re being lazy, you can try fiddling around with the sum formula to get something more efficient, but we’re ignoring performance here, mostly.</p>
+<p>
+The last piece of the puzzle is the numerator then. This is the most complicated part of the calculation, and to make it a little simpler, we’re splitting this up into two cases:</p>
+<ol>
+<li>
+<p>we have less than or equal to 10 readings so far</p>
+</li>
+<li>
+<p>we have more than 10 readings</p>
+</li>
+</ol>
+<p>Let’s do the first case:</p>
+<div class="src src-cpp">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">float</span> <span style="color:#a6e22e">regression</span>() {
+  <span style="color:#66d9ef">float</span> <span style="color:#66d9ef">const</span> avgx <span style="color:#f92672">=</span> average_x_values();
+  <span style="color:#66d9ef">float</span> <span style="color:#66d9ef">const</span> avgy <span style="color:#f92672">=</span> average_humidity_values();
+  <span style="color:#66d9ef">float</span> result <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+
+  <span style="color:#66d9ef">if</span> (no_readings <span style="color:#f92672">&lt;</span> max_readings <span style="color:#f92672">||</span> current_reading <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">unsigned</span> counter <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; counter <span style="color:#f92672">&lt;</span> no_readings; <span style="color:#f92672">++</span>counter) {
+      result <span style="color:#f92672">+=</span> ((counter <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">-</span> avgx) <span style="color:#f92672">*</span> (readings[counter] <span style="color:#f92672">-</span> avgy);
+    }
+  } <span style="color:#66d9ef">else</span> {
+    <span style="color:#75715e">// part 2 comes here
+</span><span style="color:#75715e"></span>  }
+  <span style="color:#66d9ef">return</span> result <span style="color:#f92672">/</span> regression_denominator();
+}
+</code></pre></div>
+</div>
+<p>
+Here, we have a loop over all readings so far, and we quite simply implement the formula, using our averages from before.</p>
+<p>
+Now for the case where we have more than 10 measurements, so our history wraps around, as described above:</p>
+<div class="src src-cpp">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">unsigned</span> counter <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, idx <span style="color:#f92672">=</span> current_reading; counter <span style="color:#f92672">&lt;</span> no_readings; <span style="color:#f92672">++</span>counter) {
+  result <span style="color:#f92672">+=</span> ((counter <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">-</span> avgx) <span style="color:#f92672">*</span> (readings[idx] <span style="color:#f92672">-</span> avgy);
+  <span style="color:#66d9ef">if</span> (idx <span style="color:#f92672">==</span> max_readings <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>)
+    idx <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+  <span style="color:#66d9ef">else</span>
+    idx<span style="color:#f92672">++</span>;
+}
+</code></pre></div>
+</div>
+<p>
+This is still not rocket science, but it’s a little involved. We still need a counter, because we need to loop through our history exactly 10 times. However, to access our history we use a separate <code class="verbatim">idx</code> variable that starts at <code class="verbatim">current_reading</code> (whereas <code class="verbatim">counter</code> starts at zero). Recall that <code class="verbatim">current_reading</code> is the variable specifying where the <em>next</em> history element will be written to. Put differently, it points to the <em>oldest</em> history entry. That’s where we start our loop. Note that we still use <code class="verbatim">counter+1</code> for our x value. That’s intentional, because <code class="verbatim">counter</code> in this case represents the age of the entry behind <code class="verbatim">idx</code>. The oldest entry has <code class="verbatim">counter</code> value 0, the youngest has value 9. Finally, we have an <code class="verbatim">if</code> statement because index should start again at zero if it’s over the right array boundary.</p>
+<p>
+Okay, so with that in place, we have our <code class="verbatim">regression</code> function, which returns the inclination of our approximated humidity line. But what does that <em>mean</em>? It’s simple, really. Say we get back a value of 1. That means every minute, the temperature rises around 1°C.</p>
+</div>
+</div>
+<div id="outline-container-headline-10" class="outline-2">
+<h2 id="headline-10">
+The tools, (code) assembly
+</h2>
+<div id="outline-text-headline-10" class="outline-text-2">
+<p>
+Here’s what I used for the project:</p>
+<ul>
+<li>
+<p>an RGB led which I had laying around</p>
+</li>
+<li>
+<p>an Arduino Uno</p>
+</li>
+<li>
+<p>lots of jumper cables</p>
+</li>
+<li>
+<p>some 220kΩ resistors for the LEDs</p>
+</li>
+<li>
+<p>a DHT22 humidity sensor</p>
+</li>
+</ul>
+<p>Assembly was pretty simple. Let me get back to you.</p>
+</div>
+</div>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://pmiddend.github.io/" >
+    &copy;  Plato’s Blog 2020 
+  </a>
+    <div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+  </div>
+</footer>
+
+    
+
+  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+
+
+  </body>
+</html>

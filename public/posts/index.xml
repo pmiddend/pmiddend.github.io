@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Plato’s Blog</title>
+    <link>https://pmiddend.github.io/posts/</link>
+    <description>Recent content in Posts on Plato’s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 20 Sep 2020 10:40:30 +0200</lastBuildDate>
+    
+	<atom:link href="https://pmiddend.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Intelligent Airing</title>
+      <link>https://pmiddend.github.io/posts/intelligent-airing/</link>
+      <pubDate>Sun, 20 Sep 2020 10:40:30 +0200</pubDate>
+      
+      <guid>https://pmiddend.github.io/posts/intelligent-airing/</guid>
+      <description>Introduction   In this post, I will detail my solution to intelligently air a room in order to ensure proper humidity. The solution is based on an Arduino board, a humidity sensor and some other components. This post is aimed at technically minded people, ideally posessing some Arduino experience.
+  What I’ll not tell you   This post will not be one of the many “here’s the code and diagram, just copy and paste” Arduino posts.</description>
+    </item>
+    
+    <item>
+      <title>GnuCash für das persönliche Haushaltsbuch</title>
+      <link>https://pmiddend.github.io/posts/gnucash-workflow/</link>
+      <pubDate>Tue, 15 Sep 2020 14:27:10 +0200</pubDate>
+      
+      <guid>https://pmiddend.github.io/posts/gnucash-workflow/</guid>
+      <description>Einleitung   Um einen Überblick über meine Finanzen zu erhalten, führe ich seit ein paar Monaten ein sogenanntes Haushaltsbuch. Wikipedia beschreibt den Aufbau und Zweck ganz gut:
+ Ein Haushaltsbuch wird in der Regel von Privatpersonen geführt. Es stellt dabei alle Einnahmen den Ausgabenposten gegenüber. Alle Einnahmen und Ausgaben sollten dabei übersichtlich und nach Monaten und eventuell nach Kategorien (wie z. B. Ausgaben für Lebensmittel, Haushaltsartikel, Auto oder öffentliche Verkehrsmittel – je nach Bedarf) geordnet sein, um eine klare Budgetierung zu ermöglichen.</description>
+    </item>
+    
+  </channel>
+</rss>
