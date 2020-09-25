@@ -1,7 +1,7 @@
 ---
 title: "Intelligent Airing"
 date: 2020-09-20T10:40:30+02:00
-draft: true
+draft: false
 ---
 * Introduction
 
