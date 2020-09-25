@@ -1,7 +1,7 @@
 ---
 title: "GnuCash für das persönliche Haushaltsbuch"
 date: 2020-09-15T14:27:10+02:00
-draft: true
+draft: false
 ---
 * Einleitung
 
