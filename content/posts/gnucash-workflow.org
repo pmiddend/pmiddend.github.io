@@ -267,13 +267,14 @@ Um eine Übersicht über verschiedene Dinge gleichzeitig zu bekommen, klickt auf
 
 ** Pro Wochentag?
 
-GnuCash wird von verschiedenen Benutzergruppen entwickelt und verwendet. Ich nehme an, es sind auch Restaurantbesitzer darunter. Eine andere Erklärung habe ich für das Tortendiagramm unter „Berichte“ → „Beispiele“ → „Aufwendungen pro Wochentag“ nicht, aber interessant fand ich es bei meinen privaten Konten dennoch. Habt ihr auch am meisten Ausgaben am Montag?
+GnuCash wird von verschiedenen Benutzergruppen entwickelt und verwendet. Ich nehme an, es sind auch Restaurantbesitzer darunter. Eine andere Erklärung habe ich für das Tortendiagramm unter „Berichte“ → „Beispiele“ → „Aufwendungen pro Wochentag“ nicht¹, aber interessant fand ich es bei meinen privaten Konten dennoch. Habt ihr auch am meisten Ausgaben am Montag? [fn:wochentagsdiagramm]
 
 #+CAPTION: Aufwendungen pro Wochentag, was ist am Montag los?
 [[/pro-wochentag.png]]
 
 Das Diagramm existiert auch für Erträge. Das ist für Geschäfte sicherlich irgendwie interessant.
 
+[fn:wochentagsdiagramm] Inzwischen hat jemand [[https://www.reddit.com/r/GnuCash/comments/j17akq/i_wrote_a_little_introductory_article_in_german/g6y65oe?utm_source=share&utm_medium=web2x&context=3][bei reddit]] erklärt, [[https://wingolog.org/archives/2014/11/27/scheme-workshop-2014][wieso dieses Diagramm existiert]], danke dafür!
 * Alternative und Fazit
 ** Die offene Alternative: Plain Text Accounting
 
@@ -289,4 +290,5 @@ Die Vorgehensweise nennt sich auch "plain text accounting", und es gibt hier ein
 Ich hoffe, ich konnte euch ein wenig für GnuCash begeistern oder wenigstens der Idee eines privaten Haushaltsbuchs. Viel Pflege benötigt das dank dem Abgleich mit der Bank nicht, und der Nutzen ist enorm.
 
 GnuCash kann viel mehr. Ich plane, damit meine Aktien und ETFs zu verwalten, muss mich aber in viele Dinge noch einarbeiten. Vielleicht folgt also ein weiterer Artikel in Kürze.
+
 
