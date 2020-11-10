@@ -35,7 +35,7 @@
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://pmiddend.github.io/" />
-<meta property="og:updated_time" content="2020-11-10T13:13:08+01:00" />
+<meta property="og:updated_time" content="2020-11-10T17:51:01+01:00" />
 <meta itemprop="name" content="Plato’s Blog">
 <meta itemprop="description" content="">
 <meta name="twitter:card" content="summary"/>
@@ -128,6 +128,31 @@
       
       <div class="blah w-100">
         <h1 class="f3 fw1 athelas mt0 lh-title">
+          <a href="https://pmiddend.github.io/posts/nixgl-on-ubuntu/" class="color-inherit dim link">
+            Using nixGL to fix OpenGL applications on non-NixOS distributions
+            </a>
+        </h1>
+        <div class="f6 f5-l lh-copy nested-copy-line-height nested-links">
+          The Nix package manager can be installed on any Linux distribution, on Mac and even on Windows. I’m currently using Ubuntu 20 and am enjoying home-manager to declaratively manage my $HOME directory using Nix tooling. For instance, to use my favorite browser qutebrowser, I could just add it into my ~/.config/nixpkgs/home.nix under packages:
+{ config, pkgs, ... }: { home.packages = [ pkgs.qutebrowser ]; }   However, since I also want to configure qutebrowser keybindings using home-manager, I’m using the builtin module instead:
+        </div>
+          <a href="https://pmiddend.github.io/posts/nixgl-on-ubuntu/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+        
+      </div>
+    </div>
+  </div>
+</article>
+
+          </div>
+        
+          <div class="relative w-100 mb4">
+            
+<article class="bb b--black-10">
+  <div class="db pv4 ph3 ph0-l no-underline dark-gray">
+    <div class="flex flex-column flex-row-ns">
+      
+      <div class="blah w-100">
+        <h1 class="f3 fw1 athelas mt0 lh-title">
           <a href="https://pmiddend.github.io/posts/named-terminals/" class="color-inherit dim link">
             Quick tip: Named Terminals in emacs
             </a>
@@ -175,33 +200,25 @@
 
           </div>
         
-          <div class="relative w-100 mb4">
-            
-<article class="bb b--black-10">
-  <div class="db pv4 ph3 ph0-l no-underline dark-gray">
-    <div class="flex flex-column flex-row-ns">
-      
-      <div class="blah w-100">
-        <h1 class="f3 fw1 athelas mt0 lh-title">
-          <a href="https://pmiddend.github.io/posts/gnucash-workflow/" class="color-inherit dim link">
-            GnuCash für das persönliche Haushaltsbuch
-            </a>
-        </h1>
-        <div class="f6 f5-l lh-copy nested-copy-line-height nested-links">
-          Einleitung   Um einen Überblick über meine Finanzen zu erhalten, führe ich seit ein paar Monaten ein sogenanntes Haushaltsbuch. Wikipedia beschreibt den Aufbau und Zweck ganz gut:
- Ein Haushaltsbuch wird in der Regel von Privatpersonen geführt. Es stellt dabei alle Einnahmen den Ausgabenposten gegenüber. Alle Einnahmen und Ausgaben sollten dabei übersichtlich und nach Monaten und eventuell nach Kategorien (wie z. B. Ausgaben für Lebensmittel, Haushaltsartikel, Auto oder öffentliche Verkehrsmittel – je nach Bedarf) geordnet sein, um eine klare Budgetierung zu ermöglichen.
-        </div>
-          <a href="https://pmiddend.github.io/posts/gnucash-workflow/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
-        
-      </div>
-    </div>
-  </div>
-</article>
-
-          </div>
-        
       </section>
 
+      
+      <section class="w-100">
+        <h1 class="f3">More</h1>
+        
+        
+          <h2 class="f5 fw4 mb4 dib mr3">
+            <a href="https://pmiddend.github.io/posts/gnucash-workflow/" class="link black dim">
+              GnuCash für das persönliche Haushaltsbuch
+            </a>
+          </h2>
+        
+
+        
+        
+          <a href="https://pmiddend.github.io/posts/" class="link db f6 pa2 br3 bg-mid-gray white dim w4 tc">All Posts</a>
+        
+        </section>
       
 
       </div>
