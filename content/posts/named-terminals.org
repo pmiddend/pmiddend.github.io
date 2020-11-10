@@ -1,0 +1,35 @@
+---
+title: "Quick tip: Named Terminals in emacs"
+date: 2020-11-10T13:13:08+01:00
+draft: true
+---
+I’m using the very convenient [[https://github.com/akermu/emacs-libvterm][vterm]] package to open a terminal in emacs. Now, as with tabs in your browser, you tend to accumulate terminals over time, and you end up with:
+
+- =vterm=
+- =vterm<1>=
+- =vterm<2>=
+- =vterm<3>=
+- …
+
+And as you can see, it’s even worse than with browser tabs, because you don’t have a natural “title” for terminals. You could use the current working directory, but that usually isn’t enough.
+
+So to organize things nicely, you can rename the vterm buffer using =M-x rename-buffer=, and that’s what I did up until today.
+
+Today I wrote the following interactive function:
+
+#+begin_src emacs-lisp
+(defun pmi/named-term (term-name)
+    "Generate a terminal with buffer name TERM-NAME."
+    (interactive "sTerminal purpose: ")
+    (vterm (concat "term-" term-name)))
+#+end_src
+
+As the documentation for the function states, this creates a terminal /and/ assigns a buffer name that you need to enter first. I want the name to start with =term-= so I can easily find terminals in my buffer search. YMMV.
+
+I mapped this in exwm via…
+
+#+begin_src emacs-lisp
+(exwm-input-set-key (kbd "s-<return>") 'pmi/named-term)
+#+end_src
+
+And now I get asked for the purpose of each terminal before it’s created.
