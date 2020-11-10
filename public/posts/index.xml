@@ -6,7 +6,17 @@
     <description>Recent content in Posts on Plato’s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 10 Nov 2020 13:13:08 +0100</lastBuildDate><atom:link href="https://pmiddend.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 10 Nov 2020 17:51:01 +0100</lastBuildDate><atom:link href="https://pmiddend.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using nixGL to fix OpenGL applications on non-NixOS distributions</title>
+      <link>https://pmiddend.github.io/posts/nixgl-on-ubuntu/</link>
+      <pubDate>Tue, 10 Nov 2020 17:51:01 +0100</pubDate>
+      
+      <guid>https://pmiddend.github.io/posts/nixgl-on-ubuntu/</guid>
+      <description>The Nix package manager can be installed on any Linux distribution, on Mac and even on Windows. I’m currently using Ubuntu 20 and am enjoying home-manager to declaratively manage my $HOME directory using Nix tooling. For instance, to use my favorite browser qutebrowser, I could just add it into my ~/.config/nixpkgs/home.nix under packages:
+{ config, pkgs, ... }: { home.packages = [ pkgs.qutebrowser ]; }   However, since I also want to configure qutebrowser keybindings using home-manager, I’m using the builtin module instead:</description>
+    </item>
+    
     <item>
       <title>Quick tip: Named Terminals in emacs</title>
       <link>https://pmiddend.github.io/posts/named-terminals/</link>

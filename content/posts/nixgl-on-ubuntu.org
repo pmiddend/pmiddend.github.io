@@ -1,0 +1,103 @@
+---
+title: "Using nixGL to fix OpenGL applications on non-NixOS distributions"
+date: 2020-11-10T17:51:01+01:00
+draft: false
+---
+
+The [[https://nixos.org/][Nix package manager]] can be installed on any Linux distribution, on Mac and even on Windows. I’m currently using Ubuntu 20 and am enjoying [[https://github.com/nix-community/home-manager][home-manager]] to declaratively manage my =$HOME= directory using Nix tooling. For instance, to use my favorite browser [[https://qutebrowser.org/][qutebrowser]], I could just add it into my =~/.config/nixpkgs/home.nix= under =packages=:
+
+#+begin_example
+{ config, pkgs, ... }:
+
+{
+  home.packages = [
+    pkgs.qutebrowser
+  ];
+}
+#+end_example
+
+However, since I also want to configure qutebrowser keybindings using home-manager, I’m using the builtin module instead:
+
+#+begin_example
+{ config, pkgs, ... }:
+
+{
+  programs.qutebrowser = {
+    enable = true;
+    keyBindings = {
+      normal = {
+        "m" = "spawn mpv {url}";
+      };
+    };
+  }
+}
+#+end_example
+
+Then I can =home-manager switch= and voila, running =qutebrowser= on a terminal…crashes! The output is…
+
+#+begin_example
+(process:134810): Gtk-WARNING **: 17:55:45.724: Locale not supported by C library.
+        Using the fallback 'C' locale.
+17:55:45 WARNING: qglx_findConfig: Failed to finding matching FBConfig for QSurfaceFormat(version 2.0, options QFlags<QSurfaceFormat::FormatOption>(), depthBufferSize -1, redBufferSize 1, greenBufferSize 1, blueBufferSize 1, alphaBufferSize -1, stencilBufferSize -1, samples -1, swapBehavior QSurfaceFormat::SingleBuffer, swapInterval 1, colorSpace QSurfaceFormat::DefaultColorSpace, profile  QSurfaceFormat::NoProfile)
+17:55:45 WARNING: qglx_findConfig: Failed to finding matching FBConfig for QSurfaceFormat(version 2.0, options QFlags<QSurfaceFormat::FormatOption>(), depthBufferSize -1, redBufferSize 1, greenBufferSize 1, blueBufferSize 1, alphaBufferSize -1, stencilBufferSize -1, samples -1, swapBehavior QSurfaceFormat::SingleBuffer, swapInterval 1, colorSpace QSurfaceFormat::DefaultColorSpace, profile  QSurfaceFormat::NoProfile)
+17:55:45 CRITICAL: Could not initialize GLX
+Fatal Python error: Aborted
+
+Current thread 0x00007fd65318ef80 (most recent call first):
+  File "/nix/store/krj21a11r9wbw2v9dpqkgfk6zrm88a43-qutebrowser-1.14.0/lib/python3.8/site-packages/qutebrowser/app.py", line 530 in __init__
+  File "/nix/store/krj21a11r9wbw2v9dpqkgfk6zrm88a43-qutebrowser-1.14.0/lib/python3.8/site-packages/qutebrowser/app.py", line 96 in run
+  File "/nix/store/krj21a11r9wbw2v9dpqkgfk6zrm88a43-qutebrowser-1.14.0/lib/python3.8/site-packages/qutebrowser/qutebrowser.py", line 204 in main
+  File "/nix/store/krj21a11r9wbw2v9dpqkgfk6zrm88a43-qutebrowser-1.14.0/bin/.qutebrowser-wrapped", line 9 in <module>
+Aborted (core dumped)
+#+end_example
+
+Something about GLX?
+
+#+begin_example
+17:55:45 CRITICAL: Could not initialize GLX
+#+end_example
+
+The output of =glxinfo= seems harmless. Is it a Nix problem, then. Let’s run:
+
+#+begin_example
+nix-shell -p glxinfo --run glxinfo
+#+end_example
+
+This runs Nix’s version of =glxinfo=, and indeed we get:
+
+#+begin_example
+name of display: :0
+Error: couldn't find RGB GLX visual or fbconfig
+#+end_example
+
+The problem faced here is, sadly, [[https://github.com/NixOS/nixpkgs/issues/9415#][known]] (the linked issue was opened in 2015). There is a solution, however, in the form of [[https://github.com/guibou/nixGL][guibou/nixGL]]. I won’t go into the details of how this works and just present you with the solution. For qutebrowser, it looks like this:
+
+#+begin_example
+{ config, pkgs, ... }:
+
+let nixGLIntel = (pkgs.callPackage "${builtins.fetchTarball {
+      url = https://github.com/guibou/nixGL/archive/17c1ec63b969472555514533569004e5f31a921f.tar.gz;
+      sha256 = "0yh8zq746djazjvlspgyy1hvppaynbqrdqpgk447iygkpkp3f5qr";
+    }}/nixGL.nix" {}).nixGLIntel;
+in
+{
+  programs.qutebrowser = {
+    enable = true;
+    keyBindings = {
+      normal = {
+        "m" = "spawn mpv {url}";
+      };
+    };
+    package =
+      pkgs.writeShellScriptBin "qutebrowser" ''
+           #!/bin/sh
+
+           ${nixGLIntel}/bin/nixGLIntel ${pkgs.qutebrowser}/bin/qutebrowser "$@"
+        '';
+  }
+}
+#+end_example
+
+So in the first few lines, I’m downloading a specific, pinned version of nixGL (so everything is nicely reproducible). I then wrap the =qutebrowser= executable inside =nixGLIntel=, as nixGL’s readme [[https://github.com/guibou/nixGL][suggests]]. Then after another =home-manager switch=, I can execute =qutebrowser= without the error message.
+
+Note that the setup is, of course, specific to me with my Intel GPU. There’s functions for NVidia and AMD, too.
