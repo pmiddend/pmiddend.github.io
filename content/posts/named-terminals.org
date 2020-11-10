@@ -1,7 +1,7 @@
 ---
 title: "Quick tip: Named Terminals in emacs"
 date: 2020-11-10T13:13:08+01:00
-draft: true
+draft: false
 ---
 I’m using the very convenient [[https://github.com/akermu/emacs-libvterm][vterm]] package to open a terminal in emacs. Now, as with tabs in your browser, you tend to accumulate terminals over time, and you end up with:
 
