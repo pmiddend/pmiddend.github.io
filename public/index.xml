@@ -6,7 +6,16 @@
     <description>Recent content on Plato’s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 10 Nov 2020 17:51:01 +0100</lastBuildDate><atom:link href="https://pmiddend.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 21 Nov 2020 11:31:45 +0100</lastBuildDate><atom:link href="https://pmiddend.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Separation of Concerns — applied</title>
+      <link>https://pmiddend.github.io/posts/org-todoist-python/</link>
+      <pubDate>Sat, 21 Nov 2020 11:31:45 +0100</pubDate>
+      
+      <guid>https://pmiddend.github.io/posts/org-todoist-python/</guid>
+      <description>Introduction   I like programming. I have been doing it since…around 2005. Because of that — and because it’s my profession — I often get asked what a “good” programmer does better than a novice. And that’s actually a very good question, not just for programmers, I guess. What’s does an experienced mathematician do better than a grad student? Or an architect? Or a brick-layer? I’m sure there are books about “expert-ness” in each of those professions.</description>
+    </item>
+    
     <item>
       <title>Using nixGL to fix OpenGL applications on non-NixOS distributions</title>
       <link>https://pmiddend.github.io/posts/nixgl-on-ubuntu/</link>
@@ -30,16 +39,6 @@
   vterm&amp;lt;3&amp;gt;
   …
   And as you can see, it’s even worse than with browser tabs, because you don’t have a natural “title” for terminals. You could use the current working directory, but that usually isn’t enough.</description>
-    </item>
-    
-    <item>
-      <title>Intelligent Airing</title>
-      <link>https://pmiddend.github.io/posts/intelligent-airing/</link>
-      <pubDate>Sun, 20 Sep 2020 10:40:30 +0200</pubDate>
-      
-      <guid>https://pmiddend.github.io/posts/intelligent-airing/</guid>
-      <description>Introduction   In this post, I will detail my solution to intelligently air a room in order to ensure proper humidity. The solution is based on an Arduino board, a humidity sensor and some other components. This post is aimed at technically minded people, ideally posessing some Arduino experience.
-  What I’ll not tell you   This post will not be one of the many “here’s the code and diagram, just copy and paste” Arduino posts.</description>
     </item>
     
     <item>

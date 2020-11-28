@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Separation of Concerns — applied | Plato’s Blog</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.77.0" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    
+
+    
+    
+      <link href="/dist/css/app.4fc0b62e4b82c997bb0041217cd6b979.css" rel="stylesheet">
+    
+
+    
+
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="Separation of Concerns — applied" />
+<meta property="og:description" content="Introduction   I like programming. I have been doing it since…around 2005. Because of that — and because it’s my profession — I often get asked what a “good” programmer does better than a novice. And that’s actually a very good question, not just for programmers, I guess. What’s does an experienced mathematician do better than a grad student? Or an architect? Or a brick-layer? I’m sure there are books about “expert-ness” in each of those professions." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://pmiddend.github.io/posts/org-todoist-python/" />
+<meta property="article:published_time" content="2020-11-21T11:31:45+01:00" />
+<meta property="article:modified_time" content="2020-11-21T11:31:45+01:00" />
+<meta itemprop="name" content="Separation of Concerns — applied">
+<meta itemprop="description" content="Introduction   I like programming. I have been doing it since…around 2005. Because of that — and because it’s my profession — I often get asked what a “good” programmer does better than a novice. And that’s actually a very good question, not just for programmers, I guess. What’s does an experienced mathematician do better than a grad student? Or an architect? Or a brick-layer? I’m sure there are books about “expert-ness” in each of those professions.">
+<meta itemprop="datePublished" content="2020-11-21T11:31:45+01:00" />
+<meta itemprop="dateModified" content="2020-11-21T11:31:45+01:00" />
+<meta itemprop="wordCount" content="3233">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Separation of Concerns — applied"/>
+<meta name="twitter:description" content="Introduction   I like programming. I have been doing it since…around 2005. Because of that — and because it’s my profession — I often get asked what a “good” programmer does better than a novice. And that’s actually a very good question, not just for programmers, I guess. What’s does an experienced mathematician do better than a grad student? Or an architect? Or a brick-layer? I’m sure there are books about “expert-ness” in each of those professions."/>
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        Plato’s Blog
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        POSTS
+      </aside>
+      
+
+
+
+
+  <div id="sharing" class="mt3">
+
+    
+    <a href="https://www.facebook.com/sharer.php?u=https://pmiddend.github.io/posts/org-todoist-python/" class="facebook no-underline" aria-label="share on Facebook">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+
+    </a>
+
+    
+    
+    <a href="https://twitter.com/share?url=https://pmiddend.github.io/posts/org-todoist-python/&amp;text=Separation%20of%20Concerns%20%e2%80%94%20applied" class="twitter no-underline" aria-label="share on Twitter">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+    </a>
+
+    
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://pmiddend.github.io/posts/org-todoist-python/&amp;title=Separation%20of%20Concerns%20%e2%80%94%20applied" class="linkedin no-underline" aria-label="share on LinkedIn">
+      <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+    </a>
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Separation of Concerns — applied</h1>
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2020-11-21T11:31:45+01:00">November 21, 2020</time>
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l">
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+Introduction
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p>
+I like programming. I have been doing it since…around 2005. Because of that — and because it’s my profession — I often get asked what a “good” programmer does better than a novice. And that’s actually a very good question, not just for programmers, I guess. What’s does an experienced mathematician do better than a grad student? Or an architect? Or a brick-layer? I’m sure there are books about “expert-ness” in each of those professions.</p>
+<p>
+So, what I’m presenting here is just a single aspect that I think is something that “novice” programmers often don’t take care about. And that’s “<a href="https://en.wikipedia.org/wiki/Separation_of_concerns">Separation of concerns</a>” (SoC):</p>
+<blockquote>
+<p>In computer science, separation of concerns (SoC) is a design principle for separating a computer program into distinct sections such that each section addresses a separate concern.</p>
+</blockquote>
+<p>
+Pretty simple to describe, but the devil is in the details. What’s a “concern”? I’ll illustrate the principle with a real-world example.</p>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
+<h2 id="headline-2">
+The project
+</h2>
+<div id="outline-text-headline-2" class="outline-text-2">
+<p>
+<img src="/org-mode-unicorn.png" alt="/org-mode-unicorn.png" title="/org-mode-unicorn.png" /></p>
+<p>
+I’m using <a href="https://orgmode.org/">emacs org-mode</a> as my professional note-taking and to-do list management tool. I like it, among other things, because it’s just <em>plain text</em>. For instance:</p>
+<div class="src src-org">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-org" data-lang="org">*<span style="font-weight:bold"> Important project</span>
+<span style="color:#75715e">**</span> General notes
+
+<span style="color:#66d9ef">- </span>This is a list
+<span style="color:#66d9ef">- </span>Of things
+  <span style="color:#66d9ef">+ </span>That can be nested!
+    <span style="color:#66d9ef">1.</span> And have enumerations
+
+<span style="color:#75715e">**</span><span style="color:#960050;background-color:#1e0010"> TODO</span> Tell boss
+<span style="color:#75715e">   DEADLINE: </span><span style="color:#75715e">&lt;2020-11-23 Mon 15:00&gt;</span>
+
+<span style="color:#75715e">**</span><span style="color:#960050;background-color:#1e0010"> TODO</span> Write article about SoC
+<span style="color:#75715e">   SCHEDULED: </span><span style="color:#75715e">&lt;2020-11-22 Sun&gt;</span></code></pre></div>
+</div>
+<p>
+org-mode files have a tree<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup> structure of headlines (denoted by asterisks), which have optional content text and optional sub-headlines (with more asterisks). A headline can also be <code class="verbatim">SCHEDULED</code> and have a <code class="verbatim">DEADLINE</code>. If you know <a href="https://daringfireball.net/projects/markdown/">markdown</a>, org-mode’s syntax is very similar.</p>
+<p>
+Because of org-mode files being…well, files, I can put them into <a href="https://git-scm.com/">git</a>, transfer them easily, and they’ll be readable forever. Heck, they’re pretty readable without the acompanying editor/OS, <a href="https://www.gnu.org/software/emacs/">emacs</a>. What emacs offers is nice editing, agenda building, searching and so on.</p>
+<p>
+However, for managing my <em>private</em> to-dos, I’m using a closed-source, proprietary service called <a href="https://todoist.com/">Todoist</a>. Why two systems?</p>
+<ul>
+<li>
+<p>I can share my to-dos lists with other people.</p>
+</li>
+<li>
+<p>My personal to-dos are much, <em>much</em> simpler than my professional ones. Instead of a full <a href="https://orgmode.org/manual/Markup-for-Rich-Contents.html">markup language</a> for rich text, <a href="https://orgmode.org/manual/The-Spreadsheet.html#The-Spreadsheet">spreadsheet features</a>, <a href="https://orgmode.org/manual/Clocking-Work-Time.html#Clocking-Work-Time">work time clocking</a>, and so on (I’m not getting paid by org-mode btw.), I simply need…</p>
+<ol>
+<li>
+<p>A todo title</p>
+</li>
+<li>
+<p>An optional due date</p>
+</li>
+<li>
+<p>Repeaters for regular “take out the trash”-style to-dos<sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup></p>
+</li>
+<li>
+<p>Ideally some sort of hierarchy. Doesn’t have to be intricate.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>There’s a very nice app and an even nicer widget that goes along with Todoist. Now, I know about <a href="http://www.orgzly.com/">orgzly</a> for org-mode on Anrdoid. It’s not as mature as the Todoist app, and thus harder to use (meaning more clicks for simple matters) and I have to build the synchronization myself. And boy, it sounds easy (just use <a href="https://www.dropbox.com/?landing=dbv2">Dropbox</a>! just use <a href="https://syncthing.net/">Syncthing</a>!), but I cannot count the number of times I’ve had conflicts in my todo files. And I do <em>not</em> appreciate solving these, neither on my smartphone nor on my desktop PC.</p>
+</li>
+</ul>
+<p>And now, to the project. It’s a papercut, really. At work, with org-mode, I can check my “org agenda”:</p>
+<p>
+<img src="/org-agenda.png" alt="/org-agenda.png" title="/org-agenda.png" /></p>
+<p>
+Which gives me a nice overview of what I did, and what’s coming up. This agenda, however, doesn’t include my private to-dos. Because those are managed by Todoist, as I said. And that’s still fine. But what I’d like to have is at least a read-only view of those private to-dos, so I don’t forget anything.</p>
+<p>
+Seemed easy enough. Todoist has an <a href="https://developer.todoist.com/sync/v8/">API</a> and a <a href="https://todoist-python.readthedocs.io/en/latest/todoist.html">Python wrapper</a> making this even easier. If you’re just interested in the result, there is a <a href="https://github.com/pmiddend/org-todoist">GitHub repository</a> for it.</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-2">
+<h2 id="headline-3">
+Describing the project, bird’s eye view
+</h2>
+<div id="outline-text-headline-3" class="outline-text-2">
+<p>
+The project is pretty easy to describe:</p>
+<ul>
+<li>
+<p>Retrieve all my to-dos from my Todoist account</p>
+</li>
+<li>
+<p>Convert them into a single, hierarchical org-mode file</p>
+</li>
+</ul>
+<p>To-dos in Todoist are also hierarchical. You have one or more <em>projects</em> at the root level. Below that, there are <em>items</em>, which can have items below them as well. Schematically, using two projects “breakfast” and “lunch”:</p>
+<p>
+<img src="/todoist-graph.png" alt="/todoist-graph.png" title="/todoist-graph.png" /></p>
+<p>
+Just so you’ve seen the same thing, in org-mode it’ll be:</p>
+<div class="src src-org">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-org" data-lang="org">*<span style="font-weight:bold"> breakfast</span>
+<span style="color:#75715e">**</span><span style="color:#960050;background-color:#1e0010"> TODO</span> buy ingredients
+<span style="color:#75715e">***</span><span style="color:#960050;background-color:#1e0010"> TODO</span> eggs
+<span style="color:#75715e">***</span><span style="color:#960050;background-color:#1e0010"> TODO</span> bread
+*<span style="font-weight:bold"> lunch</span>
+<span style="color:#75715e">**</span><span style="color:#960050;background-color:#1e0010"> TODO</span> cook</code></pre></div>
+</div>
+<p>
+There is always a project “Inbox” (stemming from the <a href="https://gettingthingsdone.com/">GTD</a> approach, I guess) and there are categories like “Today” and &#34;Upcoming“ to intelligently search for items (basically what the org-agenda does):</p>
+<p>
+<img src="/todoist-agenda.png" alt="/todoist-agenda.png" title="/todoist-agenda.png" /></p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-2">
+<h2 id="headline-4">
+Doing it stupidly
+</h2>
+<div id="outline-text-headline-4" class="outline-text-2">
+<p>
+Let’s implement this project in the most simple, straightforward way possible. Let’s run to the finish line, no matter the condition in which we arrive. Getting the data from Todoist is simple enough. Register our <a href="https://developer.todoist.com/sync/v8/#authorization">application on the website</a>, and get a test token for it. After we’ve done that, let’s start writing some Python:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> todoist
+
+api <span style="color:#f92672">=</span> todoist<span style="color:#f92672">.</span>TodoistAPI(<span style="color:#e6db74">&#34;mytokenimnottellingyou&#34;</span>)
+api<span style="color:#f92672">.</span>sync()
+
+<span style="color:#66d9ef">print</span>(api<span style="color:#f92672">.</span>state[<span style="color:#e6db74">&#34;projects&#34;</span>])</code></pre></div>
+</div>
+<p>
+As you can see, we cosntruct a <code class="verbatim">TodoistAPI</code> object, <code class="verbatim">sync()</code> it and then have our whole Todoist state in the <code class="verbatim">api.state</code> dictionary.</p>
+<p>
+Running <code class="verbatim">python my-script.py</code> still gives an error, because we need the <code class="verbatim">todoist-python</code> dependency. Package managers, always making trouble! But no matter, we’ll run <code class="verbatim">pip install todoist-python</code> and voila!</p>
+<pre class="example">
+&gt; python my-script.py
+
+[Project({&#39;child_order&#39;: 0,
+ &#39;collapsed&#39;: 0,
+ &#39;color&#39;: 48,
+ &#39;has_more_notes&#39;: False,
+ &#39;id&#39;: 1,
+ &#39;inbox_project&#39;: True,
+ &#39;is_archived&#39;: 0,
+ &#39;is_deleted&#39;: 0,
+ &#39;is_favorite&#39;: 0,
+ &#39;name&#39;: &#39;Inbox&#39;,
+ &#39;parent_id&#39;: None,
+ &#39;shared&#39;: False,
+ &#39;sync_id&#39;: None}), Project({&#39;child_order&#39;: 2,
+…]
+</pre>
+<p>
+We’re almost done, right? But wait…why are there no items inside these <code class="verbatim">Project</code> objects? Digging a bit further into this, we find that <code class="verbatim">api.state</code> contains <code class="verbatim">projects</code> and <code class="verbatim">items</code>. So these two aren’t nested, they’re linked to each other by an ID. Indeed, <a href="https://developer.todoist.com/sync/v8/#items">item</a> has a property called <code class="verbatim">project_id</code>.</p>
+<p>
+Okay, so to solve our problem, we need to…</p>
+<ul>
+<li>
+<p>Iterate over all <em>projects</em>; these will be our top-level headlines.</p>
+</li>
+<li>
+<p>For each <em>project</em>, search for all <em>items</em> in this project.</p>
+</li>
+<li>
+<p>For each <em>item</em>, output a headline and all <em>sub-items</em> of this item.</p>
+</li>
+</ul>
+<p>Easy enough, right? Let’s get to it (I’m only showing the part after <code class="verbatim">api.sync()</code>):</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">for</span> p <span style="color:#f92672">in</span> api<span style="color:#f92672">.</span>state[<span style="color:#e6db74">&#34;projects&#34;</span>]:
+    <span style="color:#66d9ef">print</span>(f<span style="color:#e6db74">&#34;* {p[&#39;name&#39;]}&#34;</span>)
+
+    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> api<span style="color:#f92672">.</span>state[<span style="color:#e6db74">&#34;items&#34;</span>]:
+        <span style="color:#66d9ef">if</span> i[<span style="color:#e6db74">&#34;project_id&#34;</span>] <span style="color:#f92672">==</span> p[<span style="color:#e6db74">&#34;id&#34;</span>]:
+            <span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#34;** TODO &#34;</span> <span style="color:#f92672">+</span> i[<span style="color:#e6db74">&#34;content&#34;</span>])</code></pre></div>
+</div>
+<p>
+This isn’t recursive yet and doesn’t dig into the sub-items. Why? Because, just as with the projects, items don’t contain sub-items. Instead, they link to each other indirectly via a <code class="verbatim">parent_id</code>. So we’re getting the following org-mode output for the simple Todoist schema above:</p>
+<div class="src src-org">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-org" data-lang="org">*<span style="font-weight:bold"> breakfast</span>
+<span style="color:#75715e">**</span><span style="color:#960050;background-color:#1e0010"> TODO</span> buy ingredients
+<span style="color:#75715e">**</span><span style="color:#960050;background-color:#1e0010"> TODO</span> eggs
+<span style="color:#75715e">**</span><span style="color:#960050;background-color:#1e0010"> TODO</span> bread
+*<span style="font-weight:bold"> lunch</span>
+<span style="color:#75715e">**</span><span style="color:#960050;background-color:#1e0010"> TODO</span> cook</code></pre></div>
+</div>
+<p>
+Note that <code class="verbatim">eggs</code> and <code class="verbatim">bread</code> are not below <code class="verbatim">buy ingredients</code>. They belong to <code class="verbatim">breakfast</code> though, so that much is correct.</p>
+<p>
+To solve the sub-items, we have to do some recursion and introduce a function. Bummer, the code was so simple before. Forgive my naming, btw., I don’t have much horizontal space here.</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">output_item</span>(depth, i, items):
+    indent <span style="color:#f92672">=</span> depth <span style="color:#f92672">*</span> <span style="color:#e6db74">&#34;*&#34;</span>
+    <span style="color:#66d9ef">print</span>(f<span style="color:#e6db74">&#34;{indent} TODO {i[&#39;content&#39;]}&#34;</span>)
+    <span style="color:#66d9ef">for</span> si <span style="color:#f92672">in</span> items:
+        <span style="color:#66d9ef">if</span> si[<span style="color:#e6db74">&#34;parent_id&#34;</span>] <span style="color:#f92672">==</span> i[<span style="color:#e6db74">&#34;id&#34;</span>]:
+            output_item(depth <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, si, items)
+
+<span style="color:#66d9ef">for</span> p <span style="color:#f92672">in</span> api<span style="color:#f92672">.</span>state[<span style="color:#e6db74">&#34;projects&#34;</span>]:
+    <span style="color:#66d9ef">print</span>(f<span style="color:#e6db74">&#34;* {p[&#39;name&#39;]}&#34;</span>)
+
+    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> api<span style="color:#f92672">.</span>state[<span style="color:#e6db74">&#34;items&#34;</span>]:
+        <span style="color:#66d9ef">if</span> i[<span style="color:#e6db74">&#34;project_id&#34;</span>] <span style="color:#f92672">==</span> p[<span style="color:#e6db74">&#34;id&#34;</span>]:
+            output_item(<span style="color:#ae81ff">2</span>, i, api<span style="color:#f92672">.</span>state[<span style="color:#e6db74">&#34;items&#34;</span>])</code></pre></div>
+</div>
+<p>
+Running this gives:</p>
+<div class="src src-org">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-org" data-lang="org">*<span style="font-weight:bold"> breakfast</span>
+<span style="color:#75715e">**</span><span style="color:#960050;background-color:#1e0010"> TODO</span> buy ingredients
+<span style="color:#75715e">***</span><span style="color:#960050;background-color:#1e0010"> TODO</span> eggs
+<span style="color:#75715e">***</span><span style="color:#960050;background-color:#1e0010"> TODO</span> bread
+<span style="color:#75715e">**</span><span style="color:#960050;background-color:#1e0010"> TODO</span> eggs
+<span style="color:#75715e">**</span><span style="color:#960050;background-color:#1e0010"> TODO</span> bread
+*<span style="font-weight:bold"> lunch</span>
+<span style="color:#75715e">**</span><span style="color:#960050;background-color:#1e0010"> TODO</span> cook</code></pre></div>
+</div>
+<p>
+Looks like we have too many to-dos now! Why is <code class="verbatim">eggs</code> displayed twice? It’s a bit tricky. Below a project, we are iterating over <em>all</em> items, not just those <em>without a parent item</em>. Rookie mistake. We need to fix the condition:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">if</span> i[<span style="color:#e6db74">&#34;project_id&#34;</span>] <span style="color:#f92672">==</span> p[<span style="color:#e6db74">&#34;id&#34;</span>]:</code></pre></div>
+</div>
+<p>
+and make it</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">if</span> i[<span style="color:#e6db74">&#34;project_id&#34;</span>] <span style="color:#f92672">==</span> p[<span style="color:#e6db74">&#34;id&#34;</span>] <span style="color:#f92672">and</span> i[<span style="color:#e6db74">&#34;parent_id&#34;</span>] <span style="color:#f92672">is</span> None:</code></pre></div>
+</div>
+<p>
+And now it works.</p>
+<p>
+What’s missing? Due dates, at least. Let’s implement those. Looking at the <a href="https://developer.todoist.com/sync/v8/#due-dates">API</a> again, we see that due dates have the following structure:</p>
+<div class="src src-json">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+    <span style="color:#f92672">&#34;date&#34;</span>: <span style="color:#e6db74">&#34;2016-12-01&#34;</span>,
+    <span style="color:#f92672">&#34;timezone&#34;</span>: <span style="color:#66d9ef">null</span>,
+    <span style="color:#f92672">&#34;string&#34;</span>: <span style="color:#e6db74">&#34;every day&#34;</span>,
+    <span style="color:#f92672">&#34;lang&#34;</span>: <span style="color:#e6db74">&#34;en&#34;</span>,
+    <span style="color:#f92672">&#34;is_recurring&#34;</span>: <span style="color:#66d9ef">true</span>
+}</code></pre></div>
+</div>
+<p>
+Interestingly, <code class="verbatim">date</code> is either <code class="verbatim">YYYY-MM-DD</code> or <code class="verbatim">YYYY-MM-DDTHH:MM:SS</code>, depending on whether we have a floating date (so one with a time) or non-floating. And I’m ignoring time-zoned date/time for now. That’d just be a hassle.</p>
+<p>
+In org-mode, it’s similar. We can have:</p>
+<div class="src src-org">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-org" data-lang="org"><span style="color:#75715e">SCHEDULED: </span><span style="color:#75715e">&lt;2016-12-01&gt;</span></code></pre></div>
+</div>
+<p>
+or:</p>
+<div class="src src-org">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-org" data-lang="org"><span style="color:#75715e">SCHEDULED: </span><span style="color:#75715e">&lt;2016-12-01 15:00&gt;</span></code></pre></div>
+</div>
+<p>
+And org-mode knows about repeaters, but importing those from Todoist doesn’t make much sense, so we’re sticking with these two date formats.</p>
+<p>
+Okay, seems like we need to do some conversion and then we’re done:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> todoist
+<span style="color:#f92672">from</span> datetime <span style="color:#f92672">import</span> datetime
+
+api <span style="color:#f92672">=</span> todoist<span style="color:#f92672">.</span>TodoistAPI(<span style="color:#e6db74">&#34;mytokenimnottellingyou&#34;</span>)
+api<span style="color:#f92672">.</span>sync()
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">output_item</span>(depth, i, items):
+    indent <span style="color:#f92672">=</span> depth <span style="color:#f92672">*</span> <span style="color:#e6db74">&#34;*&#34;</span>
+    <span style="color:#66d9ef">print</span>(f<span style="color:#e6db74">&#34;{indent} TODO {i[&#39;content&#39;]}&#34;</span>)
+    <span style="color:#66d9ef">if</span> i[<span style="color:#e6db74">&#34;date&#34;</span>] <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> None:
+        due_dt <span style="color:#f92672">=</span> datetime<span style="color:#f92672">.</span>fromisoformat(i[<span style="color:#e6db74">&#34;date&#34;</span>])
+        <span style="color:#66d9ef">if</span> due_dt<span style="color:#f92672">.</span>hour <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">and</span> due_dt<span style="color:#f92672">.</span>minute <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+            tformat <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;%Y-%m-</span><span style="color:#e6db74">%d</span><span style="color:#e6db74">&#34;</span>
+        <span style="color:#66d9ef">else</span>:
+            tformat <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;%Y-%m-</span><span style="color:#e6db74">%d</span><span style="color:#e6db74"> %H:%M&#34;</span>
+        <span style="color:#66d9ef">print</span>(f<span style="color:#e6db74">&#34;SCHEDULED: &lt;&#34;</span><span style="color:#f92672">+</span> due<span style="color:#f92672">.</span>strftime(tformat) <span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&gt;&#34;</span>)
+    <span style="color:#66d9ef">for</span> si <span style="color:#f92672">in</span> items:
+        <span style="color:#66d9ef">if</span> si[<span style="color:#e6db74">&#34;parent_id&#34;</span>] <span style="color:#f92672">==</span> i[<span style="color:#e6db74">&#34;id&#34;</span>]:
+            output_item(depth <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, si, items)
+
+<span style="color:#66d9ef">for</span> p <span style="color:#f92672">in</span> api<span style="color:#f92672">.</span>state[<span style="color:#e6db74">&#34;projects&#34;</span>]:
+    <span style="color:#66d9ef">print</span>(f<span style="color:#e6db74">&#34;* {p[&#39;name&#39;]}&#34;</span>)
+
+    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> api<span style="color:#f92672">.</span>state[<span style="color:#e6db74">&#34;items&#34;</span>]:
+        <span style="color:#66d9ef">if</span> i[<span style="color:#e6db74">&#34;project_id&#34;</span>] <span style="color:#f92672">==</span> p[<span style="color:#e6db74">&#34;id&#34;</span>]:
+            output_item(<span style="color:#ae81ff">2</span>, i, api<span style="color:#f92672">.</span>state[<span style="color:#e6db74">&#34;items&#34;</span>])</code></pre></div>
+</div>
+<p>
+We’d need some kind of configuration or command-line parsing, so the api token isn’t hard-coded. And maybe we want to write to a file instead of the standard output. But otherwise, the stupid way of doing things got us this code, which is at least <em>short</em>.</p>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-2">
+<h2 id="headline-5">
+Shortcomings
+</h2>
+<div id="outline-text-headline-5" class="outline-text-2">
+<div id="outline-container-headline-6" class="outline-3">
+<h3 id="headline-6">
+Readability
+</h3>
+<div id="outline-text-headline-6" class="outline-text-3">
+<p>
+Short code is, of course, mostly easy to read. Unless you’re using <a href="https://en.wikipedia.org/wiki/Brainfuck">Brainfuck</a>. So that’s not an immediate issue. Although, from reading the code…could you quickly guess what it does? It’s got a loop, and it’s got some recursive function that prints stuff. The input seems some kind of magic dictionary, <code class="verbatim">api.state</code>. Try giving the code to a programmer friend, possibly renaming the ‘TodoistAPI’ stuff beforehand. See if the person can puzzle it out.</p>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-3">
+<h3 id="headline-7">
+Testability
+</h3>
+<div id="outline-text-headline-7" class="outline-text-3">
+<p>
+Next talking point: testability. Is this code testable? It seems like a good candidate, since it’s all simple data types, and there are almost no external services to set up or query. We’d have to rewrite our code just a bit and factor out the project loop into a function which takes the API dictionary:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">output_projects</span>(api_state):
+  <span style="color:#66d9ef">for</span> p <span style="color:#f92672">in</span> api_state[<span style="color:#e6db74">&#34;projects&#34;</span>]:
+    <span style="color:#66d9ef">print</span>(f<span style="color:#e6db74">&#34;* {p[&#39;name&#39;]}&#34;</span>)
+
+    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> api_state[<span style="color:#e6db74">&#34;items&#34;</span>]:
+        <span style="color:#66d9ef">if</span> i[<span style="color:#e6db74">&#34;project_id&#34;</span>] <span style="color:#f92672">==</span> p[<span style="color:#e6db74">&#34;id&#34;</span>]:
+            output_item(<span style="color:#ae81ff">2</span>, i, api_state[<span style="color:#e6db74">&#34;items&#34;</span>])</code></pre></div>
+</div>
+<p>
+Then we could test it like this:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_output_is_fine</span>():
+  mock_state <span style="color:#f92672">=</span> {
+    <span style="color:#e6db74">&#34;projects&#34;</span>: [{
+      <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;breakfast&#34;</span>
+      <span style="color:#e6db74">&#34;id&#34;</span>: <span style="color:#ae81ff">1</span>
+    }],
+    <span style="color:#e6db74">&#34;items&#34;</span>: [{
+      <span style="color:#960050;background-color:#1e0010">…</span>
+    }]
+  }
+
+  output <span style="color:#f92672">=</span> output_projects(mock_state)
+
+  <span style="color:#75715e"># compare output with prepared sample org file</span>
+  <span style="color:#75715e"># (with pytest, a fixture might be a good idea here)</span>
+  <span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#39;expected_file&#39;</span>) <span style="color:#66d9ef">as</span> f:
+    <span style="color:#66d9ef">assert</span> f<span style="color:#f92672">.</span>read() <span style="color:#f92672">==</span> output</code></pre></div>
+</div>
+<p>
+The test works, but its scope is very broad. It tests the whole thing at once, and you have to supply a whole org-mode file and a whole Todoist tree to run it. That’s no fun.</p>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-3">
+<h3 id="headline-8">
+Extensibility/Modularity
+</h3>
+<div id="outline-text-headline-8" class="outline-text-3">
+<p>
+Final point: extensibility. We’ve written this thing and it converts Todoist to org-mode. Can we make it convert Todoist to Markdown as well? Markdown is, after all, very similar to org mode:</p>
+<div class="src src-markdown">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-markdown" data-lang="markdown"># breakfast #
+<span style="color:#75715e">## TODO buy ingredients ##
+</span><span style="color:#75715e">### TODO bread ###
+</span><span style="color:#75715e">### TODO eggs ###
+</span><span style="color:#75715e">## TODO lunch ##
+</span><span style="color:#75715e"></span>### TODO cook ###</code></pre></div>
+</div>
+<p>
+Doesn’t seem like there’s an easy way to do this, since our code is so hard-coded to output org-mode.</p>
+<p>
+Similarly, could we make this code <em>input</em> a different format/API and output org-mode? Same thing: we can’t. Why? Because we didn’t <strong>separate our concerns</strong> and don’t have any sort of modularization. Our code does ten things at once, without clear delineations.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-2">
+<h2 id="headline-9">
+Separating the concerns
+</h2>
+<div id="outline-text-headline-9" class="outline-text-2">
+<p>
+Instead of the solution above, the race-to-the-finish-line approach, let’s think about how we would modularize this code. For me, this means to think about which parts can be <em>isolated</em> from each other, and then composed again to form the complete application. Let’s do this by writing down the steps we are taking, and which inputs, outputs and possible side-effects these steps have:</p>
+<ol>
+<li>
+<p>Retrieve the data from Todoist.</p>
+<dl>
+<dt>
+<strong>input</strong>
+</dt>
+<dd>
+<p>the API token</p>
+</dd>
+<dt>
+<strong>output</strong>
+</dt>
+<dd>
+<p><code class="verbatim">api.state</code>, a dictionary containing all the data we need</p>
+</dd>
+</dl>
+</li>
+<li>
+<p>Convert the Todoist API dictionary to a <em>tree</em></p>
+<dl>
+<dt>
+<strong>input</strong>
+</dt>
+<dd>
+<p>a Todoist state dictionary</p>
+</dd>
+<dt>
+<strong>output</strong>
+</dt>
+<dd>
+<p>a Todoist <em>tree</em> structure (to be defined)</p>
+</dd>
+</dl>
+</li>
+<li>
+<p>Convert the <em>Todoist tree</em> to an <em>org-mode tree</em></p>
+<dl>
+<dt>
+<strong>input</strong>
+</dt>
+<dd>
+<p>A Todoist tree structure</p>
+</dd>
+<dt>
+<strong>output</strong>
+</dt>
+<dd>
+<p>an org-mode tree structure (to be defined)</p>
+</dd>
+</dl>
+</li>
+<li>
+<p><em>Serialize</em> the org-mode tree structure to a string</p>
+<dl>
+<dt>
+<strong>input</strong>
+</dt>
+<dd>
+<p>an org-mode tree structure</p>
+</dd>
+<dt>
+<strong>output</strong>
+</dt>
+<dd>
+<p>a string</p>
+</dd>
+</dl>
+</li>
+</ol>
+<p>So ‘in reality’, we are building a tree, converting it and then flattening it again<sup class="footnote-reference"><a id="footnote-reference-3" href="#footnote-3">3</a></sup>. You might have guessed as much from the code above, but it’s helpful to realize that again, and to now make it explicit.</p>
+<div id="outline-container-headline-10" class="outline-3">
+<h3 id="headline-10">
+Step 1: Retrieve the data from Todoist
+</h3>
+<div id="outline-text-headline-10" class="outline-text-3">
+<p>
+This is pretty straightforward:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">retrieve_todoist_data</span>(token: str) <span style="color:#f92672">-&gt;</span> Dict[str, Any]:
+  api <span style="color:#f92672">=</span> todoist<span style="color:#f92672">.</span>TodoistAPI(token)
+  api<span style="color:#f92672">.</span>sync()
+  <span style="color:#66d9ef">return</span> api<span style="color:#f92672">.</span>state</code></pre></div>
+</div>
+<p>
+Note that I’m using Python with <a href="https://docs.python.org/3/library/typing.html?highlight=python%20typing#module-typing">types</a>, and will be running <a href="http://mypy-lang.org/">mypy</a> on the code to verify these types. Since this is a ‘what novices do wrong’ post, let me point out that using types is the single best thing you can do to write better code. The more types, the stronger the type system, the better your code will become. Period. And to illustrate that some more, I’m making the types stronger here. Instead of <code class="verbatim">Dict[str, Any]</code>, we’ll be declaring a <a href="https://mypy.readthedocs.io/en/stable/more_types.html">TypedDict</a> which explicitly states <em>which keys</em> there are in the dictionary and which values types those keys have:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TodoistDue</span>(TypedDict):
+    date: str
+    timezone: Optional[str]
+    string: str
+    lang: str
+    is_recurring: bool
+
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TodoistItem</span>(TypedDict):
+    id: int
+    project_id: int
+    content: str
+    due: Optional[TodoistDue]
+    parent_id: Optional[int]
+    in_history: int
+    is_deleted: int
+
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TodoistProject</span>(TypedDict):
+    id: int
+    parent_id: Optional[int]
+    name: str
+
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TodoistState</span>(TypedDict):
+    projects: List[TodoistProject]
+    items: List[TodoistItem]</code></pre></div>
+</div>
+<p>
+As you can see, you simply derive from <code class="verbatim">TypedDict</code> and specify class members with the according type.<sup class="footnote-reference"><a id="footnote-reference-4" href="#footnote-4">4</a></sup> Our function doesn’t change since we simply <em>assume</em> that our types are met. This we could of course verify, but I just wanted to convey the idea for now. We can now more safely access the Todoist state dictionary:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># Behold the return type!</span>
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">retrieve_todoist_data</span>(token: str) <span style="color:#f92672">-&gt;</span> TodoistState:
+  api <span style="color:#f92672">=</span> todoist<span style="color:#f92672">.</span>TodoistAPI(token)
+  api<span style="color:#f92672">.</span>sync()
+  <span style="color:#66d9ef">return</span> api<span style="color:#f92672">.</span>state</code></pre></div>
+</div>
+<p>
+Let’s quickly check if we have actually improved on our key aspects (and I admit, the code before the refactoring was a straw man, waiting to be knocked down):</p>
+<ul>
+<li>
+<p><strong>readability</strong>: It’s more code, so it’s a little less readable in that regard. However, where where had an opaque <code class="verbatim">api.state</code> dictionary, we now have something easily discoverable by looking at the types.</p>
+</li>
+<li>
+<p><strong>testability</strong>: Since data retrieval is a parametrized, single function, we can test this trivially by running it with different inputs.</p>
+</li>
+<li>
+<p><strong>modularity</strong> / <strong>extensibility</strong>: A function is something you can import from other modules and use on its own, so that’s definitely more modular.</p>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-11" class="outline-3">
+<h3 id="headline-11">
+Step 2: Converting it into a Todoist tree
+</h3>
+<div id="outline-text-headline-11" class="outline-text-3">
+<p>
+As we saw, our data is too flat to work with. We need to massage it into a list of trees. The function signature will thus be:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">TodoistTree <span style="color:#f92672">=</span> List[TodoistTreeProject]
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">build_todoist_tree</span>(state: TodoistState) <span style="color:#f92672">-&gt;</span> TodoistTree:
+  <span style="color:#66d9ef">pass</span></code></pre></div>
+</div>
+<p>
+Here, I envision a type <code class="verbatim">TodoistTreeProject</code> similar to our <code class="verbatim">TodoistProject</code>, but ‘treeified’. Here are the types we need in the next function:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#a6e22e">@dataclass</span>(frozen<span style="color:#f92672">=</span>True)
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TodoistTreeItem</span>:
+    state: TodoistItem
+    <span style="color:#75715e"># syntax for recursive types is a little weird, needs quotes</span>
+    sub_item: List[<span style="color:#e6db74">&#34;TodoistTreeItem&#34;</span>]
+
+<span style="color:#a6e22e">@dataclass</span>(frozen<span style="color:#f92672">=</span>True)
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TodoistTreeProject</span>:
+    state: TodoistProject
+    items: List[TodoistTreeItem]</code></pre></div>
+</div>
+<p>
+This mirrors exactly what we’ve talked about when we treeified earlier. A project has a list of items, each item can recursively have items below it. And we’re using our <code class="verbatim">TypedDicts</code> such as <code class="verbatim">TodoistItem</code> from above as a link to the Todoist data.</p>
+<p>
+To build the tree, we have the following code. It’s a bit longer, but I hope pretty much understandable:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">build_todoist_item_tree</span>(
+    items: List[TodoistItem], parent_item: TodoistItem
+) <span style="color:#f92672">-&gt;</span> TodoistTreeItem:
+    <span style="color:#66d9ef">return</span> TodoistTreeItem(
+        parent_item,
+        [
+            build_todoist_item_tree(items, sub_item)
+            <span style="color:#66d9ef">for</span> sub_item <span style="color:#f92672">in</span> items
+            <span style="color:#66d9ef">if</span> sub_item[<span style="color:#e6db74">&#34;parent_id&#34;</span>] <span style="color:#f92672">==</span> parent_item[<span style="color:#e6db74">&#34;id&#34;</span>]
+        ],
+    )
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">build_todoist_project_tree</span>(
+    state: TodoistState, project: TodoistProject
+) <span style="color:#f92672">-&gt;</span> TodoistTreeProject:
+    <span style="color:#66d9ef">return</span> TodoistTreeProject(
+        project,
+        [
+            build_todoist_item_tree(state[<span style="color:#e6db74">&#34;items&#34;</span>], item)
+            <span style="color:#66d9ef">for</span> item <span style="color:#f92672">in</span> state[<span style="color:#e6db74">&#34;items&#34;</span>]
+            <span style="color:#66d9ef">if</span> item[<span style="color:#e6db74">&#34;project_id&#34;</span>] <span style="color:#f92672">==</span> project[<span style="color:#e6db74">&#34;id&#34;</span>]
+            <span style="color:#f92672">and</span> item[<span style="color:#e6db74">&#34;parent_id&#34;</span>] <span style="color:#f92672">is</span> None
+            <span style="color:#f92672">and</span> item[<span style="color:#e6db74">&#34;is_deleted&#34;</span>] <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1</span>
+            <span style="color:#f92672">and</span> item[<span style="color:#e6db74">&#34;in_history&#34;</span>] <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1</span>
+        ],
+    )
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">build_todoist_tree</span>(state: TodoistState) <span style="color:#f92672">-&gt;</span> TodoistTree:
+    <span style="color:#66d9ef">return</span> [build_todoist_project_tree(state, p) <span style="color:#66d9ef">for</span> p <span style="color:#f92672">in</span> state[<span style="color:#e6db74">&#34;projects&#34;</span>]]</code></pre></div>
+</div>
+<p>
+So we have one function for building the a project object, one for an item object and sub-items, and one for the list of projects.</p>
+<p>
+Okay, let’s check if this code really is ‘better’ than the first one:</p>
+<ul>
+<li>
+<p><strong>readability</strong>: This is debatable. It’s three distinct functions, equipped with types that hopefully clearly state what they’re doing, which is nice to read. But it’s a lot more code than before.</p>
+</li>
+<li>
+<p><strong>testability</strong>: Three separate functions taking primitive types, having no <a href="https://en.wikipedia.org/wiki/Side_effect_(computer_science)">side effects</a> and returning primitive types — what could be better testable? You don’t even need any mocks or the Todoist API, it’s just Python.</p>
+</li>
+<li>
+<p><strong>modularity</strong> / <strong>extensibility</strong>: Again, we are more or less building a Todoist library, not minted to our specific use case, so I’d say it’s pretty modular.</p>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-12" class="outline-3">
+<h3 id="headline-12">
+Step 3: Converting from Todoist to org-mode
+</h3>
+<div id="outline-text-headline-12" class="outline-text-3">
+<p>
+To convert our tree to an org-mode tree, we need an org-mode tree structure first. Well, we don’t <em>need</em> it obviously, as we saw. But that is one of the big takeaways here: Build small, focused data structures! Combine them! Transform them! Serialize/deserialize them!</p>
+<p>
+Of course, org-mode is complex, as mentioned. We are only modelling a few aspects of it (right now). We’re actually fine with:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#a6e22e">@dataclass</span>(frozen<span style="color:#f92672">=</span>True)
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">OrgHeadline</span>:
+    title: str
+    todo_state: Optional[str]
+    scheduling: Optional[datetime]
+    sub_headlines: List[<span style="color:#e6db74">&#34;OrgHeadline&#34;</span>]
+
+
+OrgDocument <span style="color:#f92672">=</span> List[OrgHeadline]</code></pre></div>
+</div>
+<p>
+With this, let’s convert!</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">due_to_org</span>(d: TodoistDue) <span style="color:#f92672">-&gt;</span> datetime:
+    date <span style="color:#f92672">=</span> d[<span style="color:#e6db74">&#34;date&#34;</span>]
+    <span style="color:#66d9ef">return</span> datetime<span style="color:#f92672">.</span>fromisoformat(date)
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">item_to_org_headline</span>(t: TodoistTreeItem) <span style="color:#f92672">-&gt;</span> OrgHeadline:
+    <span style="color:#66d9ef">return</span> OrgHeadline(
+        title<span style="color:#f92672">=</span>t<span style="color:#f92672">.</span>state[<span style="color:#e6db74">&#34;content&#34;</span>],
+        todo_state<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;TODO&#34;</span>,
+        scheduling<span style="color:#f92672">=</span>due_to_org(t<span style="color:#f92672">.</span>state[<span style="color:#e6db74">&#34;due&#34;</span>])
+        <span style="color:#66d9ef">if</span> t<span style="color:#f92672">.</span>state[<span style="color:#e6db74">&#34;due&#34;</span>] <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> None
+        <span style="color:#66d9ef">else</span> None,
+        sub_headlines<span style="color:#f92672">=</span>[item_to_org_headline(ts) <span style="color:#66d9ef">for</span> ts <span style="color:#f92672">in</span> t<span style="color:#f92672">.</span>sub_item],
+    )
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">project_to_org_headline</span>(t: TodoistTreeProject) <span style="color:#f92672">-&gt;</span> OrgHeadline:
+    <span style="color:#66d9ef">return</span> OrgHeadline(
+        title<span style="color:#f92672">=</span>t<span style="color:#f92672">.</span>state[<span style="color:#e6db74">&#34;name&#34;</span>],
+        todo_state<span style="color:#f92672">=</span>None,
+        scheduling<span style="color:#f92672">=</span>None,
+        sub_headlines<span style="color:#f92672">=</span>[item_to_org_headline(ti) <span style="color:#66d9ef">for</span> ti <span style="color:#f92672">in</span> t<span style="color:#f92672">.</span>items],
+    )
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">convert_to_org</span>(t: TodoistTree) <span style="color:#f92672">-&gt;</span> OrgDocument:
+    <span style="color:#66d9ef">return</span> [project_to_org_headline(p) <span style="color:#66d9ef">for</span> p <span style="color:#f92672">in</span> t]</code></pre></div>
+</div>
+<p>
+Again we have a few, small functions. Again, we check our requirements:</p>
+<ul>
+<li>
+<p><strong>readability</strong>: It’s a bit ‘boilerplatey’, but definitely readable in my opinion.</p>
+</li>
+<li>
+<p><strong>testability</strong>: Like with the Todoist data structure, it’s primitive Python types and no dependencies except a <code class="verbatim">TodoistTree</code>, ideal for unit testing.</p>
+</li>
+<li>
+<p><strong>modularity</strong> / <strong>extensibility</strong>: Similar to the Todoist example, with the org-mode data types, we’re basically building an org-mode library that stands on its own. And then using that for our conversion stuff. This is nice, because there are actually org-mode libraries out there that we can either migrate to or we can extend.</p>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-13" class="outline-3">
+<h3 id="headline-13">
+Step 4: Serializing to org-mode
+</h3>
+<div id="outline-text-headline-13" class="outline-text-3">
+<p>
+Serializing our org-mode tree is a relatively small function:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">convert_org_title</span>(t: str) <span style="color:#f92672">-&gt;</span> str:
+  <span style="color:#66d9ef">return</span> MARKDOWN_LINK_REGEX<span style="color:#f92672">.</span>sub(<span style="color:#e6db74">r</span><span style="color:#e6db74">&#34;[[\2][\1]]&#34;</span>, t)
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">serialize_org_headline</span>(depth: int, o: OrgHeadline) <span style="color:#f92672">-&gt;</span> str:
+    result <span style="color:#f92672">=</span> (depth <span style="color:#f92672">*</span> <span style="color:#e6db74">&#34;*&#34;</span>)
+	  <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; &#34;</span>
+	  <span style="color:#f92672">+</span> (o<span style="color:#f92672">.</span>todo_state <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#66d9ef">if</span> o<span style="color:#f92672">.</span>todo_state <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> None <span style="color:#66d9ef">else</span> <span style="color:#e6db74">&#34;&#34;</span>)
+	  <span style="color:#f92672">+</span> convert_org_title(o<span style="color:#f92672">.</span>title)
+          <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>
+    <span style="color:#66d9ef">if</span> o<span style="color:#f92672">.</span>scheduling <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> None:
+	  <span style="color:#66d9ef">if</span> o<span style="color:#f92672">.</span>scheduling<span style="color:#f92672">.</span>hour <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">or</span> o<span style="color:#f92672">.</span>scheduling<span style="color:#f92672">.</span>minute <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>:
+	    result <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;SCHEDULED: &lt;&#34;</span> <span style="color:#f92672">+</span> o<span style="color:#f92672">.</span>scheduling<span style="color:#f92672">.</span>strftime(<span style="color:#e6db74">&#34;%Y-%m-</span><span style="color:#e6db74">%d</span><span style="color:#e6db74"> %H:%M&#34;</span>) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;&gt;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>
+	  <span style="color:#66d9ef">else</span>:
+	    result <span style="color:#f92672">+=</span> f<span style="color:#e6db74">&#34;SCHEDULED: &lt;{o.scheduling.strftime(&#39;%Y-%m-</span><span style="color:#e6db74">%d</span><span style="color:#e6db74">&#39;)}&gt;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>
+    <span style="color:#66d9ef">for</span> sh <span style="color:#f92672">in</span> o<span style="color:#f92672">.</span>sub_headlines:
+	  result <span style="color:#f92672">+=</span> serialize_org_headline(depth <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, sh)<span style="color:#f92672">+</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>
+    <span style="color:#66d9ef">return</span> result
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">serialize_org</span>(t: OrgDocument) <span style="color:#f92672">-&gt;</span> str:
+    result <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>
+    <span style="color:#66d9ef">for</span> p <span style="color:#f92672">in</span> t:
+	  result <span style="color:#f92672">+=</span> serialize_org_headline(<span style="color:#ae81ff">1</span>, p)
+    <span style="color:#66d9ef">return</span> result</code></pre></div>
+</div>
+<p>
+Checking our bullet points again:</p>
+<ul>
+<li>
+<p><strong>readability</strong>: Pretty much the same as before I would say.</p>
+</li>
+<li>
+<p><strong>testability</strong>: Ideally testable, as before</p>
+</li>
+<li>
+<p><strong>modularity</strong> / <strong>extensibility</strong>: Serializing org-mode structures is much more isolated than ‘serializing Todoist structures in org-mode’, so we won here, too.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-14" class="outline-2">
+<h2 id="headline-14">
+Putting it all together
+</h2>
+<div id="outline-text-headline-14" class="outline-text-2">
+<p>
+Let’s assemble all the components:</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">state <span style="color:#f92672">=</span> retrieve_todoist_data(<span style="color:#e6db74">&#39;&#34;mytokenimnottellingyou&#34;&#39;</span>)
+tree <span style="color:#f92672">=</span> build_todoist_tree(state)
+org_tree <span style="color:#f92672">=</span> convert_to_org(tree)
+<span style="color:#66d9ef">print</span>(serialize_org(org_tree))</code></pre></div>
+</div>
+<p>
+Done. Could’ve written this in a single line.</p>
+<p>
+Is this better than our original solution: Absolutely. We can…</p>
+<ul>
+<li>
+<p>…extend our Todoist ‘frontend’ to include more types and our export doesn’t change at all.</p>
+</li>
+<li>
+<p>…factor out our Todoist types into a library for everyone to enjoy.</p>
+</li>
+<li>
+<p>…same for our org-mode types and serialization.</p>
+</li>
+<li>
+<p>…offer different serialization backends than just org-mode, or even different org-mode serialization.</p>
+</li>
+<li>
+<p>…write tests for everything easily.</p>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-15" class="outline-2">
+<h2 id="headline-15">
+Footnotes
+</h2>
+</div>
+<div class="footnotes">
+<hr class="footnotes-separatator">
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p>Actually a <a href="https://en.wikipedia.org/wiki/Tree_(graph_theory)">forest</a>, since there are multiple root nodes.</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-2"><a href="#footnote-reference-2">2</a></sup>
+<div class="footnote-body">
+<p>Repeaters are surprisingly hard to find, and Todoist fits the bill pretty well, although their repeaters are text-based, which I find a bit off-putting.</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-3"><a href="#footnote-reference-3">3</a></sup>
+<div class="footnote-body">
+<p>The recursion scheme guys surely have a name for that. A <a href="https://en.wikipedia.org/wiki/Hylomorphism_(computer_science)">Hylomorphism</a> possibly?</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-4"><a href="#footnote-reference-4">4</a></sup>
+<div class="footnote-body">
+<p>There’s a ‘freestanding’ version of <code class="verbatim">TypedDict</code> as well, but this inheritance-based one composes better in my experierence.</p>
+</div>
+</div>
+</div>
+</div>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://pmiddend.github.io/" >
+    &copy;  Plato’s Blog 2020 
+  </a>
+    <div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+  </div>
+</footer>
+
+    
+
+  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+
+
+  </body>
+</html>
