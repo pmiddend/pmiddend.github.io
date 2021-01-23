@@ -1,0 +1,118 @@
+---
+title: "ETFs verwalten mit GnuCash"
+date: 2020-12-28T12:08:28+01:00
+draft: false
+---
+Dies ist die Fortsetzung zu meinem vorherigen [[../gnucash-workflow/][Post]], in dem ich erkläre, wie man GnuCash als persönliches Haushaltsbuch nutzt. Wenn du zum ersten Mal von GnuCash hörst, solltest du jenen Post (oder irgend eine andere Anleitung zu dem Thema) zuerst lesen.
+
+Seit Dezember 2020 bin ich stolzer Besitzer von Anteilen des allseits bekannten [[https://de.wikipedia.org/wiki/B%C3%B6rsengehandelter_Fonds][ETF]] [[https://de.extraetf.com/etf-profile/IE00B3RBWM25][A1JX52]] (auch sperriger bekannt als „Vanguard FTSE All-World UCITS ETF“). Was ein ETF ist und wieso ich gerade diesen ETF gewählt habe, werde ich nicht weiter erläutern. Menschen, die mehr Ahnung von dem Thema haben, haben sich bereits die Mühe gemacht, [[https://www.test.de/shop/geldanlage-banken/finanzen-verstehen-sp0596/][Bücher]] und [[https://www.reddit.com/r/Finanzen/comments/dt92k3/bin_neu_und_m%C3%B6chte_in_etfs_investieren_flatex/f6vwg4r/][Artikel]] darüber zu schreiben.
+
+Ich habe einen Sparplan eingerichtet, der jeden Monat eine feste Summe Euro in diesen ETF investiert. In meinem Haushaltsbuch könnte ich diese Sparplan-Transaktion einfach buchen als „von Girokonto zu Aktiva:ETF“:
+
+#+CAPTION: Fertig! Oder?
+[[/etf-simpel.png]]
+
+So kann man das machen, das Prinzip der [[https://de.wikipedia.org/wiki/Buchf%C3%BChrung#Doppelte_Buchf%C3%BChrung_%E2%80%93_Grundlagen][doppelten Buchführung]] ist nicht verletzt. Nur bringt es aus meiner Sicht nichts: Mein Ziel bei der Anschaffung des ETF ist, mindestens die jährliche Inflation, plus was man auf einem Sparkonto an Zinsen bekäme, zu übertreffen. Dieses Ziel will ich regelmäßig mit der Realität abgleichen. Das gelingt mir mit diesem simplen Vorgehen nicht, denn die 1000€ bleiben im Haushaltsbuch gleich und spiegeln nicht den /aktuellen/ Wert meiner Anteile wider.
+
+Um diesen Realitätsabgleich durchzuführen, benötige ich mehr Informationen als nur den Betrag, der von meinem Konto ins Depot abgeht. Ich brauche zusätzlich…
+
+- die genaue Kennzeichnung des ETF (in meinem Fall A1JX52)
+- wie viele Anteile gekauft wurden
+- der Kaufpreis pro Anteil zum Kaufzeitpunkt
+
+Damit kann man dann jederzeit den aktuellen Kurs des ETF online abrufen und errechnen, wie viel die eigenen Anteile aktuell wert sind. Dieser Artikel dreht sich letztlich darum, wie man GnuCash genau diese Daten beibringt und wie man dann in GnuCash sein Vermögen betrachten kann.
+
+* Vorbereitung unter Windows
+
+GnuCash nutzt eine externe Software (Perl), um Kurse aus dem Internet abzurufen. Diese ist leider nicht mit GnuCash mitgeliefert. Ihr könnt sie aber leicht nachinstallieren. Ladet euch dazu [[https://strawberryperl.com/][Strawberry Perl]] herunter. Genauer, auf der Webseite die „Recommended version“ mit der Endung =-64bit.msi= und installiert die Software per Doppelklick.
+
+Jetzt müsst ihr in einem zweiten Schritt die für GnuCash nötigen Module installieren. Dazu bietet GnuCash glücklicherweise ein Programm an. Ihr findet es im Startmenü unter „Erweiterung um Wechselkurse mit GnuCash online abzurufen“ (eingängig benannt, oder?). Führt es aus und wartet ein wenig. Bei mir hat die Installation trotz SSD und guter Internetverbindung etwa fünf Minuten gedauert. Ich weiß auch nicht wieso.
+
+Ob das alles geklappt hat, sehr ihr weiter unten, wenn wir zum Wertpapier-Editor kommen.
+
+* Einrichtung eines ETF-Kontos in GnuCash
+
+Um zu erläutern, wie mein ETF-Workflow mit GnuCash funktioniert, habe ich ein neue Datei in GnuCash angelegt und  mein Girokonto mit fiktiven 10,000€ aufgeladen:
+
+[[/etf-anfang.png]]
+
+Als Beispiel nehmen wir an, dass mein Sparplan von meiner Bank ausgeführt wird und 1000€ davon als ETF-Anteile gebucht werden. Meine Bank nimmt 0,49€ Gebühr davon.
+
+* Der Wertpapiereditor
+
+Um meine ETFs zu bündeln, erstelle ich zuerst unter „Aktiva“ ein neues Konto „Aktien“. Darunter möchte ich ein Konto für meinen ETF erstellen. Dazu muss GnuCash aber erst wissen, dass es den ETF überhaupt gibt. Dies kann man direkt aus dem Dialog „Neues Konto“ tun, es gibt dafür allerdings auch ein separates Werkzeug, den /Wertpapier-Editor/, den ihr im Menü oben unter „Werkzeuge” → „Wertpapier-Editor“ erreicht. Hier werden alle GnuCash bekannt gemachten Wertpapiere angezeigt. Die Liste ist anfangs leer.
+
+Unten im Wertpapier-Editor seht ihr ein paar Knöpfe. Klickt auf „Hinzufügen“ und ein neuer Dialog öffnet sich. Hier tragt ihr nun (mindestens) folgendes ein:
+
+- Voller Name :: könnt ihr frei wählen; z.B. eben „Vanguard FTSE All-World“
+- Symbol/Abkürzung :: hier das „Ticker-Symbol“ eintragen; im Falle von A1JX52 ist das *VGWL.DE* (dazu erkläre ich gleich noch mehr)
+- Typ :: gibt die Börse an, bei der gehandelt wird; ich habe hier *EUREX* gewählt.
+- Handelbare Stückelung :: habe ich bei 10000 gelassen
+- Börsenkursquelle :: Checkbox „Börsenkurse online abrufen“ anwählen und dann „Einzel“ auswählen und schließlich „Yahoo as JSON“ wählen. Hier ist für Windowsbenutzer der Moment, wo sie feststellen können, ob eure Perl-Installation geklappt hat. Erscheint hier „Modul Finance::Quote ist nicht korrekt installiert“ und es ist noch etwas im Argen.
+
+Am Ende habe ich also Folgendes eingetragen:
+
+[[/etf-add.png]]
+
+Klickt auf „Ok“ und euer ETF erscheint in der Wertpapier-Liste. Jetzt kümmern wir uns um den tatsächlichen Abruf der Kurse.
+
+* Onlineabruf
+
+** Das richtige Kürzel
+
+Will man sein „aktuelles“ Vermögen im Depot errechnen muss man — wie oben erwähnt — den aktuellen Kurs des ETF abrufen und dann mit seinen Anteilen abgleichen. Genau diese nervige Arbeit kann GnuCash euch abnehmen, indem es den Kurs erstens online für euch abruft, und zweitens die Berechnung übernimmt.
+
+Um den Kurs abzurufen, gibt es sehr viele mögliche Quellen. Bei einigen muss man sich erst registrieren. Einige haben keine aktuellen Kurse, sondern welche, die einen Tag alt sind (bei einem ETF kommt es meist eh nicht auf aktuelle Kurse an, daher ist das egal). „Yahoo as JSON“ funktioniert auch ohne Registrierung und ist relativ aktuell.
+
+Das Schwierigste bei der Einrichtung des Abrufs ist aber tatsächlich, das richtige Kürzel für den ETF zu finden. Denn weder die [[https://de.wikipedia.org/wiki/Wertpapierkennnummer][WKN]] A1JX52 noch die [[https://de.wikipedia.org/wiki/National_Securities_Identifying_Number][ISIN]] IE00B3RBWM25 funktioniert. Ich habe viel herum probiert und bin auf die Seite [[https://www.justetf.com][justetf.com]] gestoßen, die eine umfangreiche Tabelle mit alternativen „Listings“ enthält:
+
+#+CAPTION: [[https://www.justetf.com/de-en/etf-profile.html?query=a1jx52&groupField=index&from=search&isin=IE00B3RBWM25#volatility][Quelle: justetf.com]]
+[[/etf-listings.png]]
+
+Nach ein paar versuchen fand ich heraus, dass „VGWL.DE“ von Yahoo (und anderen) erkannt wird.
+
+** Die Kurs-Datenbank
+
+Um den aktuellen Kurs abzurufen, und vergangene Kurse anzusehen, gibt es ein weiteres Werkzeug innerhalb GnuCashs: die /Kurs-Datenbank/. Ihr erreicht sie im Menü oben unter „Werkzeuge“ → „Kurs-Datenbank“. Auch sie ist anfangs leer. Rechts im Menü seht ihr aber einen Knopf: „Kurse abrufen“. Drückt mal drauf und schaut, was passiert. Wenn alles richtig eingerichtet ist, sollte in der Liste links ein neuer Eintrag „EUREX“ erscheinen. Klappt ihr den weiter auf, solltet ihr in etwa folgendes sehen:
+
+[[/etf-kursdatenbank.png]]
+
+Man sieht hier, dass der Kurs 86,52€ am 28.12.2020 abgerufen wurde. Die Quelle „Finance::Quote“ bedeutet, dass GnuCash den Kurs selber abgerufen hat. Ihr könnt Kurse auch mit dem Knopf „Hinzufügen“ rechts manuell eintragen, falls die Automatik nicht funktioniert.
+
+* Eine ETF-Buchung durchführen
+
+Wie tragen wir nun eine ETF-Buchung in GnuCash ein? Zunächst mal benötigt ihr die oben genannten Informationen, also den Kurs zum Zeitpunkt der Buchung, sowie die Anzahl der Anteile. Die Banken haben dafür online ein sogenanntes „Orderbuch“. Teilweise wird diese Information auch schon in der Depotübersicht angezeigt.
+
+In meinem Fall gehen wir von folgenden Daten aus:
+
+- *Buchung am* 28.12.2020
+- *Stückzahl* 11,8526
+- *Ausführungskurs* 84,37€
+
+Es findet sich außerdem eine Buchung auf dem zugehörigen Girokonto in Höhe von -1000,49€ (0,49€ ist die Gebühr). Diese Buchung tragen wir jetzt in GnuCash manuell ein. Dazu eröffnen wir unterhalb unseres Kontos Aktiva:Aktien ein neues Konto namens „A1JX52“, indem wir auf das „Aktien“-Konto rechtsklicken und „Neues Konto” anklicken. Als „Bezeichnung“ tragen wir A1JX52 ein, als „Kontoart“ wählen wir „Investmentfonds“ und wählen dann (weiter oben) als Wertpapier/Währung mittels des „Auswählen…”-Knopfs unser eben hinzugefügtes Wertpapier:
+
+[[/etf-neues-konto.png]]
+
+Ihr seht in eurer Übersicht dann das neue Konto, sowie „0 VGWL.DE” in der Spalte „Summe“. GnuCash erachtet Dinge in diesem Konto tatsächlich nicht mehr als „Euro“ sondern „Anteile“.
+
+[[/etf-summe-vorher.png]]
+
+Doppelklickt nun auf dieses Konto. Ihr kommt auf die Liste der Buchungen, die aktuell noch leer ist. In die Spalten fügen wir jetzt unsere Buchungsinformationen ein. Datum ist der 28.12.2020, Beschreibung ist beliebig zu wählen, bei „Buchen“ wählt ihr die Quelle eures Geldes aus, also z.B. das Konto „Girokonto“. „Anteile“ meint die Stückzahl 11,8526. „Preis“ ist 84,37. Wenn ihr jetzt Enter drückt und euch eure Kontenübersicht anseht, kommt folgendes dabei heraus:
+
+[[/etf-summe-nachher.png]]
+
+Wichtig ist die letzte Spalte, die bei euch noch gar nicht angezeigt wird. Ihr müsst sie explizit hinzufügen, indem ihr auf den kleinen Pfeil klickt, der sich ganz rechts in der Kopfzeile der Übersicht befindet. Dann wählt ihr „Gesamt (EUR)“ aus.
+
+Ich habe bei dem Screenshot etwas gemogelt und manuell den Kurs am 28.12.2020 eingegeben, daher kommen bei der Summe des ETF genau 1000€ raus, nicht irgendwas Krummes. Es fehlen aber noch die Transfergebühren von 0,49€. Die geben wir nun nachträglich ein. Öffnet wieder das Konto und rechtsklickt auf die Transaktion, die ihr grade eingefügt habt. Wählt „Mehrteilige Buchung“ aus. Die Ansicht wechselt ein wenig:
+
+[[/etf-mehrzeilig.png]]
+
+Um die Transfergebühren zu berücksichtigen, klickt auf die 1.000,00 in der Spalte „Verkauf“ und tragt dort 1000,49 ein. Eine neue Zeile wird auftauchen. Bei mir werden hier automatisch 0,49€ auf „Ausgleichskonto-EUR“ gebucht. Das könnt ihr noch ändern, z.B. auf „Aufwendungen:Sonstiges:Bankgebühren“:
+
+[[/etf-mehrzeilig-gebuehren.png]]
+
+Bestätigt eure Änderungen mittels Enter und geht zurück in die Übersicht. Die 49 Cent müssten jetzt angezeigt werden:
+
+[[/etf-uebersicht-mit-gebuehren.png]]
+
+Nun könnt ihr jederzeit mit der Kurs-Datenbank den aktuellen Kurs zu eurem ETF abrufen und seht das Ergebnis in der Gesamt-Spalte.

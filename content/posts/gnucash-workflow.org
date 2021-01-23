@@ -10,7 +10,6 @@ Um einen Überblick über meine Finanzen zu erhalten, führe ich seit ein paar M
 #+begin_quote
 Ein Haushaltsbuch wird in der Regel von Privatpersonen geführt. Es stellt dabei alle Einnahmen den Ausgabenposten gegenüber. Alle Einnahmen und Ausgaben sollten dabei übersichtlich und nach Monaten und eventuell nach Kategorien (wie z. B. Ausgaben für Lebensmittel, Haushaltsartikel, Auto oder öffentliche Verkehrsmittel – je nach Bedarf) geordnet sein, um eine klare Budgetierung zu ermöglichen.
 #+end_quote
-
 * Ziele
 
 Mir waren vier Ziele bei meinem Haushaltsbuch wichtig:
@@ -289,6 +288,6 @@ Die Vorgehensweise nennt sich auch "plain text accounting", und es gibt hier ein
 
 Ich hoffe, ich konnte euch ein wenig für GnuCash begeistern oder wenigstens der Idee eines privaten Haushaltsbuchs. Viel Pflege benötigt das dank dem Abgleich mit der Bank nicht, und der Nutzen ist enorm.
 
-GnuCash kann viel mehr. Ich plane, damit meine Aktien und ETFs zu verwalten, muss mich aber in viele Dinge noch einarbeiten. Vielleicht folgt also ein weiterer Artikel in Kürze.
+GnuCash kann viel mehr. Im  [[../gnucash-etfs/][nächsten Artikel]] gehtes um das Verwalten von Aktien und ETFs mit GnuCash.
 
 
