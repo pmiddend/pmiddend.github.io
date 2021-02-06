@@ -116,3 +116,7 @@ Bestätigt eure Änderungen mittels Enter und geht zurück in die Übersicht. Di
 [[/etf-uebersicht-mit-gebuehren.png]]
 
 Nun könnt ihr jederzeit mit der Kurs-Datenbank den aktuellen Kurs zu eurem ETF abrufen und seht das Ergebnis in der Gesamt-Spalte.
+
+* Fehlermeldung =ALPHAVANTAGE_API_KEY=
+
+Aus einem mir noch nicht bekannten Grund bekam ich beim Abrufen der aktuellen Kurse eine Meldung, ich solle den =ALPHAVANTAGE_API_KEY= setzen, um Kurse abzurufen. Um das abzustellen, geht ihr im Menü ganz oben auf „Bearbeiten“ → „Einstellungen“ und dann auf „Online Kurse“. Dort seht ihr dann ein Eingabefeld für den Alpha Vantage 'API key'. Ihr könnt dort irgendetwas eintragen, aber das Feld nicht leer lassen. Das hat bei mir den Fehler behoben.
